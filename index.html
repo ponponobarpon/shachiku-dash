@@ -1,1514 +1,1332 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="ja">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
 <title>社畜ダッシュ</title>
-
 <style>
-*{
-  box-sizing:border-box;
-  -webkit-tap-highlight-color:transparent
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#111;font-family:system-ui,-apple-system,BlinkMacSystemFont,"Hiragino Kaku Gothic ProN",sans-serif;touch-action:none}
+#game{position:relative;width:100vw;height:100dvh;overflow:hidden;background:#9ed8f5;will-change:transform}
+.sky{position:absolute;inset:0 0 45%;background:linear-gradient(#62bdf7 0%,#bde9ff 62%,#f4d6ad 100%);z-index:0}
+.city{position:absolute;left:0;bottom:42%;width:300%;height:30%;z-index:1;opacity:.9;background:repeating-linear-gradient(90deg,#9da8b0 0 7vw,#c9d0d5 7vw 10vw,#8997a1 10vw 16vw,#b8c1c7 16vw 21vw);will-change:transform}
+.city:before{content:"";position:absolute;inset:35% 0 0;background:repeating-linear-gradient(90deg,transparent 0 12vw,#f5c84b 12vw 12.6vw,transparent 12.6vw 24vw);opacity:.65}
+.road{position:absolute;left:0;right:0;bottom:0;height:45%;background:linear-gradient(#777b7e 0 7%,#4e5052 7% 100%);border-top:8px solid #858585;z-index:2;overflow:hidden}
+.lane{position:absolute;bottom:48%;left:0;width:300%;height:9px;background:repeating-linear-gradient(90deg,transparent 0 35px,#eee 35px 105px,transparent 105px 175px);opacity:.8;will-change:transform}
+#game:after{content:"";position:absolute;left:0;right:0;bottom:45%;height:8%;z-index:3;background:repeating-linear-gradient(90deg,#f4f4f4 0 22px,transparent 22px 82px);opacity:.45;will-change:transform}
+.hud{position:absolute;top:max(12px,env(safe-area-inset-top));left:10px;right:10px;display:flex;gap:7px;z-index:30;flex-wrap:wrap}
+.hudBox{background:#08141ce8;border:2px solid #fff;border-radius:10px;color:#fff;padding:6px 10px;font-weight:800;min-width:92px;text-align:center;box-shadow:0 3px 8px #0008}
+.hudBox small{display:block;font-size:10px;opacity:.8}.hudBox b{font-size:18px}
+#warning{position:absolute;top:21%;left:50%;transform:translateX(-50%);z-index:40;background:#e53935;color:#fff;border:3px solid #fff;border-radius:12px;padding:8px 18px;font-weight:900;font-size:22px;opacity:0;pointer-events:none;box-shadow:0 5px 18px #0008}
+#warning.show{opacity:1;animation:pulse .35s infinite alternate}
+@keyframes pulse{to{transform:translateX(-50%) scale(1.08)}}
+#boss{position:absolute;z-index:14;left:-120px;bottom:24%;width:105px;height:105px;border-radius:50%;overflow:hidden;border:4px solid #222;background:#ddd;box-shadow:0 5px 15px #0009;will-change:left,transform}
+#boss img{width:100%;height:100%;object-fit:cover;object-position:50% 25%;display:block}
+.bossFace{position:absolute;inset:0;z-index:2;pointer-events:none;border-radius:50%;opacity:0;transition:.15s}
+.bossFace:before,.bossFace:after{content:"";position:absolute;top:34%;width:18px;height:5px;background:#b71c1c;border-radius:8px;box-shadow:0 0 5px #fff8}
+.bossFace:before{left:22%;transform:rotate(18deg)}
+.bossFace:after{right:22%;transform:rotate(-18deg)}
+#boss.angry .bossFace{opacity:.72}
+#boss.pressed .bossFace{opacity:1;filter:drop-shadow(0 0 5px #f00)}
+#player{position:absolute;z-index:20;left:40%;bottom:24%;width:52px;height:72px;will-change:transform}
+.head{position:absolute;left:7px;top:-25px;width:38px;height:38px;border-radius:50%;background:#f1c7a5;border:2px solid #222}
+.body{position:absolute;left:0;top:24px;width:52px;height:48px;background:#26364b;border-radius:12px 12px 8px 8px;border:2px solid #111}
+.faceEye{position:absolute;top:13px;width:5px;height:5px;background:#222;border-radius:50%}.e1{left:11px}.e2{right:11px}
+.mouth{position:absolute;left:12px;top:27px;width:16px;height:7px;border-bottom:2px solid #222;border-radius:50%;transition:.15s}
+.sweat{position:absolute;right:-5px;top:5px;width:7px;height:13px;background:#39a9ff;border-radius:70% 30% 70% 30%;opacity:0;transition:.15s}
+.sweating .sweat{opacity:1}.panicked .mouth{height:13px;border:2px solid #222;border-radius:50%}.happy .mouth{height:9px;border-bottom:4px solid #222}.eyesWide .faceEye{width:7px;height:7px}.tired .mouth{border-bottom:0;border-top:2px solid #222}
+.arm{position:absolute;top:38px;width:10px;height:32px;background:#26364b;border:2px solid #111;border-radius:10px}
+.a1{left:-1px;transform:rotate(15deg)}.a2{right:-1px;transform:rotate(-15deg)}
+.leg{position:absolute;top:67px;width:13px;height:22px;background:#202733;border-radius:8px}.l1{left:17px}.l2{right:17px}
+#obstacles{position:absolute;inset:0;z-index:12;pointer-events:none}
+.ob{position:absolute;bottom:24%;width:52px;height:62px;border-radius:10px;background:#ff9f1c;border:4px solid #fff;box-shadow:0 4px 10px #0008}
+.ob::after{content:"!";position:absolute;inset:0;display:grid;place-items:center;color:#fff;font-size:30px;font-weight:1000}
+.ob.cone{background:#ff7b00}.ob.bike{background:#27ae60}.ob.sign{background:#e53935}.ob.bench{background:#8d5a35}.ob.car{background:#2878d0}
+.ob.bike::after{content:"🚲";font-size:26px}.ob.sign::after{content:"⚠"}.ob.bench::after{content:"🪑"}.ob.car::after{content:"🚗"}
+.coin{position:absolute;bottom:35%;width:34px;height:34px;border-radius:50%;background:#ffd21c;border:4px solid #fff;box-shadow:0 3px 10px #0008;display:grid;place-items:center;color:#8a5b00;font-weight:1000;font-size:17px}
+#pauseBtn{position:absolute;right:0;top:0;width:48px;height:48px;margin:0;padding:0;border:2px solid #fff;border-radius:12px;background:#111d;color:#fff;font-size:22px;font-weight:1000;z-index:80}
+#pauseBtn:active{transform:scale(.94)}
+#milestone,#powerupMessage{position:absolute;left:50%;transform:translate(-50%,-50%);z-index:45;color:#fff;font-weight:1000;text-align:center;text-shadow:0 3px 7px #000;pointer-events:none;opacity:0}
+#milestone{top:38%;font-size:30px}
+#powerupMessage{top:48%;font-size:20px}
+#milestone.show,#powerupMessage.show{animation:popMsg .9s ease-out forwards}
+@keyframes popMsg{
+0%{opacity:0;transform:translate(-50%,-35%) scale(.65)}
+18%{opacity:1;transform:translate(-50%,-50%) scale(1.12)}
+70%{opacity:1}
+100%{opacity:0;transform:translate(-50%,-72%) scale(1)}
 }
+.powerup{position:absolute;bottom:29%;width:42px;height:42px;border-radius:50%;border:4px solid #fff;display:grid;place-items:center;font-size:23px;font-weight:1000;box-shadow:0 4px 12px #0009;z-index:13;animation:powerFloat .55s ease-in-out infinite alternate}
+.powerup.shield{background:#2d9cdb}.powerup.slow{background:#9b59b6}.powerup.coffee{background:#8d5a35}
+@keyframes powerFloat{to{transform:translateY(-9px) rotate(8deg)}}
+#game.paused .commuterTrain,#game.paused .crosswalk,#game.paused .ped{animation-play-state:paused}
+#overlay{position:absolute;inset:0;z-index:60;background:#0009;display:flex;align-items:center;justify-content:center;padding:20px}
+.panel{width:min(92vw,430px);background:#fff;border:4px solid #111;border-radius:18px;padding:20px;box-shadow:0 10px 35px #000b;text-align:center}
+.panel h1{margin:0 0 4px;font-size:34px}.panel p{margin:5px 0 15px}
+#playerName{width:100%;padding:13px;border:2px solid #222;border-radius:10px;font-size:18px;text-align:center}
+button{margin-top:12px;width:100%;padding:14px;border:0;border-radius:12px;background:#111;color:#fff;font-size:20px;font-weight:900}
+#ranking{margin-top:14px;text-align:left;background:#f1f1f1;border-radius:10px;padding:10px}
+.rankRow{display:flex;justify-content:space-between;padding:6px 4px;border-bottom:1px solid #ccc}.rankRow:last-child{border-bottom:0}
+#gameoverStats{font-weight:800;margin-top:8px}
+#hint{position:absolute;bottom:5%;left:50%;transform:translateX(-50%);z-index:35;color:#fff;text-shadow:0 2px 4px #000;font-size:13px;white-space:nowrap}
+.shake{animation:shake .18s linear 3}
+@keyframes shake{25%{transform:translate(7px,0)}50%{transform:translate(-7px,0)}75%{transform:translate(5px,0)}}
+.hidden{display:none!important}
 
-html,body{
-  margin:0;
-  width:100%;
-  height:100%;
-  overflow:hidden
-}
+/* ===== COMPLETE POLISH PASS ===== */
+#multiplier,#phase{font-size:16px}
+#bossEyes{position:absolute;inset:0;z-index:4;pointer-events:none;opacity:0;transition:.12s}
+#bossEyes i{position:absolute;top:35%;width:12px;height:7px;background:#111;border-radius:50%;box-shadow:0 0 0 2px #fff6}
+#bossEyes i:first-child{left:25%}.bossEyes i:last-child{right:25%}
+#bossMouth{position:absolute;z-index:4;left:38%;top:57%;width:24%;height:9px;border-bottom:4px solid #111;border-radius:0 0 18px 18px;opacity:0;pointer-events:none}
+#boss.angry #bossEyes{opacity:1}
+.bossMouth{transition:.12s}.bossFace+.bossEyes{}
+#boss.pressed #bossMouth{opacity:1;border-bottom-color:#b40000;transform:scaleY(1.5)}
+#boss.angry .bossMouth{opacity:.9}
+.busStop{position:absolute;z-index:6;bottom:39%;left:78%;width:56px;height:72px;border-left:5px solid #333;border-top:5px solid #333;border-radius:10px 10px 0 0;font-size:9px;font-weight:900;text-align:center;padding-top:5px;color:#333}
+.tree{position:absolute;z-index:6;bottom:39%;width:34px;height:65px;background:#5b3b24;border-radius:8px}
+.tree:before{content:"";position:absolute;left:-18px;top:-34px;width:70px;height:60px;background:#4b8f45;border-radius:50%}
+.t1{left:8%}.t2{left:53%}
+#player:after{content:"";position:absolute;left:5px;bottom:-5px;width:46px;height:8px;border-radius:50%;background:#0004;filter:blur(2px);z-index:-1}
+.ob.puddle{background:#287fc2}.ob.barrier{background:#e67e22}.ob.person{background:#6c5ce7}
+.ob.puddle::after{content:"💧"}.ob.barrier::after{content:"🚧"}.ob.person::after{content:"🚶"}
+.coin{animation:coinFloat .65s ease-in-out infinite alternate}
+@keyframes coinFloat{to{transform:translateY(-7px) rotate(12deg)}}
+#warning{font-weight:1000;text-shadow:0 2px 5px #000;letter-spacing:.04em}
 
-body{
-  background:#111;
-  color:#fff;
-  font-family:system-ui,-apple-system,sans-serif;
-  touch-action:none
-}
-
-#game{
-  position:relative;
-  width:100vw;
-  height:100vh;
-  overflow:hidden;
-  background:linear-gradient(#78c9ff 0 55%,#d8d8d8 55%)
-}
-
-#sky{
-  position:absolute;
-  inset:0 0 45%;
-  background:linear-gradient(#6fc5ff,#d9f3ff)
-}
-
-#road{
-  position:absolute;
-  left:0;
-  right:0;
-  bottom:0;
-  height:45%;
-  background:#555;
-  border-top:8px solid #777;
-  overflow:hidden
-}
-
-#roadLines{
-  position:absolute;
-  inset:0
-}
-
-.roadLine{
-  position:absolute;
-  top:50%;
-  width:90px;
-  height:8px;
-  border-radius:4px;
-  background:#eee;
-  opacity:.7
-}
-
-#hud{
-  position:absolute;
-  z-index:30;
-  top:12px;
-  left:12px;
-  right:12px;
-  display:flex;
-  justify-content:space-between;
-  font-weight:900;
-  text-shadow:2px 2px #000
-}
-
-#player{
-  position:absolute;
-  z-index:15;
-  left:40%;
-  bottom:24%;
-  width:52px;
-  height:72px;
-  background:#1769aa;
-  border-radius:16px 16px 8px 8px;
-  box-shadow:0 4px 8px #0008
-}
-
-#player:before{
-  content:"";
-  position:absolute;
-  width:38px;
-  height:38px;
-  background:#f0c7a8;
-  border-radius:50%;
-  left:7px;
-  top:-28px;
-  border:3px solid #222
-}
-
-#player:after{
-  content:"";
-  position:absolute;
-  left:7px;
-  right:7px;
-  bottom:-15px;
-  height:18px;
-  border-bottom:7px solid #222;
-  border-left:5px solid transparent;
-  border-right:5px solid transparent
-}
-
-#boss{
-  position:absolute;
-  z-index:12;
-  right:-320px;
-  bottom:24%;
-  width:105px;
-  height:105px;
-  border-radius:50%;
-  overflow:hidden;
-  border:4px solid #222;
-  background:#fff;
-  box-shadow:0 5px 15px #0008
-}
-
-#boss img{
-  width:100%;
-  height:100%;
-  object-fit:cover;
-  display:block
-}
-
-#bossFallback{
-  width:100%;
-  height:100%;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  font-size:60px;
-  background:#eee
-}
-
-.obstacle{
-  position:absolute;
-  z-index:13;
-  bottom:24%;
-  width:58px;
-  height:65px;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  font-size:38px;
-  background:#222;
-  border:3px solid #fff;
-  border-radius:10px;
-  box-shadow:0 4px 10px #0008
-}
-
-.coin{
-  position:absolute;
-  z-index:14;
-  width:34px;
-  height:34px;
-  border-radius:50%;
-  background:#ffd21a;
-  border:4px solid #fff35a;
-  box-shadow:0 0 12px #ffdf00
-}
-
-.coin:after{
-  content:"¥";
-  position:absolute;
-  inset:0;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  color:#9a6500;
-  font-weight:900
-}
-
-#warning{
-  position:absolute;
-  z-index:40;
-  top:24%;
-  left:0;
-  right:0;
-  text-align:center;
-  font-size:28px;
-  font-weight:900;
-  color:#ff3030;
-  text-shadow:3px 3px #000;
-  opacity:0;
-  pointer-events:none
-}
-
-#menu,#gameover{
-  position:absolute;
-  z-index:100;
-  inset:0;
-  background:#000b;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  text-align:center;
-  padding:24px
-}
-
-#gameover{
-  display:none
-}
-
-.panel{
-  width:min(440px,94vw);
-  max-height:92vh;
-  overflow:auto;
-  background:#202020;
-  border:2px solid #fff;
-  border-radius:18px;
-  padding:24px;
-  box-shadow:0 12px 40px #000
-}
-
-h1{
-  margin:0 0 8px;
-  font-size:40px
-}
-
-button{
-  width:100%;
-  padding:15px;
-  margin-top:10px;
-  border:0;
-  border-radius:12px;
-  font-size:18px;
-  font-weight:800
-}
-
-.primary{
-  background:#ffd21a;
-  color:#111
-}
-
-input{
-  width:100%;
-  padding:13px;
-  border-radius:10px;
-  border:0;
-  font-size:17px;
-  margin:10px 0
-}
-
-.small{
-  font-size:13px;
-  color:#ccc
-}
-
-#rankingList,
-#rankingList2{
-  text-align:left;
-  max-height:220px;
-  overflow:auto;
-  margin-top:12px
-}
-
-.rankRow{
-  display:flex;
-  justify-content:space-between;
-  padding:8px 4px;
-  border-bottom:1px solid #555
-}
-
-#firebaseStatus{
-  text-align:center;
-  font-size:10px;
-  opacity:.75;
-  margin-top:5px
-}
-
-.shake{
-  animation:shake .16s linear infinite
-}
-
-@keyframes shake{
-  0%{transform:translate(0)}
-  25%{transform:translate(5px,-3px)}
-  50%{transform:translate(-4px,3px)}
-  75%{transform:translate(3px,2px)}
-  100%{transform:translate(-2px,-2px)}
-}
+/* ===== FULL GAME UPDATE ===== */
+.commuterTrain{position:absolute;z-index:5;left:-300px;bottom:39%;width:260px;height:60px;background:#f4f4f4;border:4px solid #333;border-radius:9px;box-shadow:0 5px 12px #0007;animation:trainRun 10s linear infinite}
+.commuterTrain:before{content:"";position:absolute;left:14px;top:11px;width:38px;height:28px;background:#8ed0ef;border:2px solid #333;box-shadow:48px 0 #8ed0ef,96px 0 #8ed0ef,144px 0 #8ed0ef}
+.commuterTrain:after{content:"通勤";position:absolute;right:10px;top:13px;font-weight:1000;color:#222}
+@keyframes trainRun{to{transform:translateX(calc(100vw + 650px))}}
+.crosswalk{position:absolute;z-index:6;bottom:39%;left:0;width:100%;height:45px;background:repeating-linear-gradient(90deg,#fff 0 24px,transparent 24px 48px);opacity:.65;animation:crossMove 3s linear infinite}
+@keyframes crossMove{to{transform:translateX(-48px)}}
+.ped{position:absolute;z-index:7;bottom:39%;width:18px;height:44px;background:#333;border-radius:10px 10px 4px 4px;animation:pedWalk 2.8s ease-in-out infinite alternate}
+.ped:before{content:"";position:absolute;left:3px;top:-14px;width:12px;height:12px;border-radius:50%;background:#f1c7a5;border:2px solid #222}
+.ped.p1{left:24%;animation-delay:-.7s}.ped.p2{left:67%;animation-delay:-1.4s}
+@keyframes pedWalk{to{transform:translateX(24px)}}
+#bestDistance{font-size:16px}
 </style>
 </head>
 
 <body>
-
 <div id="game">
+<div class="sky"></div>
+<div class="city"></div>
 
-  <div id="sky"></div>
+<div class="commuterTrain"></div>
+<div class="crosswalk"></div>
+<div class="ped p1"></div>
+<div class="ped p2"></div>
+<div class="busStop">BUS</div>
+<div class="tree t1"></div>
+<div class="tree t2"></div>
 
-  <div id="road">
-    <div id="roadLines"></div>
-  </div>
+<div class="road">
+<div class="lane"></div>
+</div>
 
-  <div id="hud">
-    <span>距離 <b id="distance">0</b>m</span>
-    <span>🪙 <b id="coins">0</b>　🔥 <b id="combo">0</b></span>
-  </div>
+<div class="hud">
+<div class="hudBox"><small>DISTANCE</small><b id="distance">0m</b></div>
+<div class="hudBox"><small>SPEED</small><b id="speed">9.0km/h</b></div>
+<div class="hudBox"><small>上司まで</small><b id="bossDistance">38m</b></div>
+<div class="hudBox"><small>COIN</small><b id="coins">0</b></div>
+<div class="hudBox"><small>COMBO</small><b id="combo">0</b></div>
+<div class="hudBox"><small>倍率</small><b id="multiplier">×1</b></div>
+<div class="hudBox"><small>PHASE</small><b id="phase">朝</b></div>
+<div class="hudBox"><small>BEST</small><b id="bestDistance">0m</b></div>
+</div>
 
-  <div id="warning">⚠ 上司が近い！ ⚠</div>
+<button id="pauseBtn" type="button">Ⅱ</button>
 
-  <div id="boss">
-    <img id="bossImg" alt="上司" style="display:none">
-    <div id="bossFallback">😡</div>
-  </div>
+<div id="warning">⚠ 上司が迫っている！</div>
+<div id="milestone"></div>
+<div id="powerupMessage"></div>
 
-  <div id="player"></div>
+<div id="boss">
+<img src="data:image/jpeg;base64,Srb26EV2Fs+64U9q8Ug+NXgKGAKthf5H/TOL/47Whb/AB38Ax8mw1Akf9M4f/jtCxdLv+Yckj6DksIZolYYzisS4tSpMYHArzKD9o34fxgK+n6kR7RQ/wDx6pm/aM+GrfMdN1PP/XKD/wCPVf1ql3/Mz9mzr59O4LbaxJY1Q4K1jP8AtEfDJwR/Zmp8/wDTKD/49WHc/HP4cSNldN1H8Y4f/jtZPFUu/wCZahKx1oKo5O3imyygSAha4WT41/D11wun6gD/ANc4f/jtRt8Z/h+f+Yff/wDfuL/47WDxNPpL8y+SR6HbuGuIyV4Br5Z+LjB/iFqzLwD5H/oiOvaE+Nnw9TBGn6hkf9M4f/jteA+PNbsPE3iq+1rS45IrW4ERRZQA42RIhyFLDqOOelfOZrVjKklF9f0Z10ItPU4yiiivjTuP/9k=" alt="上司">
+<div class="bossFace"></div>
+<div id="bossEyes" class="bossEyes"><i></i><i></i></div>
+<div id="bossMouth" class="bossMouth"></div>
+<div id="bossMood">😠</div>
+</div>
 
-  <div id="menu">
-    <div class="panel">
+<div id="player">
+<div class="head">
+<i class="faceEye e1"></i>
+<i class="faceEye e2"></i>
+<i class="mouth"></i>
+<i class="sweat"></i>
+</div>
+<div class="body"></div>
+<div class="arm a1"></div>
+<div class="arm a2"></div>
+<div class="leg l1"></div>
+<div class="leg l2"></div>
+</div>
 
-      <h1>社畜ダッシュ</h1>
+<div id="obstacles"></div>
 
-      <p>上司から逃げ続けろ。</p>
+<div id="hint">タップ＝ジャンプ　長押し＝大ジャンプ</div>
 
-      <p class="small">
-        タップ：ジャンプ<br>
-        長押し：大ジャンプ
-      </p>
-
-      <input
-        id="playerName"
-        maxlength="12"
-        value="社畜"
-        placeholder="名前"
-      >
-
-      <button class="primary" id="startBtn">
-        スタート
-      </button>
-
-      <h2>ランキング</h2>
-
-      <div id="rankingList">
-        読み込み中...
-      </div>
-
-      <div id="firebaseStatus"></div>
-
-    </div>
-  </div>
-
-  <div id="gameover">
-
-    <div class="panel">
-
-      <h1>GAME OVER</h1>
-
-      <p id="result"></p>
-
-      <button class="primary" id="retryBtn">
-        もう一度
-      </button>
-
-      <h2>ランキング</h2>
-
-      <div id="rankingList2"></div>
-
-    </div>
-
-  </div>
-
+<div id="overlay">
+<div class="panel">
+<h1>社畜ダッシュ</h1>
+<p>上司から逃げ続けろ。</p>
+<input id="playerName" maxlength="12" value="社畜" placeholder="ユーザー名">
+<button id="startBtn">START</button>
+<div id="gameoverStats" class="hidden"></div>
+<div id="ranking">
+<b>🏆 ONLINE RANKING</b>
+<div id="rankingList">ランキング読み込み中…</div>
+</div>
+</div>
+</div>
 </div>
 
 <script type="module">
-
-import {
-  initializeApp
-} from "https://www.gstatic.com/firebasejs/12.19.0/firebase-app.js";
-
-import {
-  getDatabase,
-  ref,
-  push,
-  set,
-  get
-} from "https://www.gstatic.com/firebasejs/12.19.0/firebase-database.js";
-
-
-/* =========================
-   FIREBASE
-========================= */
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-app.js";
+import { getDatabase, ref, push, set, get } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-database.js";
 
 const firebaseConfig={
-  apiKey:"AIzaSyDP7aQ8ylOIiOeLiKfawJVpGUEIt4Dr4e4",
-  authDomain:"shachiku-dash.firebaseapp.com",
-  databaseURL:"https://shachiku-dash-default-rtdb.asia-southeast1.firebasedatabase.app",
-  projectId:"shachiku-dash",
-  storageBucket:"shachiku-dash.firebasestorage.app",
-  messagingSenderId:"416033862481",
-  appId:"1:416033862481:web:5e951a935e0d80fdd6d970"
+apiKey:"AIzaSyDP7a8QylOIiOeLiKfawJVpGUEIt4Dr4e4",
+authDomain:"shachiku-dash.firebaseapp.com",
+databaseURL:"https://shachiku-dash-default-rtdb.asia-southeast1.firebasedatabase.app",
+projectId:"shachiku-dash",
+storageBucket:"shachiku-dash.firebasestorage.app",
+messagingSenderId:"416033862481",
+appId:"1:416033862481:web:5e951a9350d80fdd6d970"
 };
 
 const app=initializeApp(firebaseConfig);
 const db=getDatabase(app);
+const $=id=>document.getElementById(id);
 
+const game=$("game");
+const overlay=$("overlay");
+const startBtn=$("startBtn");
+const playerName=$("playerName");
+const player=$("player");
+const boss=$("boss");
+const obstacles=$("obstacles");
+const warning=$("warning");
 
-/* =========================
-   DOM
-========================= */
+const distanceEl=$("distance");
+const speedEl=$("speed");
+const bossDistanceEl=$("bossDistance");
+const coinsEl=$("coins");
+const comboEl=$("combo");
+const multiplierEl=$("multiplier");
+const phaseEl=$("phase");
+const bestEl=$("bestDistance");
 
-const game=document.getElementById("game");
-const player=document.getElementById("player");
-const boss=document.getElementById("boss");
-
-const distanceEl=document.getElementById("distance");
-const coinsEl=document.getElementById("coins");
-const comboEl=document.getElementById("combo");
-
-const menu=document.getElementById("menu");
-const over=document.getElementById("gameover");
-const warning=document.getElementById("warning");
-
-const result=document.getElementById("result");
-
-const rankingList=document.getElementById("rankingList");
-const rankingList2=document.getElementById("rankingList2");
-
-const playerName=document.getElementById("playerName");
-const firebaseStatus=document.getElementById("firebaseStatus");
-
-const bossImg=document.getElementById("bossImg");
-const bossFallback=document.getElementById("bossFallback");
-
-
-/* =========================
-   ROAD
-========================= */
-
-for(let i=0;i<8;i++){
-
-  const line=document.createElement("div");
-
-  line.className="roadLine";
-
-  line.dataset.x=String(i*15);
-
-  line.style.left=(i*15)+"%";
-
-  document
-    .getElementById("roadLines")
-    .appendChild(line);
-
-}
-
-
-/* =========================
-   GAME STATE
-========================= */
+const rankingList=$("rankingList");
+const gameoverStats=$("gameoverStats");
+const hint=$("hint");
+const bossMood=$("bossMood");
+const pauseBtn=$("pauseBtn");
+const milestoneEl=$("milestone");
+const powerupMessage=$("powerupMessage");
 
 let running=false;
 let last=0;
+let raf=0;
 
 let distance=0;
 let coins=0;
 let combo=0;
 let bestCombo=0;
-
 let speed=2.5;
+
+let playerY=0;
+let vy=0;
+let jumping=false;
+
+let bossGap=38;
+let elapsed=0;
+
+let nextObstacle=2.4;
+let nextCoin=.9;
+let nextPowerup=7;
+
+let safeUntil=0;
+
+let obstacleList=[];
+let coinList=[];
+let powerupList=[];
 
 const START_SPEED=2.5;
 const MAX_SPEED=4.0;
-const GROUND=24;
 
-let jumpY=0;
-let vy=0;
+const playerFaces=["tired","sweating","panicked","happy"];
 
-let obstacles=[];
-let coinItems=[];
+let faceTimer=0;
+let bossFlashTimer=0;
+let roadOffset=0;
+let cityOffset=0;
+let longJumpTriggered=false;
+let endScheduled=false;
+let runPhase=0;
+let lastMilestoneShown=0;
+let nearMisses=0;
 
-let obstacleTimer=0;
-let coinTimer=0;
+let paused=false;
+let countdown=3;
 
-let bossDistance=38;
+let shield=0;
+let slowTimer=0;
+let coffeeTimer=0;
 
-let safeUntil=0;
-let warningTimer=0;
+let bestDistance=Number(localStorage.getItem("shachikuBestDistance")||0);
+bestEl.textContent=bestDistance+"m";
 
-
-/* =========================
-   FACES
-========================= */
-
-const playerFaces=[
-  "🙂",
-  "😐",
-  "😣",
-  "😫",
-  "😱",
-  "😵"
-];
-
-const bossFaces=[
-  "😡",
-  "😠",
-  "🤬",
-  "😤"
-];
-
-let playerFaceTimer=null;
-let bossFaceTimer=null;
-
-
-function setPlayerFace(face){
-
-  player.dataset.face=face;
-
-  player.style.setProperty(
-    "--face",
-    `"${face}"`
-  );
-
+function resizeBoss(){
+boss.style.width=Math.min(210,innerWidth*.38)+"px";
+boss.style.height=boss.style.width;
 }
 
+addEventListener("resize",resizeBoss);
+resizeBoss();
 
-function randomPlayerFace(){
+function clearObjects(){
+obstacleList.forEach(o=>o.el.remove());
+coinList.forEach(o=>o.el.remove());
+powerupList.forEach(o=>o.el.remove());
 
-  if(!running)return;
-
-  const face=
-    playerFaces[
-      Math.floor(
-        Math.random()*playerFaces.length
-      )
-    ];
-
-  player.style.setProperty(
-    "background",
-    face==="😱" ? "#8e44ad" :
-    face==="😣" ? "#1769aa" :
-    "#1769aa"
-  );
-
-  playerFaceTimer=setTimeout(
-    randomPlayerFace,
-    2200+Math.random()*1800
-  );
-
+obstacleList=[];
+coinList=[];
+powerupList=[];
 }
 
+function startGame(){
+playerName.value=(playerName.value.trim()||"社畜").slice(0,12);
 
-function randomBossFace(){
+running=true;
+paused=false;
+last=performance.now();
 
-  if(!running)return;
+distance=0;
+coins=0;
+combo=0;
+bestCombo=0;
+speed=START_SPEED;
 
-  if(
-    !bossImg.src ||
-    bossImg.style.display==="none"
-  ){
-    bossFallback.textContent=
-      bossFaces[
-        Math.floor(
-          Math.random()*bossFaces.length
-        )
-      ];
-  }
+playerY=0;
+vy=0;
+jumping=false;
 
-  bossFaceTimer=setTimeout(
-    randomBossFace,
-    2500+Math.random()*2000
-  );
+bossGap=38;
+elapsed=0;
 
+nextObstacle=2.4;
+nextCoin=.9;
+nextPowerup=7;
+
+safeUntil=performance.now()+1200;
+
+shield=0;
+slowTimer=0;
+coffeeTimer=0;
+
+nearMisses=0;
+lastMilestoneShown=0;
+
+clearObjects();
+
+overlay.classList.add("hidden");
+hint.classList.remove("hidden");
+
+boss.style.left="-330px";
+boss.classList.remove("angry","pressed");
+bossMood.textContent="😠";
+
+pauseBtn.textContent="Ⅱ";
+game.classList.remove("paused");
+
+player.classList.remove(...playerFaces);
+player.classList.add("tired");
+
+runPhase=0;
+
+updateHUD();
+
+cancelAnimationFrame(raf);
+raf=requestAnimationFrame(loop);
 }
 
+function endGame(){
+if(!running)return;
 
-/* =========================
-   SAFE HTML
-========================= */
+running=false;
+endScheduled=false;
+isPressing=false;
+longJumpTriggered=false;
+lastMilestoneShown=0;
+nearMisses=0;
+paused=false;
 
-function escapeHtml(s){
+shield=0;
+slowTimer=0;
+coffeeTimer=0;
+nextPowerup=7;
 
-  return String(s).replace(
-    /[&<>"']/g,
-    m=>({
-      "&":"&amp;",
-      "<":"&lt;",
-      ">":"&gt;",
-      '"':"&quot;",
-      "'":"&#039;"
-    }[m])
-  );
+game.classList.remove("paused");
+pauseBtn.textContent="Ⅱ";
 
+if(pressTimer){
+clearTimeout(pressTimer);
+pressTimer=0;
 }
 
+player.classList.remove("running");
 
-/* =========================
-   RANKING
-========================= */
+cancelAnimationFrame(raf);
 
-async function loadRanking(
-  target=rankingList
-){
+const finalMultiplier=Math.min(5,1+Math.floor(bestCombo/5));
 
-  try{
-
-    firebaseStatus.textContent=
-      "ランキング読み込み中…";
-
-    const snap=
-      await get(
-        ref(db,"scores")
-      );
-
-    if(!snap.exists()){
-
-      target.textContent=
-        "まだランキングがありません";
-
-      firebaseStatus.textContent="";
-
-      return;
-    }
-
-    const rows=[];
-
-    snap.forEach(child=>{
-
-      const value=child.val();
-
-      if(value){
-        rows.push(value);
-      }
-
-    });
-
-    rows.sort(
-      (a,b)=>
-        Number(b.score||0)-
-        Number(a.score||0)
-    );
-
-    target.innerHTML="";
-
-    rows
-      .slice(0,10)
-      .forEach((x,i)=>{
-
-        const row=
-          document.createElement("div");
-
-        row.className="rankRow";
-
-        row.innerHTML=`
-          <span>
-            ${i+1}位　
-            ${escapeHtml(
-              x.name||"社畜"
-            )}
-          </span>
-          <b>
-            ${Number(
-              x.score||0
-            ).toLocaleString()}
-          </b>
-        `;
-
-        target.appendChild(row);
-
-      });
-
-    firebaseStatus.textContent=
-      "✓ ランキング接続中";
-
-  }catch(e){
-
-    console.error(e);
-
-    target.textContent=
-      "ランキング取得失敗";
-
-    firebaseStatus.textContent=
-      "ランキング接続エラー";
-
-  }
-
+if(distance>bestDistance){
+bestDistance=Math.floor(distance);
+localStorage.setItem("shachikuBestDistance",bestDistance);
 }
 
+bestEl.textContent=bestDistance+"m";
 
-/* =========================
-   SCORE SAVE
-========================= */
+const score=Math.floor(
+(distance*10+coins*100+bestCombo*50)*finalMultiplier
+);
+
+gameoverStats.innerHTML=
+`距離 ${Math.floor(distance)}m ／ コイン ${coins} ／ 最大COMBO ${bestCombo} ／ 倍率 ×${finalMultiplier} ／ スコア ${score.toLocaleString()}`;
+
+gameoverStats.classList.remove("hidden");
+overlay.classList.remove("hidden");
+hint.classList.add("hidden");
+
+submitScore(score).then(loadRanking);
+}
 
 async function submitScore(score){
+try{
+const r=push(ref(db,"scores"));
 
-  try{
+await set(r,{
+name:playerName.value.trim()||"社畜",
+score,
+distance:Math.floor(distance),
+coins,
+combo:bestCombo,
+createdAt:Date.now()
+});
 
-    firebaseStatus.textContent=
-      "ランキング保存中…";
+}catch(e){
+console.error("ランキング保存失敗",e);
+}
+}
 
-    const scoresRef=
-      ref(db,"scores");
+function escapeHtml(s){
+return String(s).replace(
+/[&<>"']/g,
+m=>({
+"&":"&amp;",
+"<":"&lt;",
+">":"&gt;",
+"\"":"&quot;",
+"'":"&#039;"
+}[m])
+);
+}
 
-    const newScore=
-      push(scoresRef);
+async function loadRanking(){
+try{
 
-    await set(
-      newScore,
-      {
-        name:
-          playerName.value.trim()||
-          "社畜",
+const snap=await get(ref(db,"scores"));
 
-        score:Number(score),
+if(!snap.exists()){
+rankingList.innerHTML="<div style='padding-top:6px'>まだランキングがありません</div>";
+return;
+}
 
-        distance:
-          Math.floor(distance),
+const rows=[];
 
-        coins:Number(coins),
+snap.forEach(c=>{
+rows.push(c.val());
+});
 
-        combo:Number(bestCombo),
+rows.sort(
+(a,b)=>Number(b.score||0)-Number(a.score||0)
+);
 
-        createdAt:Date.now()
-      }
-    );
+rankingList.innerHTML=
+rows.slice(0,10)
+.map((x,i)=>
+`<div class="rankRow">
+<span>${i+1}位　${escapeHtml(x.name||"社畜")}</span>
+<b>${Number(x.score||0).toLocaleString()}</b>
+</div>`
+)
+.join("");
 
-    firebaseStatus.textContent=
-      "✓ ランキング保存完了";
+}catch(e){
 
-  }catch(e){
+console.error("ランキング取得失敗",e);
 
-    console.error(e);
+rankingList.innerHTML=
+"<div style='padding-top:6px'>ランキング取得失敗</div>";
+}
+}
 
-    firebaseStatus.textContent=
-      "ランキング保存失敗";
+function jump(high){
+if(!running||paused)return;
 
-  }
+if(!jumping){
+
+jumping=true;
+
+vy=high?980:650;
+
+safeUntil=performance.now()+1400;
+
+}else if(high){
+
+vy=Math.max(vy,820);
+
+}
+}
+
+let pressTimer=null;
+let isPressing=false;
+
+game.addEventListener("pointerdown",e=>{
+
+if(!running||e.target.closest("#overlay")||e.target.closest("#pauseBtn"))return;
+
+e.preventDefault();
+
+isPressing=true;
+longJumpTriggered=false;
+
+if(pressTimer){
+clearTimeout(pressTimer);
+}
+
+pressTimer=setTimeout(()=>{
+
+if(isPressing){
+
+longJumpTriggered=true;
+jump(true);
 
 }
 
+},260);
 
-/* =========================
-   RESET
-========================= */
+});
 
-function reset(){
+game.addEventListener("pointerup",e=>{
 
-  document
-    .querySelectorAll(
-      ".obstacle,.coin"
-    )
-    .forEach(e=>e.remove());
+if(!running||e.target.closest("#overlay")||e.target.closest("#pauseBtn"))return;
 
-  obstacles=[];
-  coinItems=[];
+e.preventDefault();
 
-  distance=0;
-  coins=0;
-  combo=0;
-  bestCombo=0;
+if(pressTimer){
+clearTimeout(pressTimer);
+pressTimer=0;
+}
 
-  speed=START_SPEED;
+if(isPressing&&!longJumpTriggered){
+jump(false);
+}
 
-  jumpY=0;
-  vy=0;
+isPressing=false;
+longJumpTriggered=false;
 
-  obstacleTimer=900;
-  coinTimer=700;
+});
 
-  bossDistance=38;
+game.addEventListener("pointercancel",()=>{
 
-  safeUntil=
-    performance.now()+1200;
+isPressing=false;
+longJumpTriggered=false;
 
-  warningTimer=0;
+if(pressTimer){
+clearTimeout(pressTimer);
+pressTimer=0;
+}
 
-  player.style.transform=
-    "translateY(0)";
+});
 
-  boss.style.left=
-    "-320px";
+addEventListener("pointerup",()=>{
 
-  game.classList.remove(
-    "shake"
-  );
+if(!isPressing)return;
 
-  warning.style.opacity=0;
+if(pressTimer){
+clearTimeout(pressTimer);
+pressTimer=0;
+}
 
-  distanceEl.textContent="0";
-  coinsEl.textContent="0";
-  comboEl.textContent="0";
+isPressing=false;
+longJumpTriggered=false;
+
+});
+
+addEventListener("pointercancel",()=>{
+
+if(pressTimer){
+clearTimeout(pressTimer);
+pressTimer=0;
+}
+
+isPressing=false;
+longJumpTriggered=false;
+
+});
+
+game.addEventListener(
+"contextmenu",
+e=>e.preventDefault()
+);
+
+addEventListener("keydown",e=>{
+
+if(e.code==="Space"){
+e.preventDefault();
+jump(true);
+}
+
+if(e.code==="Escape"&&running){
+
+paused=!paused;
+
+game.classList.toggle("paused",paused);
+
+pauseBtn.textContent=paused?"▶":"Ⅱ";
+
+if(!paused){
+
+last=performance.now();
+
+raf=requestAnimationFrame(loop);
 
 }
 
+}
 
-/* =========================
-   START
-========================= */
+});
 
-function start(){
+pauseBtn.addEventListener("click",e=>{
 
-  reset();
+e.preventDefault();
 
-  menu.style.display="none";
-  over.style.display="none";
+if(!running)return;
 
-  running=true;
+paused=!paused;
 
-  last=performance.now();
+game.classList.toggle("paused",paused);
 
-  randomPlayerFace();
-  randomBossFace();
+pauseBtn.textContent=paused?"▶":"Ⅱ";
 
-  requestAnimationFrame(loop);
+if(!paused){
+
+last=performance.now();
+
+raf=requestAnimationFrame(loop);
 
 }
 
+});
 
-/* =========================
-   GAME OVER
-========================= */
-
-function end(){
-
-  if(!running)return;
-
-  running=false;
-
-  clearTimeout(playerFaceTimer);
-  clearTimeout(bossFaceTimer);
-
-  const multiplier=
-    Math.min(
-      1+
-      Math.floor(
-        bestCombo/5
-      ),
-      5
-    );
-
-  const score=Math.floor(
-    distance*10+
-    coins*100+
-    bestCombo*20+
-    coins*100*(multiplier-1)
-  );
-
-  result.innerHTML=`
-    距離
-    <b>${Math.floor(distance)}m</b><br>
-    コイン ${coins}枚<br>
-    ベストコンボ ${bestCombo}<br>
-    スコア
-    <strong>
-      ${score.toLocaleString()}
-    </strong>
-  `;
-
-  over.style.display="flex";
-
-  submitScore(score);
-
-  loadRanking(
-    rankingList2
-  );
-
-}
-
-
-/* =========================
-   JUMP
-========================= */
-
-function jump(power){
-
-  if(jumpY<=0){
-
-    vy=power;
-
-    safeUntil=
-      performance.now()+1400;
-
-  }
-
-}
-
-
-/* =========================
-   OBSTACLE CHECK
-========================= */
-
-function obstacleTooClose(){
-
-  const screenW=
-    window.innerWidth;
-
-  for(const o of obstacles){
-
-    if(
-      o.x>screenW*.35 &&
-      o.x<screenW+700
-    ){
-
-      return true;
-
-    }
-
-  }
-
-  return false;
-
-}
-
-
-/* =========================
-   OBSTACLE SPAWN
-========================= */
+startBtn.addEventListener("click",startGame);
 
 function spawnObstacle(){
 
-  if(
-    performance.now()<safeUntil
-  ){
-    return;
-  }
+const types=[
+"cone",
+"bike",
+"sign",
+"bench",
+"car",
+"puddle",
+"barrier",
+"person"
+];
 
-  if(obstacleTooClose()){
-    return;
-  }
+const type=
+types[Math.floor(Math.random()*types.length)];
 
-  const types=[
+const el=document.createElement("div");
 
-    ["cone","🚧"],
-    ["bike","🚲"],
-    ["sign","⚠️"],
-    ["bench","🪑"],
-    ["car","🚗"]
+el.className="ob "+type;
 
-  ];
+el.style.left=(innerWidth+80)+"px";
 
-  const type=
-    types[
-      Math.floor(
-        Math.random()*types.length
-      )
-    ];
+obstacles.appendChild(el);
 
-  const el=
-    document.createElement("div");
-
-  el.className="obstacle";
-
-  el.dataset.type=
-    type[0];
-
-  el.textContent=
-    type[1];
-
-  const x=
-    window.innerWidth+80;
-
-  el.style.left=
-    x+"px";
-
-  game.appendChild(el);
-
-  obstacles.push({
-    el,
-    x
-  });
+obstacleList.push({
+el,
+x:innerWidth+80,
+hit:false
+});
 
 }
-
-
-/* =========================
-   COIN
-========================= */
 
 function spawnCoin(){
 
-  const el=
-    document.createElement("div");
+const el=document.createElement("div");
 
-  el.className="coin";
+el.className="coin";
+el.textContent="¥";
 
-  const bottom=
-    31+
-    Math.random()*29;
+el.style.bottom=
+(25+Math.random()*20)+"%";
 
-  const x=
-    window.innerWidth+100;
+el.style.left=
+(innerWidth+60)+"px";
 
-  el.style.left=
-    x+"px";
+obstacles.appendChild(el);
 
-  el.style.bottom=
-    bottom+"%";
-
-  game.appendChild(el);
-
-  coinItems.push({
-    el,
-    x,
-    y:bottom
-  });
+coinList.push({
+el,
+x:innerWidth+60,
+hit:false
+});
 
 }
 
+function spawnPowerup(){
 
-/* =========================
-   COLLISION BOX
-========================= */
+const types=[
+"shield",
+"slow",
+"coffee"
+];
 
-function playerBox(){
+const type=
+types[Math.floor(Math.random()*types.length)];
 
-  const r=
-    player.getBoundingClientRect();
+const el=document.createElement("div");
 
-  return{
-    left:r.left+8,
-    right:r.right-8,
-    top:r.top+8,
-    bottom:r.bottom-3
-  };
+el.className="powerup "+type;
 
-}
+el.textContent=
+type==="shield"
+?"🛡️"
+:type==="slow"
+?"⏱️"
+:"☕";
 
+el.style.left=(innerWidth+70)+"px";
 
-function objectBox(
-  el,
-  padding=5
-){
+obstacles.appendChild(el);
 
-  const r=
-    el.getBoundingClientRect();
-
-  return{
-    left:r.left+padding,
-    right:r.right-padding,
-    top:r.top+padding,
-    bottom:r.bottom
-  };
+powerupList.push({
+el,
+x:innerWidth+70,
+type,
+hit:false
+});
 
 }
 
+function rectHit(a,b){
 
-function hit(
-  a,
-  b,
-  padding=5
-){
+const ap={
+left:a.left+7,
+right:a.right-7,
+top:a.top+6,
+bottom:a.bottom-2
+};
 
-  const ar=
-    playerBox();
+const bp={
+left:b.left+5,
+right:b.right-5,
+top:b.top+5,
+bottom:b.bottom
+};
 
-  const br=
-    objectBox(
-      b,
-      padding
-    );
-
-  return(
-    ar.left<br.right&&
-    ar.right>br.left&&
-    ar.top<br.bottom&&
-    ar.bottom>br.top
-  );
+return(
+ap.left<bp.right&&
+ap.right>bp.left&&
+ap.top<bp.bottom&&
+ap.bottom>bp.top
+);
 
 }
 
+function updateHUD(){
 
-/* =========================
-   GAME LOOP
-========================= */
+const mult=
+Math.min(5,1+Math.floor(combo/5));
+
+distanceEl.textContent=
+Math.floor(distance)+"m";
+
+speedEl.textContent=
+(speed*3.6).toFixed(1)+"km/h";
+
+coinsEl.textContent=coins;
+
+comboEl.textContent=combo;
+
+bossDistanceEl.textContent=
+Math.max(0,bossGap).toFixed(0)+"m";
+
+multiplierEl.textContent="×"+mult;
+
+const d=Math.floor(distance);
+
+phaseEl.textContent=
+d<80
+?"朝"
+:d<180
+?"通勤"
+:d<300
+?"修羅場"
+:"限界";
+
+}
+
+function setPlayerFace(){
+
+player.classList.remove(...playerFaces);
+
+let f=
+playerFaces[
+Math.floor(
+Math.random()*playerFaces.length
+)
+];
+
+if(bossGap<12){
+f="panicked";
+}else if(jumping){
+f="sweating";
+}
+
+player.classList.add(f);
+
+}
+
+function updateScene(dt){
+
+roadOffset=
+(roadOffset+(560+speed*145)*dt)%560;
+
+cityOffset=
+(cityOffset+(55+speed*16)*dt)%280;
+
+const lane=
+document.querySelector(".lane");
+
+const city=
+document.querySelector(".city");
+
+if(lane){
+lane.style.transform=
+`translateX(${-roadOffset}px)`;
+}
+
+if(city){
+city.style.transform=
+`translateX(${-cityOffset}px)`;
+}
+
+runPhase+=dt*speed*7;
+
+player.style.marginBottom=
+(Math.sin(runPhase)*1.5)+"px";
+
+}
 
 function loop(now){
 
-  if(!running)return;
+if(!running)return;
 
-  const dtSec=
-    Math.min(
-      .035,
-      (now-last)/1000
-    );
+const dt=
+Math.min(.032,(now-last)/1000);
 
-  last=now;
+last=now;
 
+if(paused)return;
 
-  /* SPEED */
+elapsed+=dt;
 
-  speed=
-    Math.min(
-      MAX_SPEED,
-      START_SPEED+
-      distance*.006
-    );
+if(slowTimer>0){
+slowTimer-=dt;
+}
 
+if(coffeeTimer>0){
+coffeeTimer-=dt;
+}
 
-  /* DISTANCE */
+speed=
+Math.min(
+MAX_SPEED,
+START_SPEED+distance*.0105
+);
 
-  distance+=
-    speed*dtSec;
+if(coffeeTimer>0){
+speed=
+Math.min(
+MAX_SPEED,
+speed+.65
+);
+}
 
-  distanceEl.textContent=
-    Math.floor(distance);
+if(slowTimer>0){
+speed*=.62;
+}
 
+distance+=speed*dt;
 
-  /* JUMP */
+updateScene(dt);
 
-  jumpY+=
-    vy*dtSec;
+const bossApproach=
+.90+
+Math.min(distance/220,1.15);
 
-  vy-=
-    18*dtSec;
+bossGap=
+Math.max(
+0,
+bossGap-bossApproach*dt
+);
 
-  if(jumpY<0){
+const playerX=
+innerWidth*.39;
 
-    jumpY=0;
-    vy=0;
+const gapPx=
+Math.max(-40,bossGap*10.5);
 
-  }
+boss.style.left=
+(playerX-gapPx-105)+"px";
 
-  player.style.transform=
-    `translateY(${
-      -jumpY*7
-    }px)`;
+if(bossGap<15){
 
+boss.classList.add("angry");
 
-  /* ROAD */
+bossMood.textContent=
+bossGap<6
+?"🤬"
+:"😠";
 
-  document
-    .querySelectorAll(
-      ".roadLine"
-    )
-    .forEach(line=>{
+warning.classList.add("show");
 
-      let x=
-        Number(
-          line.dataset.x
-        );
+if(bossGap<3){
 
-      x-=
-        speed*
-        dtSec*
-        7;
+game.classList.add("shake");
 
-      if(x<-15){
-        x=100;
-      }
+setTimeout(
+()=>game.classList.remove("shake"),
+220
+);
 
-      line.dataset.x=
-        x;
+if(!endScheduled){
 
-      line.style.left=
-        x+"%";
+endScheduled=true;
 
-    });
-
-
-  /* OBSTACLE TIMER */
-
-  obstacleTimer-=
-    dtSec*1000;
-
-  if(obstacleTimer<=0){
-
-    spawnObstacle();
-
-    obstacleTimer=
-      Math.max(
-        1700,
-        2400-
-        distance*1.2
-      );
-
-  }
-
-
-  /* COIN TIMER */
-
-  coinTimer-=
-    dtSec*1000;
-
-  if(coinTimer<=0){
-
-    spawnCoin();
-
-    coinTimer=
-      1200+
-      Math.random()*900;
-
-  }
-
-
-  /* EXTRA COINS */
-
-  if(
-    Math.random()<
-    dtSec*.55 &&
-    performance.now()>
-    safeUntil
-  ){
-
-    spawnCoin();
-
-  }
-
-
-  /* OBJECT SPEED */
-
-  const obstaclePixelSpeed=
-    300+
-    Math.min(
-      distance*.8,
-      70
-    );
-
-
-  /* OBSTACLES */
-
-  obstacles=
-    obstacles.filter(o=>{
-
-      o.x-=
-        obstaclePixelSpeed*
-        dtSec;
-
-      o.el.style.left=
-        o.x+"px";
-
-
-      if(o.x<-120){
-
-        o.el.remove();
-
-        return false;
-
-      }
-
-
-      if(
-        hit(player,o.el)&&
-        jumpY<45
-      ){
-
-        combo=0;
-
-        comboEl.textContent="0";
-
-        bossDistance=
-          Math.max(
-            0,
-            bossDistance-4
-          );
-
-        end();
-
-        return false;
-
-      }
-
-      return true;
-
-    });
-
-
-  /* COINS */
-
-  coinItems=
-    coinItems.filter(c=>{
-
-      c.x-=
-        obstaclePixelSpeed*
-        dtSec;
-
-      c.el.style.left=
-        c.x+"px";
-
-
-      if(c.x<-80){
-
-        c.el.remove();
-
-        return false;
-
-      }
-
-
-      if(
-        hit(
-          player,
-          c.el,
-          2
-        )
-      ){
-
-        coins++;
-        combo++;
-
-        bestCombo=
-          Math.max(
-            bestCombo,
-            combo
-          );
-
-        coinsEl.textContent=
-          coins;
-
-        comboEl.textContent=
-          combo;
-
-        safeUntil=
-          performance.now()+
-          1100;
-
-        c.el.remove();
-
-        return false;
-
-      }
-
-      return true;
-
-    });
-
-
-  /* BOSS */
-
-  const bossApproach=
-    .8+
-    Math.min(
-      distance/250,
-      .8
-    );
-
-  bossDistance-=
-    bossApproach*
-    dtSec*
-    .45;
-
-  const px=
-    window.innerWidth*.40;
-
-  const gapPx=
-    Math.max(
-      -40,
-      bossDistance*9
-    );
-
-  boss.style.left=
-    (
-      px-
-      gapPx-
-      105
-    )+"px";
-
-
-  /* WARNING */
-
-  if(bossDistance<10){
-
-    warning.style.opacity=1;
-
-    warningTimer=.15;
-
-    game.classList.add(
-      "shake"
-    );
-
-  }
-  else{
-
-    warningTimer-=
-      dtSec;
-
-    if(warningTimer<=0){
-
-      warning.style.opacity=0;
-
-      game.classList.remove(
-        "shake"
-      );
-
-    }
-
-  }
-
-
-  /* BOSS CATCH */
-
-  if(bossDistance<3){
-
-    end();
-
-    return;
-
-  }
-
-
-  requestAnimationFrame(
-    loop
-  );
+setTimeout(
+endGame,
+180
+);
 
 }
 
+return;
 
-/* =========================
-   TOUCH
-========================= */
+}
 
-let pressTimer=null;
-let pressed=false;
+}else{
 
+warning.classList.remove("show");
 
-game.addEventListener(
-  "pointerdown",
-  e=>{
-
-    if(!running)return;
-
-    pressed=true;
-
-    pressTimer=
-      setTimeout(
-        ()=>{
-          if(pressed){
-            jump(13);
-          }
-        },
-        260
-      );
-
-  }
+boss.classList.remove(
+"angry",
+"pressed"
 );
 
+bossMood.textContent="😠";
 
-game.addEventListener(
-  "pointerup",
-  ()=>{
-    
-    if(!running)return;
+}
 
-    if(pressTimer){
+if(bossGap<6){
 
-      clearTimeout(
-        pressTimer
-      );
+boss.classList.add("pressed");
 
-      pressTimer=null;
+bossMood.textContent="🤬";
 
-    }
+}
 
-    if(pressed){
+if(jumping){
 
-      jump(9);
+playerY+=vy*dt;
 
-    }
+vy-=1850*dt;
 
-    pressed=false;
+if(playerY<=0){
 
-  }
+playerY=0;
+vy=0;
+jumping=false;
+
+}
+
+}
+
+player.style.transform=
+`translateY(${-playerY}px)`;
+
+faceTimer-=dt;
+
+if(faceTimer<=0){
+
+setPlayerFace();
+
+faceTimer=
+1.8+Math.random()*2.0;
+
+}
+
+if(jumping){
+
+player.classList.add("sweating");
+
+}
+
+const nowMs=
+performance.now();
+
+if(elapsed>=nextObstacle){
+
+const nearby=
+obstacleList.some(
+o=>o.x<innerWidth*.72
 );
 
+if(
+nowMs>safeUntil&&
+!nearby
+){
 
-game.addEventListener(
-  "pointercancel",
-  ()=>{
+spawnObstacle();
 
-    pressed=false;
+}
 
-    if(pressTimer){
+nextObstacle=
+elapsed+
+Math.max(
+1.15,
+2.05-distance*.0028
+)+
+Math.random()*.55;
 
-      clearTimeout(
-        pressTimer
-      );
+}
 
-      pressTimer=null;
+if(elapsed>=nextCoin){
 
-    }
+spawnCoin();
 
-  }
+nextCoin=
+elapsed+
+1+
+Math.random()*1.4;
+
+}
+
+if(elapsed>=nextPowerup){
+
+spawnPowerup();
+
+nextPowerup=
+elapsed+
+7+
+Math.random()*6;
+
+}
+
+const playerRect=
+player.getBoundingClientRect();
+
+obstacleList.forEach(o=>{
+
+o.x-=
+(360+speed*95)*dt;
+
+o.el.style.left=
+o.x+"px";
+
+if(
+!o.hit&&
+rectHit(
+playerRect,
+o.el.getBoundingClientRect()
+)
+){
+
+o.hit=true;
+
+if(shield>0){
+
+shield=0;
+
+o.el.remove();
+
+powerupMessage.textContent=
+"🛡️ シールドで回避！";
+
+powerupMessage.classList.remove("show");
+
+void powerupMessage.offsetWidth;
+
+powerupMessage.classList.add("show");
+
+combo++;
+
+bestCombo=
+Math.max(bestCombo,combo);
+
+}else{
+
+combo=0;
+
+player.classList.remove(...playerFaces);
+
+player.classList.add("panicked");
+
+player.style.transform=
+`translateY(${-playerY}px) rotate(72deg)`;
+
+game.classList.add("shake");
+
+setTimeout(
+()=>game.classList.remove("shake"),
+220
 );
 
+if(!endScheduled){
 
-/* =========================
-   BUTTONS
-========================= */
+endScheduled=true;
 
-document
-  .getElementById("startBtn")
-  .addEventListener(
-    "click",
-    start
-  );
+setTimeout(
+endGame,
+260
+);
 
-document
-  .getElementById("retryBtn")
-  .addEventListener(
-    "click",
-    start
-  );
+}
 
+}
 
-/* =========================
-   INITIAL RANKING
-========================= */
+}else if(
+!o.hit&&
+!o.near&&
+o.x<innerWidth*.43&&
+o.x>innerWidth*.25
+){
+
+o.near=true;
+
+if(!jumping){
+
+combo++;
+
+nearMisses++;
+
+bestCombo=
+Math.max(bestCombo,combo);
+
+safeUntil=
+Math.max(
+safeUntil,
+performance.now()+350
+);
+
+}
+
+}
+
+});
+
+coinList.forEach(c=>{
+
+c.x-=
+(360+speed*95)*dt;
+
+c.el.style.left=
+c.x+"px";
+
+if(
+!c.hit&&
+rectHit(
+playerRect,
+c.el.getBoundingClientRect()
+)
+){
+
+c.hit=true;
+
+coins++;
+
+combo++;
+
+bestCombo=
+Math.max(bestCombo,combo);
+
+safeUntil=
+Math.max(
+safeUntil,
+performance.now()+1100
+);
+
+player.classList.remove(...playerFaces);
+
+player.classList.add("happy");
+
+faceTimer=1.4;
+
+comboEl.textContent=combo;
+
+multiplierEl.textContent=
+"×"+
+Math.min(
+5,
+1+Math.floor(combo/5)
+);
+
+c.el.remove();
+
+}
+
+});
+
+powerupList.forEach(p=>{
+
+p.x-=
+(360+speed*95)*dt;
+
+p.el.style.left=
+p.x+"px";
+
+if(
+!p.hit&&
+rectHit(
+playerRect,
+p.el.getBoundingClientRect()
+)
+){
+
+p.hit=true;
+
+if(p.type==="shield"){
+
+shield=1;
+
+powerupMessage.textContent=
+"🛡️ シールド獲得！";
+
+}else if(p.type==="slow"){
+
+slowTimer=4;
+
+powerupMessage.textContent=
+"⏱️ 上司の時間が減速！";
+
+}else{
+
+coffeeTimer=5;
+
+powerupMessage.textContent=
+"☕ コーヒーブースト！";
+
+}
+
+powerupMessage.classList.remove("show");
+
+void powerupMessage.offsetWidth;
+
+powerupMessage.classList.add("show");
+
+combo++;
+
+bestCombo=
+Math.max(bestCombo,combo);
+
+p.el.remove();
+
+}
+
+});
+
+powerupList=
+powerupList.filter(p=>{
+
+if(p.x<-100){
+
+p.el.remove();
+
+return false;
+
+}
+
+return true;
+
+});
+
+obstacleList=
+obstacleList.filter(o=>{
+
+if(o.x<-100){
+
+o.el.remove();
+
+return false;
+
+}
+
+return true;
+
+});
+
+coinList=
+coinList.filter(c=>{
+
+if(c.x<-100){
+
+c.el.remove();
+
+return false;
+
+}
+
+return true;
+
+});
+
+const milestone=
+Math.floor(distance/50)*50;
+
+if(
+milestone>=50&&
+milestone>lastMilestoneShown
+){
+
+lastMilestoneShown=milestone;
+
+milestoneEl.textContent=
+`🔥 ${milestone}m突破！`;
+
+milestoneEl.classList.remove("show");
+
+void milestoneEl.offsetWidth;
+
+milestoneEl.classList.add("show");
+
+}
+
+updateHUD();
+
+raf=
+requestAnimationFrame(loop);
+
+}
 
 loadRanking();
-
 </script>
-
 </body>
 </html>
