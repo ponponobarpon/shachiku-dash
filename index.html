@@ -6,99 +6,171 @@
 <title>社畜ダッシュ</title>
 
 <style>
-*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-html,body{margin:0;width:100%;height:100%;overflow:hidden}
+*{
+  box-sizing:border-box;
+  -webkit-tap-highlight-color:transparent
+}
+
+html,body{
+  margin:0;
+  width:100%;
+  height:100%;
+  overflow:hidden
+}
+
 body{
-  background:#111;color:#fff;
+  background:#111;
+  color:#fff;
   font-family:system-ui,-apple-system,sans-serif;
-  touch-action:none;
+  touch-action:none
 }
+
 #game{
-  position:relative;width:100vw;height:100vh;overflow:hidden;
-  background:linear-gradient(#6fc5ff 0 55%,#d8d8d8 55%);
-}
-#sky{
-  position:absolute;inset:0 0 45%;
-  background:linear-gradient(#6fc5ff,#d9f3ff);
-}
-#road{
-  position:absolute;left:0;right:0;bottom:0;height:45%;
-  background:#555;border-top:8px solid #777;
+  position:relative;
+  width:100vw;
+  height:100vh;
   overflow:hidden;
+  background:linear-gradient(#78c9ff 0 55%,#d8d8d8 55%)
 }
+
+#sky{
+  position:absolute;
+  inset:0 0 45%;
+  background:linear-gradient(#6fc5ff,#d9f3ff)
+}
+
+#road{
+  position:absolute;
+  left:0;
+  right:0;
+  bottom:0;
+  height:45%;
+  background:#555;
+  border-top:8px solid #777;
+  overflow:hidden
+}
+
 #roadLines{
-  position:absolute;inset:0;
+  position:absolute;
+  inset:0
 }
+
 .roadLine{
-  position:absolute;top:50%;width:90px;height:8px;
-  background:#eee;border-radius:5px;opacity:.75;
+  position:absolute;
+  top:50%;
+  width:90px;
+  height:8px;
+  border-radius:4px;
+  background:#eee;
+  opacity:.7
 }
 
 #hud{
-  position:absolute;z-index:30;top:12px;left:12px;right:12px;
-  display:flex;justify-content:space-between;
-  font-weight:900;text-shadow:2px 2px #000;
+  position:absolute;
+  z-index:30;
+  top:12px;
+  left:12px;
+  right:12px;
+  display:flex;
+  justify-content:space-between;
+  font-weight:900;
+  text-shadow:2px 2px #000
 }
 
 #player{
-  position:absolute;z-index:15;
-  left:40%;bottom:24%;
-  width:52px;height:72px;
+  position:absolute;
+  z-index:15;
+  left:40%;
+  bottom:24%;
+  width:52px;
+  height:72px;
   background:#1769aa;
   border-radius:16px 16px 8px 8px;
-  box-shadow:0 4px 8px #0008;
-  transition:transform .05s linear;
+  box-shadow:0 4px 8px #0008
 }
+
 #player:before{
   content:"";
   position:absolute;
-  width:38px;height:38px;
-  background:#f0c7a8;border-radius:50%;
-  left:7px;top:-28px;border:3px solid #222;
+  width:38px;
+  height:38px;
+  background:#f0c7a8;
+  border-radius:50%;
+  left:7px;
+  top:-28px;
+  border:3px solid #222
 }
+
 #player:after{
   content:"";
   position:absolute;
-  left:7px;right:7px;bottom:-15px;height:18px;
+  left:7px;
+  right:7px;
+  bottom:-15px;
+  height:18px;
   border-bottom:7px solid #222;
   border-left:5px solid transparent;
-  border-right:5px solid transparent;
+  border-right:5px solid transparent
 }
 
 #boss{
-  position:absolute;z-index:12;
-  left:-130px;bottom:24%;
-  width:105px;height:105px;
+  position:absolute;
+  z-index:12;
+  right:-320px;
+  bottom:24%;
+  width:105px;
+  height:105px;
   border-radius:50%;
   overflow:hidden;
   border:4px solid #222;
   background:#fff;
-  box-shadow:0 5px 15px #0008;
+  box-shadow:0 5px 15px #0008
 }
-#bossImg{
-  width:100%;height:100%;object-fit:cover;display:block;
+
+#boss img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  display:block
+}
+
+#bossFallback{
+  width:100%;
+  height:100%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:60px;
+  background:#eee
 }
 
 .obstacle{
-  position:absolute;z-index:13;
+  position:absolute;
+  z-index:13;
   bottom:24%;
-  width:54px;height:65px;
-  display:flex;align-items:center;justify-content:center;
+  width:58px;
+  height:65px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
   font-size:38px;
   background:#222;
   border:3px solid #fff;
   border-radius:10px;
-  box-shadow:0 4px 10px #0008;
+  box-shadow:0 4px 10px #0008
 }
 
 .coin{
-  position:absolute;z-index:14;
-  width:32px;height:32px;
+  position:absolute;
+  z-index:14;
+  width:34px;
+  height:34px;
   border-radius:50%;
   background:#ffd21a;
   border:4px solid #fff35a;
-  box-shadow:0 0 12px #ffdf00;
+  box-shadow:0 0 12px #ffdf00
 }
+
 .coin:after{
   content:"¥";
   position:absolute;
@@ -107,64 +179,111 @@ body{
   align-items:center;
   justify-content:center;
   color:#9a6500;
-  font-weight:900;
+  font-weight:900
 }
 
 #warning{
-  position:absolute;z-index:40;
-  top:24%;left:0;right:0;
+  position:absolute;
+  z-index:40;
+  top:24%;
+  left:0;
+  right:0;
   text-align:center;
-  font-size:28px;font-weight:900;
-  color:#ff3030;text-shadow:3px 3px #000;
-  opacity:0;pointer-events:none;
+  font-size:28px;
+  font-weight:900;
+  color:#ff3030;
+  text-shadow:3px 3px #000;
+  opacity:0;
+  pointer-events:none
 }
 
 #menu,#gameover{
-  position:absolute;z-index:100;inset:0;
+  position:absolute;
+  z-index:100;
+  inset:0;
   background:#000b;
-  display:flex;align-items:center;justify-content:center;
-  text-align:center;padding:24px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  text-align:center;
+  padding:24px
 }
-#gameover{display:none}
+
+#gameover{
+  display:none
+}
 
 .panel{
   width:min(440px,94vw);
-  max-height:90vh;
+  max-height:92vh;
   overflow:auto;
   background:#202020;
   border:2px solid #fff;
   border-radius:18px;
   padding:24px;
-  box-shadow:0 12px 40px #000;
-}
-h1{margin:0 0 8px;font-size:40px}
-button{
-  width:100%;padding:15px;margin-top:10px;
-  border:0;border-radius:12px;
-  font-size:18px;font-weight:800;
-}
-.primary{background:#ffd21a;color:#111}
-input{
-  width:100%;padding:13px;
-  border-radius:10px;border:0;
-  font-size:17px;margin:10px 0;
-}
-.small{font-size:13px;color:#ccc}
-#rankingList,#rankingList2{
-  text-align:left;max-height:220px;
-  overflow:auto;margin-top:12px;
-}
-.rankRow{
-  display:flex;justify-content:space-between;
-  padding:8px 4px;
-  border-bottom:1px solid #555;
-}
-#firebaseStatus{
-  text-align:center;font-size:10px;
-  opacity:.75;margin-top:5px;
+  box-shadow:0 12px 40px #000
 }
 
-.shake{animation:shake .16s linear infinite}
+h1{
+  margin:0 0 8px;
+  font-size:40px
+}
+
+button{
+  width:100%;
+  padding:15px;
+  margin-top:10px;
+  border:0;
+  border-radius:12px;
+  font-size:18px;
+  font-weight:800
+}
+
+.primary{
+  background:#ffd21a;
+  color:#111
+}
+
+input{
+  width:100%;
+  padding:13px;
+  border-radius:10px;
+  border:0;
+  font-size:17px;
+  margin:10px 0
+}
+
+.small{
+  font-size:13px;
+  color:#ccc
+}
+
+#rankingList,
+#rankingList2{
+  text-align:left;
+  max-height:220px;
+  overflow:auto;
+  margin-top:12px
+}
+
+.rankRow{
+  display:flex;
+  justify-content:space-between;
+  padding:8px 4px;
+  border-bottom:1px solid #555
+}
+
+#firebaseStatus{
+  text-align:center;
+  font-size:10px;
+  opacity:.75;
+  margin-top:5px
+}
+
+.shake{
+  animation:shake .16s linear infinite
+}
+
 @keyframes shake{
   0%{transform:translate(0)}
   25%{transform:translate(5px,-3px)}
@@ -193,11 +312,8 @@ input{
   <div id="warning">⚠ 上司が近い！ ⚠</div>
 
   <div id="boss">
-    <div style="
-      width:100%;height:100%;
-      display:flex;align-items:center;justify-content:center;
-      font-size:55px;background:#eee;
-    ">😡</div>
+    <img id="bossImg" alt="上司" style="display:none">
+    <div id="bossFallback">😡</div>
   </div>
 
   <div id="player"></div>
@@ -237,6 +353,7 @@ input{
   </div>
 
   <div id="gameover">
+
     <div class="panel">
 
       <h1>GAME OVER</h1>
@@ -252,6 +369,7 @@ input{
       <div id="rankingList2"></div>
 
     </div>
+
   </div>
 
 </div>
@@ -272,10 +390,10 @@ import {
 
 
 /* =========================
-   Firebase
+   FIREBASE
 ========================= */
 
-const firebaseConfig = {
+const firebaseConfig={
   apiKey:"AIzaSyDP7aQ8ylOIiOeLiKfawJVpGUEIt4Dr4e4",
   authDomain:"shachiku-dash.firebaseapp.com",
   databaseURL:"https://shachiku-dash-default-rtdb.asia-southeast1.firebasedatabase.app",
@@ -313,12 +431,13 @@ const rankingList2=document.getElementById("rankingList2");
 const playerName=document.getElementById("playerName");
 const firebaseStatus=document.getElementById("firebaseStatus");
 
+const bossImg=document.getElementById("bossImg");
+const bossFallback=document.getElementById("bossFallback");
+
 
 /* =========================
-   道路
+   ROAD
 ========================= */
-
-const roadLines=document.getElementById("roadLines");
 
 for(let i=0;i<8;i++){
 
@@ -330,12 +449,15 @@ for(let i=0;i<8;i++){
 
   line.style.left=(i*15)+"%";
 
-  roadLines.appendChild(line);
+  document
+    .getElementById("roadLines")
+    .appendChild(line);
+
 }
 
 
 /* =========================
-   GAME DATA
+   GAME STATE
 ========================= */
 
 let running=false;
@@ -350,7 +472,6 @@ let speed=2.5;
 
 const START_SPEED=2.5;
 const MAX_SPEED=4.0;
-
 const GROUND=24;
 
 let jumpY=0;
@@ -365,12 +486,97 @@ let coinTimer=0;
 let bossDistance=38;
 
 let safeUntil=0;
-
 let warningTimer=0;
 
 
 /* =========================
-   安全なHTML
+   FACES
+========================= */
+
+const playerFaces=[
+  "🙂",
+  "😐",
+  "😣",
+  "😫",
+  "😱",
+  "😵"
+];
+
+const bossFaces=[
+  "😡",
+  "😠",
+  "🤬",
+  "😤"
+];
+
+let playerFaceTimer=null;
+let bossFaceTimer=null;
+
+
+function setPlayerFace(face){
+
+  player.dataset.face=face;
+
+  player.style.setProperty(
+    "--face",
+    `"${face}"`
+  );
+
+}
+
+
+function randomPlayerFace(){
+
+  if(!running)return;
+
+  const face=
+    playerFaces[
+      Math.floor(
+        Math.random()*playerFaces.length
+      )
+    ];
+
+  player.style.setProperty(
+    "background",
+    face==="😱" ? "#8e44ad" :
+    face==="😣" ? "#1769aa" :
+    "#1769aa"
+  );
+
+  playerFaceTimer=setTimeout(
+    randomPlayerFace,
+    2200+Math.random()*1800
+  );
+
+}
+
+
+function randomBossFace(){
+
+  if(!running)return;
+
+  if(
+    !bossImg.src ||
+    bossImg.style.display==="none"
+  ){
+    bossFallback.textContent=
+      bossFaces[
+        Math.floor(
+          Math.random()*bossFaces.length
+        )
+      ];
+  }
+
+  bossFaceTimer=setTimeout(
+    randomBossFace,
+    2500+Math.random()*2000
+  );
+
+}
+
+
+/* =========================
+   SAFE HTML
 ========================= */
 
 function escapeHtml(s){
@@ -393,17 +599,24 @@ function escapeHtml(s){
    RANKING
 ========================= */
 
-async function loadRanking(target=rankingList){
+async function loadRanking(
+  target=rankingList
+){
 
   try{
 
-    firebaseStatus.textContent="ランキング読み込み中…";
+    firebaseStatus.textContent=
+      "ランキング読み込み中…";
 
-    const snap=await get(ref(db,"scores"));
+    const snap=
+      await get(
+        ref(db,"scores")
+      );
 
     if(!snap.exists()){
 
-      target.textContent="まだランキングがありません";
+      target.textContent=
+        "まだランキングがありません";
 
       firebaseStatus.textContent="";
 
@@ -430,35 +643,45 @@ async function loadRanking(target=rankingList){
 
     target.innerHTML="";
 
-    rows.slice(0,10).forEach((x,i)=>{
+    rows
+      .slice(0,10)
+      .forEach((x,i)=>{
 
-      const row=document.createElement("div");
+        const row=
+          document.createElement("div");
 
-      row.className="rankRow";
+        row.className="rankRow";
 
-      row.innerHTML=`
-        <span>
-          ${i+1}位　
-          ${escapeHtml(x.name||"社畜")}
-        </span>
-        <b>
-          ${Number(x.score||0).toLocaleString()}
-        </b>
-      `;
+        row.innerHTML=`
+          <span>
+            ${i+1}位　
+            ${escapeHtml(
+              x.name||"社畜"
+            )}
+          </span>
+          <b>
+            ${Number(
+              x.score||0
+            ).toLocaleString()}
+          </b>
+        `;
 
-      target.appendChild(row);
+        target.appendChild(row);
 
-    });
+      });
 
-    firebaseStatus.textContent="✓ オンライン";
+    firebaseStatus.textContent=
+      "✓ ランキング接続中";
 
   }catch(e){
 
     console.error(e);
 
-    target.textContent="ランキング取得失敗";
+    target.textContent=
+      "ランキング取得失敗";
 
-    firebaseStatus.textContent="ランキング接続エラー";
+    firebaseStatus.textContent=
+      "ランキング接続エラー";
 
   }
 
@@ -466,45 +689,51 @@ async function loadRanking(target=rankingList){
 
 
 /* =========================
-   SCORE
+   SCORE SAVE
 ========================= */
 
 async function submitScore(score){
 
   try{
 
-    firebaseStatus.textContent="ランキング保存中…";
+    firebaseStatus.textContent=
+      "ランキング保存中…";
 
-    const scoresRef=ref(db,"scores");
+    const scoresRef=
+      ref(db,"scores");
 
-    const newScore=push(scoresRef);
+    const newScore=
+      push(scoresRef);
 
-    await set(newScore,{
+    await set(
+      newScore,
+      {
+        name:
+          playerName.value.trim()||
+          "社畜",
 
-      name:
-        playerName.value.trim()||
-        "社畜",
+        score:Number(score),
 
-      score:Number(score),
+        distance:
+          Math.floor(distance),
 
-      distance:
-        Math.floor(distance),
+        coins:Number(coins),
 
-      coins:Number(coins),
+        combo:Number(bestCombo),
 
-      combo:Number(bestCombo),
+        createdAt:Date.now()
+      }
+    );
 
-      createdAt:Date.now()
-
-    });
-
-    firebaseStatus.textContent="✓ ランキング保存完了";
+    firebaseStatus.textContent=
+      "✓ ランキング保存完了";
 
   }catch(e){
 
     console.error(e);
 
-    firebaseStatus.textContent="ランキング保存失敗";
+    firebaseStatus.textContent=
+      "ランキング保存失敗";
 
   }
 
@@ -518,7 +747,9 @@ async function submitScore(score){
 function reset(){
 
   document
-    .querySelectorAll(".obstacle,.coin")
+    .querySelectorAll(
+      ".obstacle,.coin"
+    )
     .forEach(e=>e.remove());
 
   obstacles=[];
@@ -534,8 +765,8 @@ function reset(){
   jumpY=0;
   vy=0;
 
-  obstacleTimer=700;
-  coinTimer=900;
+  obstacleTimer=900;
+  coinTimer=700;
 
   bossDistance=38;
 
@@ -544,11 +775,15 @@ function reset(){
 
   warningTimer=0;
 
-  player.style.transform="translateY(0)";
+  player.style.transform=
+    "translateY(0)";
 
-  boss.style.left="-130px";
+  boss.style.left=
+    "-320px";
 
-  game.classList.remove("shake");
+  game.classList.remove(
+    "shake"
+  );
 
   warning.style.opacity=0;
 
@@ -574,13 +809,16 @@ function start(){
 
   last=performance.now();
 
+  randomPlayerFace();
+  randomBossFace();
+
   requestAnimationFrame(loop);
 
 }
 
 
 /* =========================
-   END
+   GAME OVER
 ========================= */
 
 function end(){
@@ -589,9 +827,15 @@ function end(){
 
   running=false;
 
+  clearTimeout(playerFaceTimer);
+  clearTimeout(bossFaceTimer);
+
   const multiplier=
     Math.min(
-      1+Math.floor(bestCombo/5),
+      1+
+      Math.floor(
+        bestCombo/5
+      ),
       5
     );
 
@@ -603,7 +847,8 @@ function end(){
   );
 
   result.innerHTML=`
-    距離 <b>${Math.floor(distance)}m</b><br>
+    距離
+    <b>${Math.floor(distance)}m</b><br>
     コイン ${coins}枚<br>
     ベストコンボ ${bestCombo}<br>
     スコア
@@ -616,7 +861,9 @@ function end(){
 
   submitScore(score);
 
-  loadRanking(rankingList2);
+  loadRanking(
+    rankingList2
+  );
 
 }
 
@@ -640,12 +887,13 @@ function jump(power){
 
 
 /* =========================
-   OBSTACLE
+   OBSTACLE CHECK
 ========================= */
 
 function obstacleTooClose(){
 
-  const screenW=window.innerWidth;
+  const screenW=
+    window.innerWidth;
 
   for(const o of obstacles){
 
@@ -653,7 +901,9 @@ function obstacleTooClose(){
       o.x>screenW*.35 &&
       o.x<screenW+700
     ){
+
       return true;
+
     }
 
   }
@@ -663,12 +913,19 @@ function obstacleTooClose(){
 }
 
 
+/* =========================
+   OBSTACLE SPAWN
+========================= */
+
 function spawnObstacle(){
 
   if(
-    performance.now()<safeUntil||
-    obstacleTooClose()
+    performance.now()<safeUntil
   ){
+    return;
+  }
+
+  if(obstacleTooClose()){
     return;
   }
 
@@ -694,21 +951,23 @@ function spawnObstacle(){
 
   el.className="obstacle";
 
-  el.dataset.type=type[0];
+  el.dataset.type=
+    type[0];
 
-  el.textContent=type[1];
+  el.textContent=
+    type[1];
+
+  const x=
+    window.innerWidth+80;
 
   el.style.left=
-    (window.innerWidth+60)+"px";
+    x+"px";
 
   game.appendChild(el);
 
   obstacles.push({
-
-    el:el,
-
-    x:window.innerWidth+60
-
+    el,
+    x
   });
 
 }
@@ -726,10 +985,14 @@ function spawnCoin(){
   el.className="coin";
 
   const bottom=
-    31+Math.random()*18;
+    31+
+    Math.random()*29;
+
+  const x=
+    window.innerWidth+100;
 
   el.style.left=
-    (window.innerWidth+40)+"px";
+    x+"px";
 
   el.style.bottom=
     bottom+"%";
@@ -737,70 +1000,65 @@ function spawnCoin(){
   game.appendChild(el);
 
   coinItems.push({
-
-    el:el,
-
-    x:window.innerWidth+40,
-
+    el,
+    x,
     y:bottom
-
   });
 
 }
 
 
 /* =========================
-   COLLISION
+   COLLISION BOX
 ========================= */
 
-function playerRect(){
+function playerBox(){
 
   const r=
     player.getBoundingClientRect();
 
-  return {
-
+  return{
     left:r.left+8,
-
     right:r.right-8,
-
     top:r.top+8,
-
     bottom:r.bottom-3
-
   };
 
 }
 
 
-function objectRect(el,padding=5){
+function objectBox(
+  el,
+  padding=5
+){
 
   const r=
     el.getBoundingClientRect();
 
-  return {
-
+  return{
     left:r.left+padding,
-
     right:r.right-padding,
-
     top:r.top+padding,
-
     bottom:r.bottom
-
   };
 
 }
 
 
-function hit(a,b,padding=5){
+function hit(
+  a,
+  b,
+  padding=5
+){
 
-  const ar=playerRect();
+  const ar=
+    playerBox();
 
-  const br=objectRect(
-    b,
-    padding
-  );
+  const br=
+    objectBox(
+      b,
+      padding
+    );
 
   return(
     ar.left<br.right&&
@@ -820,7 +1078,7 @@ function loop(now){
 
   if(!running)return;
 
-  const dt=
+  const dtSec=
     Math.min(
       .035,
       (now-last)/1000
@@ -841,7 +1099,8 @@ function loop(now){
 
   /* DISTANCE */
 
-  distance+=speed*dt;
+  distance+=
+    speed*dtSec;
 
   distanceEl.textContent=
     Math.floor(distance);
@@ -849,56 +1108,64 @@ function loop(now){
 
   /* JUMP */
 
-  jumpY+=vy*dt;
+  jumpY+=
+    vy*dtSec;
 
-  vy-=18*dt;
+  vy-=
+    18*dtSec;
 
   if(jumpY<0){
 
     jumpY=0;
-
     vy=0;
 
   }
 
   player.style.transform=
-    `translateY(${-jumpY*7}px)`;
+    `translateY(${
+      -jumpY*7
+    }px)`;
 
 
   /* ROAD */
 
   document
-    .querySelectorAll(".roadLine")
+    .querySelectorAll(
+      ".roadLine"
+    )
     .forEach(line=>{
 
       let x=
-        Number(line.dataset.x);
+        Number(
+          line.dataset.x
+        );
 
-      x-=speed*dt*7;
+      x-=
+        speed*
+        dtSec*
+        7;
 
-      if(x<-15)x=100;
+      if(x<-15){
+        x=100;
+      }
 
-      line.dataset.x=x;
+      line.dataset.x=
+        x;
 
-      line.style.left=x+"%";
+      line.style.left=
+        x+"%";
 
     });
 
 
   /* OBSTACLE TIMER */
 
-  obstacleTimer-=dt*1000;
+  obstacleTimer-=
+    dtSec*1000;
 
   if(obstacleTimer<=0){
 
-    if(
-      performance.now()>
-      safeUntil
-    ){
-
-      spawnObstacle();
-
-    }
+    spawnObstacle();
 
     obstacleTimer=
       Math.max(
@@ -912,20 +1179,35 @@ function loop(now){
 
   /* COIN TIMER */
 
-  coinTimer-=dt*1000;
+  coinTimer-=
+    dtSec*1000;
 
   if(coinTimer<=0){
 
     spawnCoin();
 
     coinTimer=
-      1300+
+      1200+
       Math.random()*900;
 
   }
 
 
-  /* OBSTACLES */
+  /* EXTRA COINS */
+
+  if(
+    Math.random()<
+    dtSec*.55 &&
+    performance.now()>
+    safeUntil
+  ){
+
+    spawnCoin();
+
+  }
+
+
+  /* OBJECT SPEED */
 
   const obstaclePixelSpeed=
     300+
@@ -934,17 +1216,21 @@ function loop(now){
       70
     );
 
+
+  /* OBSTACLES */
+
   obstacles=
     obstacles.filter(o=>{
 
       o.x-=
-        obstaclePixelSpeed*dt;
+        obstaclePixelSpeed*
+        dtSec;
 
       o.el.style.left=
         o.x+"px";
 
 
-      if(o.x<-100){
+      if(o.x<-120){
 
         o.el.remove();
 
@@ -954,7 +1240,7 @@ function loop(now){
 
 
       if(
-        hit(player,o.el) &&
+        hit(player,o.el)&&
         jumpY<45
       ){
 
@@ -964,8 +1250,8 @@ function loop(now){
 
         bossDistance=
           Math.max(
-            bossDistance-4,
-            0
+            0,
+            bossDistance-4
           );
 
         end();
@@ -985,13 +1271,14 @@ function loop(now){
     coinItems.filter(c=>{
 
       c.x-=
-        obstaclePixelSpeed*dt;
+        obstaclePixelSpeed*
+        dtSec;
 
       c.el.style.left=
         c.x+"px";
 
 
-      if(c.x<-70){
+      if(c.x<-80){
 
         c.el.remove();
 
@@ -1000,10 +1287,15 @@ function loop(now){
       }
 
 
-      if(hit(player,c.el,2)){
+      if(
+        hit(
+          player,
+          c.el,
+          2
+        )
+      ){
 
         coins++;
-
         combo++;
 
         bestCombo=
@@ -1019,7 +1311,8 @@ function loop(now){
           combo;
 
         safeUntil=
-          performance.now()+1100;
+          performance.now()+
+          1100;
 
         c.el.remove();
 
@@ -1043,7 +1336,8 @@ function loop(now){
 
   bossDistance-=
     bossApproach*
-    dt*.18;
+    dtSec*
+    .45;
 
   const px=
     window.innerWidth*.40;
@@ -1055,7 +1349,11 @@ function loop(now){
     );
 
   boss.style.left=
-    (px-gapPx-105)+"px";
+    (
+      px-
+      gapPx-
+      105
+    )+"px";
 
 
   /* WARNING */
@@ -1066,18 +1364,23 @@ function loop(now){
 
     warningTimer=.15;
 
-    game.classList.add("shake");
+    game.classList.add(
+      "shake"
+    );
 
   }
   else{
 
-    warningTimer-=dt;
+    warningTimer-=
+      dtSec;
 
     if(warningTimer<=0){
 
       warning.style.opacity=0;
 
-      game.classList.remove("shake");
+      game.classList.remove(
+        "shake"
+      );
 
     }
 
@@ -1095,13 +1398,15 @@ function loop(now){
   }
 
 
-  requestAnimationFrame(loop);
+  requestAnimationFrame(
+    loop
+  );
 
 }
 
 
 /* =========================
-   INPUT
+   TOUCH
 ========================= */
 
 let pressTimer=null;
@@ -1110,22 +1415,21 @@ let pressed=false;
 
 game.addEventListener(
   "pointerdown",
-  ()=>{
+  e=>{
 
     if(!running)return;
 
     pressed=true;
 
     pressTimer=
-      setTimeout(()=>{
-
-        if(pressed){
-
-          jump(13);
-
-        }
-
-      },260);
+      setTimeout(
+        ()=>{
+          if(pressed){
+            jump(13);
+          }
+        },
+        260
+      );
 
   }
 );
@@ -1134,7 +1438,7 @@ game.addEventListener(
 game.addEventListener(
   "pointerup",
   ()=>{
-
+    
     if(!running)return;
 
     if(pressTimer){
@@ -1142,6 +1446,8 @@ game.addEventListener(
       clearTimeout(
         pressTimer
       );
+
+      pressTimer=null;
 
     }
 
@@ -1169,6 +1475,8 @@ game.addEventListener(
         pressTimer
       );
 
+      pressTimer=null;
+
     }
 
   }
@@ -1176,7 +1484,7 @@ game.addEventListener(
 
 
 /* =========================
-   BUTTON
+   BUTTONS
 ========================= */
 
 document
@@ -1195,7 +1503,7 @@ document
 
 
 /* =========================
-   INITIAL
+   INITIAL RANKING
 ========================= */
 
 loadRanking();
