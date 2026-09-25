@@ -87,8 +87,6 @@ html,body{
   opacity:.8;
 }
 
-/* HUD */
-
 #hud{
   position:absolute;
   z-index:40;
@@ -110,8 +108,6 @@ html,body{
   border-radius:8px;
 }
 
-/* WARNING */
-
 #warning{
   position:absolute;
   z-index:50;
@@ -128,8 +124,6 @@ html,body{
   opacity:0;
   pointer-events:none;
 }
-
-/* PLAYER / BOSS */
 
 #player,
 #boss{
@@ -379,11 +373,7 @@ html,body{
   border-radius:10px 10px 0 0;
 }
 
-/* 上司の変顔 */
-
-.boss-face-normal .mouth{
-  width:12px;
-}
+/* 上司の表情 */
 
 .boss-face-grin .mouth{
   width:19px;
@@ -441,7 +431,7 @@ html,body{
   position:absolute;
   z-index:18;
   bottom:49%;
-  right:-300px;
+  right:-320px;
 
   display:flex;
   align-items:center;
@@ -490,7 +480,7 @@ html,body{
 .coin{
   position:absolute;
   z-index:19;
-  right:-100px;
+  right:-120px;
   bottom:60%;
 
   width:34px;
@@ -599,11 +589,24 @@ html,body{
   font-size:17px;
 }
 
+#rankingList{
+  min-height:22px;
+}
+
 .rankRow{
   display:flex;
   justify-content:space-between;
-  padding:3px 5px;
+  padding:4px 5px;
   border-bottom:1px solid rgba(255,255,255,.15);
+}
+
+/* Firebase状態 */
+
+#firebaseStatus{
+  text-align:center;
+  font-size:10px;
+  opacity:.75;
+  margin-top:5px;
 }
 
 /* GAME OVER */
@@ -706,25 +709,11 @@ html,body{
 }
 
 @keyframes shake{
-  0%,100%{
-    transform:translate(0);
-  }
-
-  20%{
-    transform:translate(-6px,3px);
-  }
-
-  40%{
-    transform:translate(6px,-3px);
-  }
-
-  60%{
-    transform:translate(-5px,-2px);
-  }
-
-  80%{
-    transform:translate(5px,3px);
-  }
+  0%,100%{transform:translate(0)}
+  20%{transform:translate(-6px,3px)}
+  40%{transform:translate(6px,-3px)}
+  60%{transform:translate(-5px,-2px)}
+  80%{transform:translate(5px,3px)}
 }
 
 .shake{
@@ -771,6 +760,7 @@ html,body{
   <div id="roadLines"></div>
 
   <div id="hud">
+
     <div class="hudBox">
       距離 <span id="distance">0</span>m
     </div>
@@ -786,6 +776,7 @@ html,body{
     <div class="hudBox">
       🪙 <span id="coins">0</span>
     </div>
+
   </div>
 
   <div id="warning">
@@ -797,7 +788,7 @@ html,body{
   </div>
 
 
-  <!-- PLAYER -->
+  <!-- プレイヤー -->
 
   <div id="player" class="face-normal">
 
@@ -828,7 +819,7 @@ html,body{
   </div>
 
 
-  <!-- BOSS -->
+  <!-- 上司 -->
 
   <div id="boss" class="boss-face-normal">
 
@@ -864,6 +855,7 @@ html,body{
     <p>上司から逃げ続けろ。</p>
   </div>
 
+
   <button id="start">
     START
   </button>
@@ -874,7 +866,11 @@ html,body{
     <h2>🏆 ONLINE RANKING</h2>
 
     <div id="rankingList">
-      ランキング接続中…
+      ランキング読み込み中…
+    </div>
+
+    <div id="firebaseStatus">
+      Firebase接続確認中…
     </div>
 
   </div>
@@ -935,43 +931,85 @@ import {
 ========================= */
 
 const firebaseConfig={
-  apiKey:"AIzaSyDP7aQ8ylOIiOeLiKfawJVpGUEIt4Dr4e4",
-  authDomain:"shachiku-dash.firebaseapp.com",
-  projectId:"shachiku-dash",
-  storageBucket:"shachiku-dash.firebasestorage.app",
-  messagingSenderId:"416033862481",
-  appId:"1:416033862481:web:5e951a935e0d80fdd6d970"
+
+  apiKey:
+    "AIzaSyDP7aQ8ylOIiOeLiKfawJVpGUEIt4Dr4e4",
+
+  authDomain:
+    "shachiku-dash.firebaseapp.com",
+
+  /*
+    これが今回重要
+  */
+  databaseURL:
+    "https://shachiku-dash-default-rtdb.asia-southeast1.firebasedatabase.app",
+
+  projectId:
+    "shachiku-dash",
+
+  storageBucket:
+    "shachiku-dash.firebasestorage.app",
+
+  messagingSenderId:
+    "416033862481",
+
+  appId:
+    "1:416033862481:web:5e951a935e0d80fdd6d970"
 };
 
-const app=initializeApp(firebaseConfig);
 
-const db=getDatabase(app);
+const app=
+  initializeApp(firebaseConfig);
+
+const db=
+  getDatabase(app);
 
 
 /* =========================
    DOM
 ========================= */
 
-const game=document.getElementById("game");
+const game=
+  document.getElementById("game");
 
-const player=document.getElementById("player");
-const boss=document.getElementById("boss");
+const player=
+  document.getElementById("player");
 
-const distanceEl=document.getElementById("distance");
-const speedEl=document.getElementById("speed");
-const bossDistanceEl=document.getElementById("bossDistance");
-const coinsEl=document.getElementById("coins");
+const boss=
+  document.getElementById("boss");
 
-const warning=document.getElementById("warning");
-const comboEl=document.getElementById("combo");
+const distanceEl=
+  document.getElementById("distance");
 
-const startBtn=document.getElementById("start");
-const retryBtn=document.getElementById("retry");
+const speedEl=
+  document.getElementById("speed");
 
-const title=document.getElementById("title");
+const bossDistanceEl=
+  document.getElementById("bossDistance");
+
+const coinsEl=
+  document.getElementById("coins");
+
+const warning=
+  document.getElementById("warning");
+
+const comboEl=
+  document.getElementById("combo");
+
+const startBtn=
+  document.getElementById("start");
+
+const retryBtn=
+  document.getElementById("retry");
+
+const title=
+  document.getElementById("title");
 
 const rankingList=
   document.getElementById("rankingList");
+
+const firebaseStatus=
+  document.getElementById("firebaseStatus");
 
 const gameover=
   document.getElementById("gameover");
@@ -1031,6 +1069,28 @@ for(let i=0;i<18;i++){
 }
 
 
+/* 道路ライン */
+
+for(let i=0;i<8;i++){
+
+  const line=
+    document.createElement("div");
+
+  line.className=
+    "roadLine";
+
+  line.dataset.x=
+    String(i*15);
+
+  line.style.left=
+    (i*15)+"%";
+
+  document
+    .getElementById("roadLines")
+    .appendChild(line);
+}
+
+
 /* =========================
    STATE
 ========================= */
@@ -1058,18 +1118,8 @@ let lastTime=0;
 let obstacleTimer=0;
 let coinTimer=0;
 
+let safeUntil=0;
 
-/*
-  現実的なランニング速度
-
-  2.5m/s = 9km/h
-  3.0m/s = 10.8km/h
-  3.5m/s = 12.6km/h
-  4.0m/s = 14.4km/h
-
-  徐々に上がるが、
-  ゲーム後半でも4m/s程度。
-*/
 const START_SPEED=2.5;
 const MAX_SPEED=4.0;
 
@@ -1114,7 +1164,8 @@ function changePlayerFace(){
     next=
       playerFaces[
         Math.floor(
-          Math.random()*playerFaces.length
+          Math.random()*
+          playerFaces.length
         )
       ];
   }
@@ -1128,7 +1179,8 @@ function changePlayerFace(){
   playerFaceTimer=
     setTimeout(
       changePlayerFace,
-      2200+Math.random()*1800
+      2200+
+      Math.random()*1800
     );
 }
 
@@ -1149,7 +1201,8 @@ function changeBossFace(){
     next=
       bossFaces[
         Math.floor(
-          Math.random()*bossFaces.length
+          Math.random()*
+          bossFaces.length
         )
       ];
   }
@@ -1163,7 +1216,8 @@ function changeBossFace(){
   bossFaceTimer=
     setTimeout(
       changeBossFace,
-      2500+Math.random()*2000
+      2500+
+      Math.random()*2000
     );
 }
 
@@ -1214,24 +1268,10 @@ function stopFaceAnimations(){
 
 
 /* =========================
-   REALISTIC SPEED
+   SPEED
 ========================= */
 
 function getRunSpeed(){
-
-  /*
-    0〜60mではゆっくり加速。
-
-    2.5m/s
-       ↓
-    3.0m/s
-       ↓
-    3.5m/s
-       ↓
-    最大4.0m/s
-
-    急激な加速をしない。
-  */
 
   const acceleration=
     Math.min(
@@ -1268,6 +1308,8 @@ function startGame(){
   jumpY=0;
   jumpVelocity=0;
   jumping=false;
+
+  safeUntil=0;
 
   obstacles.forEach(
     o=>o.el.remove()
@@ -1307,23 +1349,13 @@ function startGame(){
   boss.style.opacity="1";
 
   warning.style.opacity="0";
-
   comboEl.style.opacity="0";
 
   title.style.display="none";
   startBtn.style.display="none";
-
   gameover.style.display="none";
 
-  /*
-    最初の障害物はすぐ出さない。
-  */
   obstacleTimer=2200;
-
-  /*
-    コインも最初から
-    いきなり目の前に出さない。
-  */
   coinTimer=1700;
 
   lastTime=
@@ -1340,20 +1372,6 @@ function startGame(){
    OBSTACLE SAFETY
 ========================= */
 
-/*
-  コインをジャンプで取った後に
-  着地地点へ障害物を置かないための
-  「安全時間」。
-
-  ジャンプしてから着地するまでを
-  おおよそ1秒以上確保。
-*/
-let safeUntil=0;
-
-
-/*
-  直前に障害物が存在するか。
-*/
 function obstacleTooClose(){
 
   const screenW=
@@ -1361,18 +1379,13 @@ function obstacleTooClose(){
 
   for(const o of obstacles){
 
-    /*
-      プレイヤーより右側700px以内に
-      障害物がいる場合は新しい障害物を
-      出さない。
-    */
-
     if(
-      o.x >
-      screenW*0.35 &&
-      o.x <
+      o.x>
+      screenW*.35 &&
+      o.x<
       screenW+700
     ){
+
       return true;
     }
   }
@@ -1387,38 +1400,34 @@ function obstacleTooClose(){
 
 function spawnObstacle(){
 
-  /*
-    コインを取った直後など、
-    安全時間中は障害物を生成しない。
-  */
-
   if(
-    performance.now()<safeUntil
+    performance.now()<
+    safeUntil
   ){
+
     return;
   }
 
-  /*
-    すでに近くに障害物があれば
-    さらに出さない。
-  */
-
   if(obstacleTooClose()){
+
     return;
   }
 
   const types=[
+
     ["cone","🚧"],
     ["bike","🚲"],
     ["sign","⚠️"],
     ["bench","🪑"],
     ["car","🚗"]
+
   ];
 
   const type=
     types[
       Math.floor(
-        Math.random()*types.length
+        Math.random()*
+        types.length
       )
     ];
 
@@ -1432,10 +1441,6 @@ function spawnObstacle(){
     type[1];
 
   game.appendChild(el);
-
-  /*
-    かなり遠くから走らせる。
-  */
 
   obstacles.push({
 
@@ -1458,13 +1463,10 @@ function spawnCoin(){
     document.createElement("div");
 
   el.className="coin";
+
   el.textContent="¥";
 
   game.appendChild(el);
-
-  /*
-    コインはジャンプで取りやすい高さ。
-  */
 
   coinObjects.push({
 
@@ -1493,15 +1495,8 @@ function jump(high=false){
       high ? 14 : 10;
 
     /*
-      ジャンプ開始時点から
-      少なくとも一定時間は
+      ジャンプ中は
       新しい障害物を生成しない。
-
-      これで
-      「コインを取りにジャンプ
-       ↓
-       着地地点に障害物」
-      を防ぐ。
     */
 
     safeUntil=
@@ -1602,11 +1597,8 @@ function playerRect(){
   return{
 
     left:r.left+8,
-
     right:r.right-8,
-
     top:r.top+8,
-
     bottom:r.bottom-3
 
   };
@@ -1621,11 +1613,8 @@ function obstacleRect(el){
   return{
 
     left:r.left+5,
-
     right:r.right-5,
-
     top:r.top+5,
-
     bottom:r.bottom
 
   };
@@ -1654,10 +1643,6 @@ function crash(){
   combo=0;
 
   updateCombo();
-
-  /*
-    衝突したら上司が少し近づく。
-  */
 
   bossDistance=
     Math.max(
@@ -1761,10 +1746,6 @@ function caughtByBoss(){
 
   boss.style.left="35%";
 
-  player.classList.remove(
-    "fall"
-  );
-
   player.classList.add(
     "fly"
   );
@@ -1801,7 +1782,6 @@ function collectCoin(index){
     coinObjects[index];
 
   coins++;
-
   combo++;
 
   if(combo>bestCombo){
@@ -1811,11 +1791,6 @@ function collectCoin(index){
 
   coinsEl.textContent=
     coins;
-
-  /*
-    コインを取った直後も
-    着地まで安全時間を延長。
-  */
 
   safeUntil=
     Math.max(
@@ -1849,7 +1824,8 @@ function updateCombo(){
 
   const multiplier=
     Math.min(
-      1+Math.floor(combo/5),
+      1+
+      Math.floor(combo/5),
       5
     );
 
@@ -1879,7 +1855,8 @@ function getFinalScore(){
 
   const multiplier=
     Math.min(
-      1+Math.floor(combo/5),
+      1+
+      Math.floor(combo/5),
       5
     );
 
@@ -1908,18 +1885,7 @@ function loop(now){
     getRunSpeed();
 
 
-  /* =====================
-     DISTANCE
-
-     ここは「現実のメートル」。
-
-     2.5m/sなら
-     10秒 = 25m
-     30秒 = 75m
-     60秒 = 150m
-
-     という感覚。
-  ===================== */
+  /* 距離 */
 
   distance+=
     speed*dtSec;
@@ -1931,9 +1897,7 @@ function loop(now){
     speed.toFixed(1);
 
 
-  /* =====================
-     JUMP
-  ===================== */
+  /* ジャンプ */
 
   if(jumping){
 
@@ -1949,15 +1913,8 @@ function loop(now){
     if(jumpY<=0){
 
       jumpY=0;
-
       jumpVelocity=0;
-
       jumping=false;
-
-      /*
-        着地後も少しだけ
-        安全時間を残す。
-      */
 
       safeUntil=
         Math.max(
@@ -1972,22 +1929,13 @@ function loop(now){
      translateY(${-jumpY}px)`;
 
 
-  /* =====================
-     BOSS
-
-     100mから徐々に迫る
-  ===================== */
-
-  /*
-    距離に応じて少しずつ接近。
-    急激に減らさない。
-  */
+  /* 上司 */
 
   const bossApproach=
     0.8+
     Math.min(
       distance/250,
-      0.8
+      .8
     );
 
   bossDistance-=
@@ -2018,9 +1966,7 @@ function loop(now){
     )+"px";
 
 
-  /* =====================
-     WARNING
-  ===================== */
+  /* 警告 */
 
   if(bossDistance<70){
 
@@ -2059,25 +2005,10 @@ function loop(now){
   }
 
 
-  /* =====================
-     OBSTACLE TIMER
-
-     現実の速度と別管理。
-
-     プレイヤーの走行距離が
-     伸びても急激に障害物が
-     速くならない。
-  ===================== */
+  /* 障害物 */
 
   obstacleTimer-=
     dtSec*1000;
-
-
-  /*
-    最初は約2.4秒間隔。
-
-    後半でも最低1.7秒程度。
-  */
 
   const obstacleInterval=
     Math.max(
@@ -2086,16 +2017,10 @@ function loop(now){
       distance*1.2
     );
 
-
   if(
     obstacleTimer<=0 &&
     performance.now()>safeUntil
   ){
-
-    /*
-      近くに障害物があるなら
-      今回は生成を見送る。
-    */
 
     if(!obstacleTooClose()){
 
@@ -2103,6 +2028,7 @@ function loop(now){
 
       obstacleTimer=
         obstacleInterval;
+
     }else{
 
       obstacleTimer=500;
@@ -2110,23 +2036,10 @@ function loop(now){
   }
 
 
-  /* =====================
-     MOVE OBSTACLES
-  ===================== */
-
-  /*
-    画面上の障害物速度。
-    現実のmとは別。
-
-    これを分離することで
-    「距離mが急激に増える」
-    問題を防ぐ。
-  */
-
   const obstaclePixelSpeed=
     300+
     Math.min(
-      distance*0.8,
+      distance*.8,
       70
     );
 
@@ -2149,14 +2062,12 @@ function loop(now){
       +"px";
 
 
-    const pr=
-      playerRect();
-
-    const or=
-      obstacleRect(o.el);
-
-
-    if(hit(pr,or)){
+    if(
+      hit(
+        playerRect(),
+        obstacleRect(o.el)
+      )
+    ){
 
       crash();
 
@@ -2183,9 +2094,7 @@ function loop(now){
   }
 
 
-  /* =====================
-     COIN TIMER
-  ===================== */
+  /* コイン */
 
   coinTimer-=
     dtSec*1000;
@@ -2193,24 +2102,18 @@ function loop(now){
 
   if(coinTimer<=0){
 
-    /*
-      コインの出現位置付近に
-      障害物がないことを確認。
-    */
-
     let safe=true;
 
     for(const o of obstacles){
 
       if(
-        o.x >
+        o.x>
         window.innerWidth-100 &&
-        o.x <
+        o.x<
         window.innerWidth+500
       ){
 
         safe=false;
-
         break;
       }
     }
@@ -2230,10 +2133,6 @@ function loop(now){
     }
   }
 
-
-  /* =====================
-     MOVE COINS
-  ===================== */
 
   const coinPixelSpeed=
     300+
@@ -2293,9 +2192,7 @@ function loop(now){
   }
 
 
-  /* =====================
-     ROAD
-  ===================== */
+  /* 道路 */
 
   document
     .querySelectorAll(".roadLine")
@@ -2322,9 +2219,7 @@ function loop(now){
     });
 
 
-  /* =====================
-     BOSS CATCH
-  ===================== */
+  /* 捕獲 */
 
   if(bossDistance<=25){
 
@@ -2340,7 +2235,7 @@ function loop(now){
 
 
 /* =========================
-   FINISH
+   GAME OVER
 ========================= */
 
 async function finishGame(){
@@ -2373,10 +2268,13 @@ async function finishGame(){
 
 
 /* =========================
-   FIREBASE SAVE
+   SAVE SCORE
 ========================= */
 
 async function submitScore(score){
+
+  firebaseStatus.textContent=
+    "ランキング保存中…";
 
   try{
 
@@ -2390,13 +2288,16 @@ async function submitScore(score){
       newScore,
       {
         name:"社畜",
-        score:score,
+        score:Number(score),
         distance:Math.floor(distance),
-        coins:coins,
-        combo:bestCombo,
+        coins:Number(coins),
+        combo:Number(bestCombo),
         createdAt:Date.now()
       }
     );
+
+    firebaseStatus.textContent=
+      "✓ ランキング保存完了";
 
   }catch(err){
 
@@ -2404,15 +2305,26 @@ async function submitScore(score){
       "ランキング保存エラー:",
       err
     );
+
+    firebaseStatus.textContent=
+      "⚠ 保存失敗: "+
+      err.message;
   }
 }
 
 
 /* =========================
-   RANKING
+   LOAD RANKING
 ========================= */
 
 async function loadRanking(){
+
+  rankingList.innerHTML=
+    "ランキング読み込み中…";
+
+  firebaseStatus.textContent=
+    "Firebase接続確認中…";
+
 
   try{
 
@@ -2435,17 +2347,26 @@ async function loadRanking(){
       rankingList.innerHTML=
         "<div style='text-align:center'>まだランキングがありません</div>";
 
+      firebaseStatus.textContent=
+        "✓ Firebase接続OK";
+
       return;
     }
 
 
     const data=[];
 
+
     snapshot.forEach(
       child=>{
-        data.push(
-          child.val()
-        );
+
+        const value=
+          child.val();
+
+        if(value){
+
+          data.push(value);
+        }
       }
     );
 
@@ -2464,14 +2385,18 @@ async function loadRanking(){
       (item,index)=>{
 
         const row=
-          document.createElement("div");
+          document.createElement(
+            "div"
+          );
 
         row.className=
           "rankRow";
 
         row.innerHTML=`
+
           <span>
-            ${index+1}位　${item.name||"社畜"}
+            ${index+1}位
+            ${item.name||"社畜"}
           </span>
 
           <b>
@@ -2479,11 +2404,19 @@ async function loadRanking(){
               item.score||0
             ).toLocaleString()}
           </b>
+
         `;
 
-        rankingList.appendChild(row);
+        rankingList.appendChild(
+          row
+        );
       }
     );
+
+
+    firebaseStatus.textContent=
+      "✓ オンラインランキング接続中";
+
 
   }catch(err){
 
@@ -2493,7 +2426,18 @@ async function loadRanking(){
     );
 
     rankingList.innerHTML=
-      "<div style='text-align:center'>ランキング接続失敗</div>";
+      `
+      <div style="
+        text-align:center;
+        color:#ff8080;
+      ">
+        ランキング取得失敗
+      </div>
+      `;
+
+    firebaseStatus.textContent=
+      "⚠ Firebaseエラー: "+
+      err.message;
   }
 }
 
