@@ -26,8 +26,11 @@ html,body{
   width:100vw;
   height:100vh;
   overflow:hidden;
-  background:
-    linear-gradient(#8fd3ff 0 48%,#777 48% 52%,#3d3d3d 52% 100%);
+  background:linear-gradient(
+    #8fd3ff 0 48%,
+    #777 48% 52%,
+    #3d3d3d 52% 100%
+  );
 }
 
 #city{
@@ -57,8 +60,7 @@ html,body{
   right:0;
   bottom:0;
   height:48%;
-  background:
-    linear-gradient(#555,#333);
+  background:linear-gradient(#555,#333);
 }
 
 .roadLine{
@@ -79,6 +81,10 @@ html,body{
   border-top:3px solid #666;
 }
 
+/* =========================
+   HUD
+========================= */
+
 #hud{
   position:absolute;
   z-index:30;
@@ -87,18 +93,22 @@ html,body{
   right:10px;
   display:flex;
   justify-content:space-between;
-  gap:6px;
+  gap:5px;
   color:#fff;
   font-weight:bold;
   text-shadow:0 2px 3px #000;
-  font-size:14px;
+  font-size:13px;
 }
 
 .hudBox{
-  background:rgba(0,0,0,.55);
-  padding:7px 9px;
+  background:rgba(0,0,0,.58);
+  padding:7px 8px;
   border-radius:8px;
 }
+
+/* =========================
+   WARNING
+========================= */
 
 #warning{
   position:absolute;
@@ -107,7 +117,7 @@ html,body{
   left:50%;
   transform:translateX(-50%);
   color:#fff;
-  background:rgba(190,0,0,.85);
+  background:rgba(190,0,0,.88);
   border:2px solid #fff;
   border-radius:10px;
   padding:8px 18px;
@@ -117,79 +127,290 @@ html,body{
   pointer-events:none;
 }
 
+/* =========================
+   PLAYER
+========================= */
+
 #player{
   position:absolute;
   z-index:20;
+
+  /* 画面中央より少し左＝約43% */
   left:43%;
+
   bottom:49%;
-  width:48px;
-  height:82px;
+  width:52px;
+  height:90px;
   transform:translateX(-50%);
 }
 
+/* 頭 */
 .head{
   position:absolute;
-  width:30px;
-  height:30px;
-  left:9px;
+  width:32px;
+  height:32px;
+  left:10px;
   top:0;
   background:#f0bd91;
+  border:2px solid #9e6948;
+  border-radius:50%;
+  overflow:visible;
+}
+
+/* 髪 */
+.hair{
+  position:absolute;
+  left:2px;
+  top:-2px;
+  width:28px;
+  height:12px;
+  background:#222;
+  border-radius:14px 14px 5px 5px;
+}
+
+/* 目 */
+.eye{
+  position:absolute;
+  top:12px;
+  width:5px;
+  height:7px;
+  background:#111;
   border-radius:50%;
 }
 
+.eye.left{
+  left:7px;
+}
+
+.eye.right{
+  right:7px;
+}
+
+/* 眉 */
+.brow{
+  position:absolute;
+  top:8px;
+  width:8px;
+  height:2px;
+  background:#222;
+}
+
+.brow.left{
+  left:5px;
+}
+
+.brow.right{
+  right:5px;
+}
+
+/* 口 */
+.mouth{
+  position:absolute;
+  left:50%;
+  bottom:5px;
+  transform:translateX(-50%);
+  width:12px;
+  height:5px;
+  background:#8c3333;
+  border-radius:0 0 10px 10px;
+}
+
+/* 鼻 */
+.nose{
+  position:absolute;
+  left:50%;
+  top:18px;
+  transform:translateX(-50%);
+  width:3px;
+  height:4px;
+  background:#a96f4e;
+}
+
+/* 体 */
 .body{
   position:absolute;
-  left:7px;
-  top:26px;
-  width:34px;
-  height:39px;
+  left:8px;
+  top:28px;
+  width:36px;
+  height:40px;
   background:#1d2738;
   border-radius:7px 7px 4px 4px;
 }
 
 .tie{
   position:absolute;
-  left:22px;
-  top:29px;
+  left:23px;
+  top:31px;
   width:5px;
-  height:27px;
+  height:28px;
   background:#d33;
   transform:skew(-5deg);
 }
 
 .leg{
   position:absolute;
-  top:61px;
-  width:10px;
-  height:23px;
+  top:65px;
+  width:11px;
+  height:25px;
   background:#222;
   border-radius:5px;
 }
 
-.leg.l{left:10px}
-.leg.r{left:28px}
+.leg.l{
+  left:11px;
+}
+
+.leg.r{
+  left:30px;
+}
 
 .arm{
   position:absolute;
-  top:30px;
+  top:32px;
   width:9px;
-  height:31px;
+  height:32px;
   background:#f0bd91;
   border-radius:5px;
 }
 
-.arm.l{left:0;transform:rotate(10deg)}
-.arm.r{right:0;transform:rotate(-10deg)}
+.arm.l{
+  left:0;
+  transform:rotate(10deg);
+}
+
+.arm.r{
+  right:0;
+  transform:rotate(-10deg);
+}
+
+/* =========================
+   FACE EXPRESSIONS
+========================= */
+
+/* 通常 */
+.face-normal .eye{
+  transform:none;
+}
+
+.face-normal .mouth{
+  height:4px;
+}
+
+/* 焦り */
+.face-panic .eye{
+  width:7px;
+  height:9px;
+  background:#fff;
+  border:2px solid #111;
+}
+
+.face-panic .mouth{
+  width:10px;
+  height:10px;
+  border-radius:50%;
+  background:#321;
+}
+
+/* 変顔1 */
+.face-funny1 .eye.left{
+  width:9px;
+  height:4px;
+  transform:rotate(25deg);
+}
+
+.face-funny1 .eye.right{
+  width:5px;
+  height:10px;
+  transform:rotate(-20deg);
+}
+
+.face-funny1 .mouth{
+  width:17px;
+  height:7px;
+  border-radius:50%;
+  transform:translateX(-50%) rotate(8deg);
+}
+
+/* 変顔2 */
+.face-funny2 .eye.left{
+  width:10px;
+  height:3px;
+  transform:rotate(-25deg);
+}
+
+.face-funny2 .eye.right{
+  width:10px;
+  height:3px;
+  transform:rotate(25deg);
+}
+
+.face-funny2 .mouth{
+  width:17px;
+  height:9px;
+  border-radius:2px 10px 2px 10px;
+  transform:translateX(-50%) rotate(-7deg);
+}
+
+/* 変顔3 */
+.face-funny3 .eye.left{
+  width:7px;
+  height:11px;
+  transform:rotate(35deg);
+}
+
+.face-funny3 .eye.right{
+  width:7px;
+  height:11px;
+  transform:rotate(-35deg);
+}
+
+.face-funny3 .mouth{
+  width:20px;
+  height:4px;
+  border-radius:0;
+  transform:translateX(-50%) rotate(12deg);
+}
+
+/* 驚き */
+.face-shock .eye{
+  width:9px;
+  height:11px;
+  background:#fff;
+  border:2px solid #111;
+}
+
+.face-shock .mouth{
+  width:11px;
+  height:13px;
+  border-radius:50%;
+  background:#321;
+}
+
+/* 絶望 */
+.face-despair .eye{
+  height:3px;
+  width:9px;
+  background:#111;
+}
+
+.face-despair .mouth{
+  width:16px;
+  height:8px;
+  border-radius:10px 10px 0 0;
+}
+
+/* =========================
+   BOSS
+========================= */
 
 #boss{
   position:absolute;
   z-index:18;
   left:-80px;
   bottom:49%;
-  width:48px;
-  height:82px;
+  width:52px;
+  height:90px;
   transform:translateX(-50%);
-  opacity:.95;
 }
 
 #boss .head{
@@ -204,67 +425,94 @@ html,body{
   background:#555;
 }
 
+/* =========================
+   OBSTACLES
+========================= */
+
 .obstacle{
   position:absolute;
   z-index:17;
   bottom:49%;
-  right:-100px;
-  min-width:52px;
-  min-height:52px;
+
+  /*
+    画面に入るかなり前から存在させる。
+    右端から突然現れる仕様をやめる。
+  */
+  right:-180px;
+
+  min-width:58px;
+  min-height:58px;
+
   display:flex;
   align-items:center;
   justify-content:center;
-  font-size:38px;
-  filter:drop-shadow(0 4px 2px rgba(0,0,0,.55));
+
+  font-size:44px;
+
+  filter:
+    drop-shadow(0 4px 2px rgba(0,0,0,.65))
+    drop-shadow(0 0 5px rgba(255,255,255,.35));
 }
 
+/* 種類ごとに大きさを明確化 */
+
 .obstacle.cone{
-  width:48px;
-  height:62px;
-  font-size:48px;
+  width:58px;
+  height:70px;
+  font-size:56px;
 }
 
 .obstacle.bike{
-  width:70px;
-  height:58px;
-  font-size:46px;
+  width:82px;
+  height:62px;
+  font-size:52px;
 }
 
 .obstacle.sign{
-  width:55px;
-  height:75px;
-  font-size:46px;
+  width:64px;
+  height:82px;
+  font-size:52px;
 }
 
 .obstacle.bench{
-  width:78px;
-  height:50px;
-  font-size:45px;
+  width:90px;
+  height:58px;
+  font-size:50px;
 }
 
 .obstacle.car{
-  width:90px;
-  height:52px;
-  font-size:50px;
+  width:105px;
+  height:60px;
+  font-size:56px;
 }
+
+/* =========================
+   COIN
+========================= */
 
 .coin{
   position:absolute;
   z-index:19;
-  right:-50px;
+  right:-70px;
   bottom:60%;
-  width:32px;
-  height:32px;
+  width:34px;
+  height:34px;
   border-radius:50%;
   background:#ffd21c;
   border:4px solid #fff3a0;
-  box-shadow:0 0 15px #ffe45e;
+  box-shadow:0 0 18px #ffe45e;
+
   display:flex;
   justify-content:center;
   align-items:center;
+
   font-weight:bold;
   color:#9b6900;
 }
+
+/* =========================
+   COMBO
+========================= */
 
 #combo{
   position:absolute;
@@ -279,6 +527,10 @@ html,body{
   text-shadow:0 3px 5px #000;
   transition:.15s;
 }
+
+/* =========================
+   TITLE
+========================= */
 
 #title{
   position:absolute;
@@ -302,6 +554,10 @@ html,body{
   font-size:16px;
 }
 
+/* =========================
+   START
+========================= */
+
 #start{
   position:absolute;
   z-index:60;
@@ -318,10 +574,9 @@ html,body{
   box-shadow:0 5px 0 #555;
 }
 
-#start:active{
-  transform:translate(-50%,-47%);
-  box-shadow:0 2px 0 #555;
-}
+/* =========================
+   RANKING
+========================= */
 
 #ranking{
   position:absolute;
@@ -350,15 +605,21 @@ html,body{
   border-bottom:1px solid rgba(255,255,255,.15);
 }
 
+/* =========================
+   GAME OVER
+========================= */
+
 #gameover{
   position:absolute;
   z-index:100;
   inset:0;
   background:rgba(0,0,0,.78);
+
   display:none;
   align-items:center;
   justify-content:center;
   flex-direction:column;
+
   color:#fff;
   text-align:center;
 }
@@ -382,6 +643,10 @@ html,body{
   font-weight:bold;
 }
 
+/* =========================
+   IMPACT
+========================= */
+
 #flash{
   position:absolute;
   z-index:90;
@@ -398,12 +663,18 @@ html,body{
   top:40%;
   transform:translate(-50%,-50%) rotate(-8deg) scale(.5);
   opacity:0;
+
   color:#fff;
   font-size:45px;
   font-weight:900;
   text-shadow:0 5px 0 #000;
+
   pointer-events:none;
 }
+
+/* =========================
+   ANIMATION
+========================= */
 
 .fall{
   animation:fall .45s forwards;
@@ -414,21 +685,53 @@ html,body{
 }
 
 @keyframes fall{
-  0%{transform:translateX(-50%) rotate(0)}
-  100%{transform:translateX(-50%) translateY(35px) rotate(70deg)}
+  0%{
+    transform:translateX(-50%) rotate(0);
+  }
+
+  100%{
+    transform:
+      translateX(-50%)
+      translateY(35px)
+      rotate(70deg);
+  }
 }
 
 @keyframes fly{
-  0%{transform:translateX(-50%)}
-  100%{transform:translateX(120px) translateY(-70px) rotate(45deg);opacity:0}
+  0%{
+    transform:translateX(-50%);
+  }
+
+  100%{
+    transform:
+      translateX(120px)
+      translateY(-70px)
+      rotate(45deg);
+
+    opacity:0;
+  }
 }
 
 @keyframes shake{
-  0%,100%{transform:translate(0)}
-  20%{transform:translate(-6px,3px)}
-  40%{transform:translate(6px,-3px)}
-  60%{transform:translate(-5px,-2px)}
-  80%{transform:translate(5px,3px)}
+  0%,100%{
+    transform:translate(0);
+  }
+
+  20%{
+    transform:translate(-6px,3px);
+  }
+
+  40%{
+    transform:translate(6px,-3px);
+  }
+
+  60%{
+    transform:translate(-5px,-2px);
+  }
+
+  80%{
+    transform:translate(5px,3px);
+  }
 }
 
 .shake{
@@ -436,10 +739,22 @@ html,body{
 }
 
 @media(max-width:600px){
-  #title h1{font-size:36px}
-  #hud{font-size:12px}
-  .hudBox{padding:6px}
-  #ranking{font-size:12px}
+
+  #title h1{
+    font-size:36px;
+  }
+
+  #hud{
+    font-size:11px;
+  }
+
+  .hudBox{
+    padding:6px;
+  }
+
+  #ranking{
+    font-size:12px;
+  }
 }
 </style>
 </head>
@@ -452,7 +767,6 @@ html,body{
 
   <div class="sidewalk"></div>
   <div class="road"></div>
-
   <div id="roadLines"></div>
 
   <div id="hud">
@@ -466,16 +780,36 @@ html,body{
 
   <div id="combo">COMBO ×1</div>
 
-  <div id="player">
-    <div class="head"></div>
+  <!-- PLAYER -->
+  <div id="player" class="face-normal">
+
+    <div class="head">
+
+      <div class="hair"></div>
+
+      <div class="brow left"></div>
+      <div class="brow right"></div>
+
+      <div class="eye left"></div>
+      <div class="eye right"></div>
+
+      <div class="nose"></div>
+      <div class="mouth"></div>
+
+    </div>
+
     <div class="body"></div>
     <div class="tie"></div>
+
     <div class="arm l"></div>
     <div class="arm r"></div>
+
     <div class="leg l"></div>
     <div class="leg r"></div>
+
   </div>
 
+  <!-- BOSS -->
   <div id="boss">
     <div class="head"></div>
     <div class="body"></div>
@@ -502,14 +836,30 @@ html,body{
   <div id="impactText"></div>
 
   <div id="gameover">
+
     <h2>GAME OVER</h2>
-    <p>走行距離：<b><span id="finalDistance">0</span>m</b></p>
-    <p>コイン：<b><span id="finalCoins">0</span></b></p>
-    <p>最終スコア：<b><span id="finalScore">0</span></b></p>
+
+    <p>
+      走行距離：
+      <b><span id="finalDistance">0</span>m</b>
+    </p>
+
+    <p>
+      コイン：
+      <b><span id="finalCoins">0</span></b>
+    </p>
+
+    <p>
+      最終スコア：
+      <b><span id="finalScore">0</span></b>
+    </p>
+
     <button id="retry">もう一度走る</button>
+
   </div>
 
 </div>
+
 
 <script type="module">
 
@@ -534,48 +884,48 @@ import {
 ========================= */
 
 const firebaseConfig = {
-  apiKey: "AIzaSyDP7aQ8ylOIiOeLiKfawJVpGUEIt4Dr4e4",
-  authDomain: "shachiku-dash.firebaseapp.com",
-  projectId: "shachiku-dash",
-  storageBucket: "shachiku-dash.firebasestorage.app",
-  messagingSenderId: "416033862481",
-  appId: "1:416033862481:web:5e951a935e0d80fdd6d970"
+  apiKey:"AIzaSyDP7aQ8ylOIiOeLiKfawJVpGUEIt4Dr4e4",
+  authDomain:"shachiku-dash.firebaseapp.com",
+  projectId:"shachiku-dash",
+  storageBucket:"shachiku-dash.firebasestorage.app",
+  messagingSenderId:"416033862481",
+  appId:"1:416033862481:web:5e951a935e0d80fdd6d970"
 };
 
-const app = initializeApp(firebaseConfig);
-const db = getDatabase(app);
+const app=initializeApp(firebaseConfig);
+const db=getDatabase(app);
 
 
 /* =========================
    DOM
 ========================= */
 
-const game = document.getElementById("game");
-const player = document.getElementById("player");
-const boss = document.getElementById("boss");
+const game=document.getElementById("game");
+const player=document.getElementById("player");
+const boss=document.getElementById("boss");
 
-const distanceEl = document.getElementById("distance");
-const speedEl = document.getElementById("speed");
-const bossDistanceEl = document.getElementById("bossDistance");
-const coinsEl = document.getElementById("coins");
+const distanceEl=document.getElementById("distance");
+const speedEl=document.getElementById("speed");
+const bossDistanceEl=document.getElementById("bossDistance");
+const coinsEl=document.getElementById("coins");
 
-const warning = document.getElementById("warning");
-const comboEl = document.getElementById("combo");
+const warning=document.getElementById("warning");
+const comboEl=document.getElementById("combo");
 
-const startBtn = document.getElementById("start");
-const retryBtn = document.getElementById("retry");
+const startBtn=document.getElementById("start");
+const retryBtn=document.getElementById("retry");
 
-const title = document.getElementById("title");
-const ranking = document.getElementById("ranking");
-const rankingList = document.getElementById("rankingList");
+const title=document.getElementById("title");
+const rankingList=document.getElementById("rankingList");
 
-const gameover = document.getElementById("gameover");
-const finalDistance = document.getElementById("finalDistance");
-const finalCoins = document.getElementById("finalCoins");
-const finalScore = document.getElementById("finalScore");
+const gameover=document.getElementById("gameover");
 
-const flash = document.getElementById("flash");
-const impactText = document.getElementById("impactText");
+const finalDistance=document.getElementById("finalDistance");
+const finalCoins=document.getElementById("finalCoins");
+const finalScore=document.getElementById("finalScore");
+
+const flash=document.getElementById("flash");
+const impactText=document.getElementById("impactText");
 
 
 /* =========================
@@ -585,32 +935,52 @@ const impactText = document.getElementById("impactText");
 for(let i=0;i<18;i++){
 
   const b=document.createElement("div");
+
   b.className="building";
 
-  b.style.left=(i*7+Math.random()*3)+"%";
-  b.style.height=(80+Math.random()*180)+"px";
+  b.style.left=
+    (i*7+Math.random()*3)+"%";
+
+  b.style.height=
+    (80+Math.random()*180)+"px";
 
   for(let w=0;w<4;w++){
+
     const win=document.createElement("div");
+
     win.className="window";
-    win.style.left=(8+(w%2)*28)+"px";
-    win.style.top=(12+Math.floor(w/2)*35)+"px";
+
+    win.style.left=
+      (8+(w%2)*28)+"px";
+
+    win.style.top=
+      (12+Math.floor(w/2)*35)+"px";
+
     b.appendChild(win);
   }
 
-  document.getElementById("city").appendChild(b);
+  document
+    .getElementById("city")
+    .appendChild(b);
 }
 
+
 for(let i=0;i<8;i++){
+
   const line=document.createElement("div");
+
   line.className="roadLine";
+
   line.style.left=(i*15)+"%";
-  document.getElementById("roadLines").appendChild(line);
+
+  document
+    .getElementById("roadLines")
+    .appendChild(line);
 }
 
 
 /* =========================
-   GAME STATE
+   STATE
 ========================= */
 
 let running=false;
@@ -618,6 +988,7 @@ let raf=0;
 
 let distance=0;
 let coins=0;
+
 let combo=0;
 let bestCombo=0;
 
@@ -631,8 +1002,85 @@ let obstacles=[];
 let coinObjects=[];
 
 let lastTime=0;
+
 let obstacleTimer=0;
 let coinTimer=0;
+
+
+/* =========================
+   FACE
+========================= */
+
+const faces=[
+  "face-normal",
+  "face-panic",
+  "face-funny1",
+  "face-funny2",
+  "face-funny3"
+];
+
+let faceTimer=null;
+
+function changeFace(){
+
+  if(!running) return;
+
+  const current=
+    faces.find(f=>
+      player.classList.contains(f)
+    );
+
+  let next=current;
+
+  while(next===current){
+
+    next=
+      faces[
+        Math.floor(
+          Math.random()*faces.length
+        )
+      ];
+  }
+
+  faces.forEach(f=>
+    player.classList.remove(f)
+  );
+
+  player.classList.add(next);
+
+  /*
+    2〜4秒ごとに表情変更
+  */
+  const nextTime=
+    2000+Math.random()*2000;
+
+  faceTimer=setTimeout(
+    changeFace,
+    nextTime
+  );
+}
+
+function startFaceAnimation(){
+
+  clearTimeout(faceTimer);
+
+  faces.forEach(f=>
+    player.classList.remove(f)
+  );
+
+  player.classList.add("face-normal");
+
+  faceTimer=setTimeout(
+    changeFace,
+    2200
+  );
+}
+
+function stopFaceAnimation(){
+
+  clearTimeout(faceTimer);
+  faceTimer=null;
+}
 
 
 /* =========================
@@ -642,6 +1090,8 @@ let coinTimer=0;
 function startGame(){
 
   cancelAnimationFrame(raf);
+
+  stopFaceAnimation();
 
   running=true;
 
@@ -656,8 +1106,13 @@ function startGame(){
   jumpVelocity=0;
   jumping=false;
 
-  obstacles.forEach(o=>o.el.remove());
-  coinObjects.forEach(c=>c.el.remove());
+  obstacles.forEach(o=>
+    o.el.remove()
+  );
+
+  coinObjects.forEach(c=>
+    c.el.remove()
+  );
 
   obstacles=[];
   coinObjects=[];
@@ -667,10 +1122,13 @@ function startGame(){
   bossDistanceEl.textContent="100";
   coinsEl.textContent="0";
 
-  player.classList.remove("fall","fly");
-  boss.classList.remove("fly");
+  player.classList.remove(
+    "fall",
+    "fly"
+  );
 
   player.style.bottom="49%";
+
   boss.style.left="-80px";
   boss.style.opacity="1";
 
@@ -682,8 +1140,16 @@ function startGame(){
   gameover.style.display="none";
 
   lastTime=performance.now();
-  obstacleTimer=700;
-  coinTimer=1100;
+
+  /*
+    最初からすぐ目の前に出すのではなく、
+    十分遠い位置から障害物を走らせる。
+  */
+  obstacleTimer=1100;
+
+  coinTimer=1300;
+
+  startFaceAnimation();
 
   raf=requestAnimationFrame(loop);
 }
@@ -695,13 +1161,17 @@ function startGame(){
 
 function getSpeed(){
 
-  return 7 + Math.min(distance / 150,7);
+  return 7+
+    Math.min(
+      distance/150,
+      7
+    );
 
 }
 
 
 /* =========================
-   SPAWN OBSTACLE
+   OBSTACLE
 ========================= */
 
 function spawnObstacle(){
@@ -714,46 +1184,57 @@ function spawnObstacle(){
     ["car","🚗"]
   ];
 
-  const type=types[Math.floor(Math.random()*types.length)];
+  const type=
+    types[
+      Math.floor(
+        Math.random()*types.length
+      )
+    ];
 
-  const el=document.createElement("div");
+  const el=
+    document.createElement("div");
 
-  el.className="obstacle "+type[0];
+  el.className=
+    "obstacle "+type[0];
+
   el.textContent=type[1];
 
-  el.style.right="-100px";
+  /*
+    以前よりかなり遠くから出す。
+    これにより「気付いてからタップ」
+    でもジャンプ可能な時間を確保。
+  */
+  el.style.right="-240px";
 
   game.appendChild(el);
 
   obstacles.push({
     el,
-    x:window.innerWidth+100
+    x:window.innerWidth+240
   });
-
 }
 
 
 /* =========================
-   SPAWN COIN
+   COIN
 ========================= */
 
 function spawnCoin(){
 
-  const el=document.createElement("div");
+  const el=
+    document.createElement("div");
 
   el.className="coin";
   el.textContent="¥";
 
-  el.style.right="-50px";
+  el.style.right="-80px";
 
   game.appendChild(el);
 
   coinObjects.push({
     el,
-    x:window.innerWidth+50,
-    y:0
+    x:window.innerWidth+80
   });
-
 }
 
 
@@ -763,20 +1244,23 @@ function spawnCoin(){
 
 function jump(high=false){
 
-  if(!running) return;
+  if(!running)return;
 
   if(!jumping){
 
     jumping=true;
 
-    jumpVelocity=high ? 15 : 11;
+    jumpVelocity=
+      high ? 15 : 11;
 
   }else if(high){
 
-    jumpVelocity=Math.max(jumpVelocity,14);
-
+    jumpVelocity=
+      Math.max(
+        jumpVelocity,
+        14
+      );
   }
-
 }
 
 
@@ -786,48 +1270,57 @@ function jump(high=false){
 
 let pressTimer=null;
 
-game.addEventListener("pointerdown",e=>{
+game.addEventListener(
+  "pointerdown",
+  ()=>{
+    if(!running)return;
 
-  if(!running) return;
-
-  pressTimer=setTimeout(()=>{
-    jump(true);
-    pressTimer=null;
-  },180);
-
-});
-
-game.addEventListener("pointerup",e=>{
-
-  if(pressTimer!==null){
-
-    clearTimeout(pressTimer);
-    pressTimer=null;
-
-    jump(false);
-
+    pressTimer=setTimeout(
+      ()=>{
+        jump(true);
+        pressTimer=null;
+      },
+      180
+    );
   }
+);
 
-});
+game.addEventListener(
+  "pointerup",
+  ()=>{
+    if(pressTimer!==null){
 
-game.addEventListener("pointercancel",()=>{
+      clearTimeout(pressTimer);
+      pressTimer=null;
 
-  if(pressTimer!==null){
-    clearTimeout(pressTimer);
-    pressTimer=null;
+      jump(false);
+    }
   }
+);
 
-});
+game.addEventListener(
+  "pointercancel",
+  ()=>{
+    if(pressTimer!==null){
 
-
-window.addEventListener("keydown",e=>{
-
-  if(e.code==="Space"){
-    e.preventDefault();
-    jump(e.repeat);
+      clearTimeout(pressTimer);
+      pressTimer=null;
+    }
   }
+);
 
-});
+window.addEventListener(
+  "keydown",
+  e=>{
+
+    if(e.code==="Space"){
+
+      e.preventDefault();
+
+      jump(e.repeat);
+    }
+  }
+);
 
 
 /* =========================
@@ -836,28 +1329,28 @@ window.addEventListener("keydown",e=>{
 
 function playerRect(){
 
-  const r=player.getBoundingClientRect();
+  const r=
+    player.getBoundingClientRect();
 
-  return {
+  return{
     left:r.left+8,
     right:r.right-8,
     top:r.top+8,
     bottom:r.bottom-3
   };
-
 }
 
 function obstacleRect(el){
 
-  const r=el.getBoundingClientRect();
+  const r=
+    el.getBoundingClientRect();
 
-  return {
+  return{
     left:r.left+5,
     right:r.right-5,
     top:r.top+5,
     bottom:r.bottom
   };
-
 }
 
 function hit(a,b){
@@ -868,7 +1361,6 @@ function hit(a,b){
     a.bottom<b.top ||
     a.top>b.bottom
   );
-
 }
 
 
@@ -878,18 +1370,36 @@ function hit(a,b){
 
 function crash(){
 
-  if(!running) return;
+  if(!running)return;
 
   combo=0;
   updateCombo();
 
-  bossDistance=Math.max(0,bossDistance-55);
+  bossDistance=
+    Math.max(
+      0,
+      bossDistance-55
+    );
+
+  stopFaceAnimation();
+
+  faces.forEach(f=>
+    player.classList.remove(f)
+  );
+
+  player.classList.add(
+    "face-shock"
+  );
 
   player.classList.add("fall");
 
-  impactText.textContent="CRASH!";
+  impactText.textContent=
+    "CRASH!";
+
   impactText.style.opacity="1";
-  impactText.style.transform="translate(-50%,-50%) rotate(-8deg) scale(1)";
+
+  impactText.style.transform=
+    "translate(-50%,-50%) rotate(-8deg) scale(1)";
 
   flash.style.opacity=".75";
 
@@ -902,21 +1412,26 @@ function crash(){
   },350);
 
   game.classList.remove("shake");
+
   void game.offsetWidth;
+
   game.classList.add("shake");
 
   setTimeout(()=>{
-    player.classList.remove("fall");
+
+    player.classList.remove(
+      "fall"
+    );
+
   },450);
 
   if(bossDistance<=25){
 
-    setTimeout(()=>{
-      caughtByBoss();
-    },250);
-
+    setTimeout(
+      caughtByBoss,
+      250
+    );
   }
-
 }
 
 
@@ -926,17 +1441,37 @@ function crash(){
 
 function caughtByBoss(){
 
-  if(!running) return;
+  if(!running)return;
 
   running=false;
 
-  warning.style.opacity="1";
-  warning.textContent="⚠ 上司に捕まった！";
+  stopFaceAnimation();
 
+  faces.forEach(f=>
+    player.classList.remove(f)
+  );
+
+  player.classList.add(
+    "face-despair"
+  );
+
+  warning.style.opacity="1";
+
+  warning.textContent=
+    "⚠ 上司に捕まった！";
+
+  /*
+    上司が画面内へ入る
+  */
   boss.style.left="35%";
 
-  player.classList.remove("fall");
-  player.classList.add("fly");
+  player.classList.remove(
+    "fall"
+  );
+
+  player.classList.add(
+    "fly"
+  );
 
   flash.style.opacity=".9";
 
@@ -944,14 +1479,20 @@ function caughtByBoss(){
     flash.style.opacity="0";
   },130);
 
-  game.classList.remove("shake");
+  game.classList.remove(
+    "shake"
+  );
+
   void game.offsetWidth;
-  game.classList.add("shake");
 
-  setTimeout(()=>{
-    finishGame();
-  },650);
+  game.classList.add(
+    "shake"
+  );
 
+  setTimeout(
+    finishGame,
+    650
+  );
 }
 
 
@@ -961,20 +1502,27 @@ function caughtByBoss(){
 
 function collectCoin(index){
 
-  const c=coinObjects[index];
+  const c=
+    coinObjects[index];
 
   coins++;
   combo++;
 
-  if(combo>bestCombo) bestCombo=combo;
+  if(combo>bestCombo){
+    bestCombo=combo;
+  }
 
-  coinsEl.textContent=coins;
+  coinsEl.textContent=
+    coins;
 
   c.el.remove();
-  coinObjects.splice(index,1);
+
+  coinObjects.splice(
+    index,
+    1
+  );
 
   updateCombo();
-
 }
 
 
@@ -987,14 +1535,19 @@ function updateCombo(){
   if(combo<=0){
 
     comboEl.style.opacity="0";
-    return;
 
+    return;
   }
 
   comboEl.textContent=
-    "COMBO ×"+Math.min(1+Math.floor(combo/5),5);
+    "COMBO ×"+
+    Math.min(
+      1+Math.floor(combo/5),
+      5
+    );
 
   comboEl.style.opacity="1";
+
   comboEl.style.transform=
     "translateX(-50%) scale(1.15)";
 
@@ -1004,7 +1557,6 @@ function updateCombo(){
       "translateX(-50%) scale(1)";
 
   },100);
-
 }
 
 
@@ -1015,10 +1567,13 @@ function updateCombo(){
 function getFinalScore(){
 
   const multiplier=
-    Math.min(1+Math.floor(combo/5),5);
+    Math.min(
+      1+Math.floor(combo/5),
+      5
+    );
 
-  return Math.floor(distance)+coins*10*multiplier;
-
+  return Math.floor(distance)+
+    coins*10*multiplier;
 }
 
 
@@ -1028,159 +1583,248 @@ function getFinalScore(){
 
 function loop(now){
 
-  if(!running) return;
+  if(!running)return;
 
-  const dt=Math.min((now-lastTime)/16.67,2);
+  const dt=
+    Math.min(
+      (now-lastTime)/16.67,
+      2
+    );
 
   lastTime=now;
 
-  const speed=getSpeed();
+  const speed=
+    getSpeed();
 
-  distance+=speed*0.035*dt;
+  /*
+    mは走った距離だけ増える
+  */
+  distance+=
+    speed*0.035*dt;
 
-  distanceEl.textContent=Math.floor(distance);
-  speedEl.textContent=speed.toFixed(1);
+  distanceEl.textContent=
+    Math.floor(distance);
 
-  /* ジャンプ */
+  speedEl.textContent=
+    speed.toFixed(1);
+
+
+  /* =====================
+     JUMP
+  ===================== */
 
   if(jumping){
 
-    jumpY+=jumpVelocity*dt;
-    jumpVelocity-=0.75*dt;
+    jumpY+=
+      jumpVelocity*dt;
+
+    jumpVelocity-=
+      0.75*dt;
 
     if(jumpY<=0){
 
       jumpY=0;
       jumpVelocity=0;
       jumping=false;
-
     }
-
   }
 
   player.style.transform=
-    `translateX(-50%) translateY(${-jumpY}px)`;
+    `translateX(-50%)
+     translateY(${-jumpY}px)`;
 
 
-  /* 上司接近 */
+  /* =====================
+     BOSS
+  ===================== */
 
-  bossDistance-=0.0025*speed*dt;
+  bossDistance-=
+    0.0025*
+    speed*
+    dt;
 
-  bossDistance=Math.max(0,bossDistance);
+  bossDistance=
+    Math.max(
+      0,
+      bossDistance
+    );
 
-  bossDistanceEl.textContent=bossDistance.toFixed(0);
+  bossDistanceEl.textContent=
+    bossDistance.toFixed(0);
 
   const bossProgress=
-    Math.max(0,Math.min(1,(100-bossDistance)/75));
+    Math.max(
+      0,
+      Math.min(
+        1,
+        (100-bossDistance)/75
+      )
+    );
 
   boss.style.left=
-    (-80 + bossProgress*190)+"px";
+    (-80+
+      bossProgress*190
+    )+"px";
 
 
-  /* 接近警告 */
+  /* =====================
+     WARNING
+  ===================== */
 
   if(bossDistance<70){
 
     const intensity=
-      Math.min(1,(70-bossDistance)/45);
+      Math.min(
+        1,
+        (70-bossDistance)/45
+      );
 
     warning.style.opacity=
-      String(.25+intensity*.75);
+      String(
+        .25+
+        intensity*.75
+      );
 
     warning.textContent=
       bossDistance<40
       ? "⚠ 上司がすぐそこ！"
       : "⚠ 上司が近い！";
 
-    if(bossDistance<45 && Math.random()<.08){
+    if(
+      bossDistance<45 &&
+      Math.random()<.08
+    ){
 
-      game.classList.remove("shake");
+      game.classList.remove(
+        "shake"
+      );
+
       void game.offsetWidth;
-      game.classList.add("shake");
 
+      game.classList.add(
+        "shake"
+      );
     }
 
   }else{
 
     warning.style.opacity="0";
-
   }
 
 
-  /* 障害物 */
+  /* =====================
+     OBSTACLES
+  ===================== */
 
-  obstacleTimer-=dt*16.67;
+  obstacleTimer-=
+    dt*16.67;
 
+  /*
+    初期より長め。
+    距離が伸びるほど短くする。
+    ただし最低でも0.95秒。
+  */
   const interval=
-    Math.max(750,1500-distance*1.2);
+    Math.max(
+      950,
+      1800-distance*0.9
+    );
 
   if(obstacleTimer<=0){
 
     spawnObstacle();
 
-    obstacleTimer=interval;
-
+    obstacleTimer=
+      interval;
   }
 
 
-  for(let i=obstacles.length-1;i>=0;i--){
+  for(
+    let i=obstacles.length-1;
+    i>=0;
+    i--
+  ){
 
-    const o=obstacles[i];
+    const o=
+      obstacles[i];
 
-    o.x-=speed*dt;
+    o.x-=
+      speed*dt;
 
     o.el.style.right=
-      (window.innerWidth-o.x)+"px";
+      (window.innerWidth-o.x)
+      +"px";
 
-    const pr=playerRect();
-    const or=obstacleRect(o.el);
+    const pr=
+      playerRect();
+
+    const or=
+      obstacleRect(o.el);
 
     if(hit(pr,or)){
 
       crash();
 
       o.el.remove();
-      obstacles.splice(i,1);
+
+      obstacles.splice(
+        i,
+        1
+      );
 
       continue;
-
     }
 
-    if(o.x<-150){
+    if(o.x<-250){
 
       o.el.remove();
-      obstacles.splice(i,1);
 
+      obstacles.splice(
+        i,
+        1
+      );
     }
-
   }
 
 
-  /* コイン */
+  /* =====================
+     COINS
+  ===================== */
 
-  coinTimer-=dt*16.67;
+  coinTimer-=
+    dt*16.67;
 
   if(coinTimer<=0){
 
     spawnCoin();
 
     coinTimer=
-      1050+Math.random()*700;
-
+      1200+
+      Math.random()*700;
   }
 
 
-  for(let i=coinObjects.length-1;i>=0;i--){
+  for(
+    let i=coinObjects.length-1;
+    i>=0;
+    i--
+  ){
 
-    const c=coinObjects[i];
+    const c=
+      coinObjects[i];
 
-    c.x-=speed*dt;
+    c.x-=
+      speed*dt;
 
     c.el.style.right=
-      (window.innerWidth-c.x)+"px";
+      (window.innerWidth-c.x)
+      +"px";
 
-    const pr=playerRect();
-    const cr=c.el.getBoundingClientRect();
+    const pr=
+      playerRect();
+
+    const cr=
+      c.el.getBoundingClientRect();
 
     if(
       pr.right>cr.left &&
@@ -1190,45 +1834,61 @@ function loop(now){
     ){
 
       collectCoin(i);
-      continue;
 
+      continue;
     }
 
-    if(c.x<-80){
+    if(c.x<-100){
 
       c.el.remove();
-      coinObjects.splice(i,1);
 
+      coinObjects.splice(
+        i,
+        1
+      );
     }
-
   }
 
 
-  /* 道路ライン */
+  /* =====================
+     ROAD
+  ===================== */
 
-  document.querySelectorAll(".roadLine").forEach(line=>{
+  document
+    .querySelectorAll(".roadLine")
+    .forEach(line=>{
 
-    let x=parseFloat(line.style.left)||0;
+      let x=
+        parseFloat(
+          line.style.left
+        )||0;
 
-    x-=speed*0.03*dt;
+      x-=
+        speed*
+        0.03*
+        dt;
 
-    if(x<-12) x=100;
+      if(x<-12){
+        x=100;
+      }
 
-    line.style.left=x+"%";
-
-  });
+      line.style.left=
+        x+"%";
+    });
 
 
   if(bossDistance<=25){
 
     caughtByBoss();
-    return;
 
+    return;
   }
 
 
-  raf=requestAnimationFrame(loop);
-
+  raf=
+    requestAnimationFrame(
+      loop
+    );
 }
 
 
@@ -1242,34 +1902,43 @@ async function finishGame(){
 
   cancelAnimationFrame(raf);
 
+  stopFaceAnimation();
+
   finalDistance.textContent=
     Math.floor(distance);
 
   finalCoins.textContent=
     coins;
 
-  const score=getFinalScore();
+  const score=
+    getFinalScore();
 
-  finalScore.textContent=score;
+  finalScore.textContent=
+    score;
 
   const best=
-    Number(localStorage.getItem("shachikuBest")||0);
+    Number(
+      localStorage.getItem(
+        "shachikuBest"
+      )||0
+    );
 
-  if(Math.floor(distance)>best){
+  if(
+    Math.floor(distance)>best
+  ){
 
     localStorage.setItem(
       "shachikuBest",
       Math.floor(distance)
     );
-
   }
 
-  gameover.style.display="flex";
+  gameover.style.display=
+    "flex";
 
   await submitScore(score);
 
   await loadRanking();
-
 }
 
 
@@ -1281,17 +1950,23 @@ async function submitScore(score){
 
   try{
 
-    const scoresRef=ref(db,"scores");
-    const newScore=push(scoresRef);
+    const scoresRef=
+      ref(db,"scores");
 
-    await set(newScore,{
-      name:"社畜",
-      score:score,
-      distance:Math.floor(distance),
-      coins:coins,
-      combo:bestCombo,
-      createdAt:Date.now()
-    });
+    const newScore=
+      push(scoresRef);
+
+    await set(
+      newScore,
+      {
+        name:"社畜",
+        score:score,
+        distance:Math.floor(distance),
+        coins:coins,
+        combo:bestCombo,
+        createdAt:Date.now()
+      }
+    );
 
   }catch(err){
 
@@ -1299,9 +1974,7 @@ async function submitScore(score){
       "ランキング保存エラー:",
       err
     );
-
   }
-
 }
 
 
@@ -1313,15 +1986,18 @@ async function loadRanking(){
 
   try{
 
-    const scoresRef=ref(db,"scores");
+    const scoresRef=
+      ref(db,"scores");
 
-    const q=query(
-      scoresRef,
-      orderByChild("score"),
-      limitToLast(10)
-    );
+    const q=
+      query(
+        scoresRef,
+        orderByChild("score"),
+        limitToLast(10)
+      );
 
-    const snapshot=await get(q);
+    const snapshot=
+      await get(q);
 
     if(!snapshot.exists()){
 
@@ -1329,37 +2005,51 @@ async function loadRanking(){
         "<div style='text-align:center'>まだランキングがありません</div>";
 
       return;
-
     }
 
     const data=[];
 
-    snapshot.forEach(child=>{
+    snapshot.forEach(
+      child=>{
+        data.push(
+          child.val()
+        );
+      }
+    );
 
-      data.push(child.val());
-
-    });
-
-    data.sort((a,b)=>
-      Number(b.score||0)-Number(a.score||0)
+    data.sort(
+      (a,b)=>
+        Number(b.score||0)-
+        Number(a.score||0)
     );
 
     rankingList.innerHTML="";
 
-    data.forEach((item,index)=>{
+    data.forEach(
+      (item,index)=>{
 
-      const row=document.createElement("div");
+        const row=
+          document.createElement(
+            "div"
+          );
 
-      row.className="rankRow";
+        row.className=
+          "rankRow";
 
-      row.innerHTML=`
-        <span>${index+1}位　${item.name||"社畜"}</span>
-        <b>${Number(item.score||0).toLocaleString()}</b>
-      `;
+        row.innerHTML=`
+          <span>
+            ${index+1}位　${item.name||"社畜"}
+          </span>
+          <b>
+            ${Number(item.score||0).toLocaleString()}
+          </b>
+        `;
 
-      rankingList.appendChild(row);
-
-    });
+        rankingList.appendChild(
+          row
+        );
+      }
+    );
 
   }catch(err){
 
@@ -1370,14 +2060,12 @@ async function loadRanking(){
 
     rankingList.innerHTML=
       "<div style='text-align:center'>ランキング接続失敗</div>";
-
   }
-
 }
 
 
 /* =========================
-   BUTTONS
+   BUTTON
 ========================= */
 
 startBtn.addEventListener(
@@ -1392,7 +2080,7 @@ retryBtn.addEventListener(
 
 
 /* =========================
-   INITIAL RANKING
+   INITIAL
 ========================= */
 
 loadRanking();
