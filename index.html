@@ -63,15 +63,6 @@ html,body{
   background:linear-gradient(#555,#333);
 }
 
-.roadLine{
-  position:absolute;
-  top:48%;
-  width:80px;
-  height:8px;
-  background:#eee;
-  opacity:.8;
-}
-
 .sidewalk{
   position:absolute;
   bottom:48%;
@@ -81,13 +72,26 @@ html,body{
   border-top:3px solid #666;
 }
 
-/* =========================
-   HUD
-========================= */
+#roadLines{
+  position:absolute;
+  inset:0;
+  z-index:2;
+}
+
+.roadLine{
+  position:absolute;
+  top:74%;
+  width:80px;
+  height:8px;
+  background:#eee;
+  opacity:.8;
+}
+
+/* HUD */
 
 #hud{
   position:absolute;
-  z-index:30;
+  z-index:40;
   top:10px;
   left:10px;
   right:10px;
@@ -106,18 +110,16 @@ html,body{
   border-radius:8px;
 }
 
-/* =========================
-   WARNING
-========================= */
+/* WARNING */
 
 #warning{
   position:absolute;
-  z-index:40;
-  top:72px;
+  z-index:50;
+  top:70px;
   left:50%;
   transform:translateX(-50%);
   color:#fff;
-  background:rgba(190,0,0,.88);
+  background:rgba(190,0,0,.9);
   border:2px solid #fff;
   border-radius:10px;
   padding:8px 18px;
@@ -127,24 +129,27 @@ html,body{
   pointer-events:none;
 }
 
-/* =========================
-   PLAYER
-========================= */
+/* PLAYER / BOSS */
 
-#player{
+#player,
+#boss{
   position:absolute;
-  z-index:20;
-
-  /* 画面中央より少し左＝約43% */
-  left:43%;
-
-  bottom:49%;
   width:52px;
   height:90px;
+  bottom:49%;
   transform:translateX(-50%);
 }
 
-/* 頭 */
+#player{
+  left:43%;
+  z-index:25;
+}
+
+#boss{
+  left:-80px;
+  z-index:20;
+}
+
 .head{
   position:absolute;
   width:32px;
@@ -154,10 +159,8 @@ html,body{
   background:#f0bd91;
   border:2px solid #9e6948;
   border-radius:50%;
-  overflow:visible;
 }
 
-/* 髪 */
 .hair{
   position:absolute;
   left:2px;
@@ -168,7 +171,6 @@ html,body{
   border-radius:14px 14px 5px 5px;
 }
 
-/* 目 */
 .eye{
   position:absolute;
   top:12px;
@@ -186,7 +188,6 @@ html,body{
   right:7px;
 }
 
-/* 眉 */
 .brow{
   position:absolute;
   top:8px;
@@ -203,7 +204,16 @@ html,body{
   right:5px;
 }
 
-/* 口 */
+.nose{
+  position:absolute;
+  left:50%;
+  top:18px;
+  transform:translateX(-50%);
+  width:3px;
+  height:4px;
+  background:#a96f4e;
+}
+
 .mouth{
   position:absolute;
   left:50%;
@@ -215,18 +225,6 @@ html,body{
   border-radius:0 0 10px 10px;
 }
 
-/* 鼻 */
-.nose{
-  position:absolute;
-  left:50%;
-  top:18px;
-  transform:translateX(-50%);
-  width:3px;
-  height:4px;
-  background:#a96f4e;
-}
-
-/* 体 */
 .body{
   position:absolute;
   left:8px;
@@ -245,23 +243,6 @@ html,body{
   height:28px;
   background:#d33;
   transform:skew(-5deg);
-}
-
-.leg{
-  position:absolute;
-  top:65px;
-  width:11px;
-  height:25px;
-  background:#222;
-  border-radius:5px;
-}
-
-.leg.l{
-  left:11px;
-}
-
-.leg.r{
-  left:30px;
 }
 
 .arm{
@@ -283,20 +264,25 @@ html,body{
   transform:rotate(-10deg);
 }
 
-/* =========================
-   FACE EXPRESSIONS
-========================= */
-
-/* 通常 */
-.face-normal .eye{
-  transform:none;
+.leg{
+  position:absolute;
+  top:65px;
+  width:11px;
+  height:25px;
+  background:#222;
+  border-radius:5px;
 }
 
-.face-normal .mouth{
-  height:4px;
+.leg.l{
+  left:11px;
 }
 
-/* 焦り */
+.leg.r{
+  left:30px;
+}
+
+/* プレイヤー表情 */
+
 .face-panic .eye{
   width:7px;
   height:9px;
@@ -311,7 +297,6 @@ html,body{
   background:#321;
 }
 
-/* 変顔1 */
 .face-funny1 .eye.left{
   width:9px;
   height:4px;
@@ -331,7 +316,6 @@ html,body{
   transform:translateX(-50%) rotate(8deg);
 }
 
-/* 変顔2 */
 .face-funny2 .eye.left{
   width:10px;
   height:3px;
@@ -351,7 +335,6 @@ html,body{
   transform:translateX(-50%) rotate(-7deg);
 }
 
-/* 変顔3 */
 .face-funny3 .eye.left{
   width:7px;
   height:11px;
@@ -371,7 +354,6 @@ html,body{
   transform:translateX(-50%) rotate(12deg);
 }
 
-/* 驚き */
 .face-shock .eye{
   width:9px;
   height:11px;
@@ -386,11 +368,9 @@ html,body{
   background:#321;
 }
 
-/* 絶望 */
 .face-despair .eye{
-  height:3px;
   width:9px;
-  background:#111;
+  height:3px;
 }
 
 .face-despair .mouth{
@@ -399,62 +379,81 @@ html,body{
   border-radius:10px 10px 0 0;
 }
 
-/* =========================
-   BOSS
-========================= */
+/* 上司の変顔 */
 
-#boss{
-  position:absolute;
-  z-index:18;
-  left:-80px;
-  bottom:49%;
-  width:52px;
-  height:90px;
-  transform:translateX(-50%);
+.boss-face-normal .mouth{
+  width:12px;
 }
 
-#boss .head{
-  background:#e5ad83;
+.boss-face-grin .mouth{
+  width:19px;
+  height:9px;
+  background:#fff;
+  border:2px solid #222;
+  border-radius:3px 3px 12px 12px;
 }
 
-#boss .body{
-  background:#111;
+.boss-face-angry .brow.left{
+  transform:rotate(25deg);
 }
 
-#boss .tie{
-  background:#555;
+.boss-face-angry .brow.right{
+  transform:rotate(-25deg);
 }
 
-/* =========================
-   OBSTACLES
-========================= */
+.boss-face-angry .mouth{
+  width:15px;
+  height:3px;
+  border-radius:0;
+}
+
+.boss-face-funny .eye.left{
+  width:8px;
+  height:4px;
+  transform:rotate(30deg);
+}
+
+.boss-face-funny .eye.right{
+  width:5px;
+  height:10px;
+  transform:rotate(-30deg);
+}
+
+.boss-face-funny .mouth{
+  width:18px;
+  height:6px;
+  border-radius:50%;
+}
+
+.boss-face-smirk .eye.left{
+  height:3px;
+}
+
+.boss-face-smirk .mouth{
+  width:14px;
+  height:5px;
+  transform:translateX(-50%) rotate(-15deg);
+}
+
+/* 障害物 */
 
 .obstacle{
   position:absolute;
-  z-index:17;
+  z-index:18;
   bottom:49%;
-
-  /*
-    画面に入るかなり前から存在させる。
-    右端から突然現れる仕様をやめる。
-  */
-  right:-180px;
-
-  min-width:58px;
-  min-height:58px;
+  right:-300px;
 
   display:flex;
   align-items:center;
   justify-content:center;
 
-  font-size:44px;
+  min-width:58px;
+  min-height:58px;
 
   filter:
     drop-shadow(0 4px 2px rgba(0,0,0,.65))
     drop-shadow(0 0 5px rgba(255,255,255,.35));
 }
-
-/* 種類ごとに大きさを明確化 */
 
 .obstacle.cone{
   width:58px;
@@ -486,20 +485,21 @@ html,body{
   font-size:56px;
 }
 
-/* =========================
-   COIN
-========================= */
+/* コイン */
 
 .coin{
   position:absolute;
   z-index:19;
-  right:-70px;
+  right:-100px;
   bottom:60%;
+
   width:34px;
   height:34px;
+
   border-radius:50%;
   background:#ffd21c;
   border:4px solid #fff3a0;
+
   box-shadow:0 0 18px #ffe45e;
 
   display:flex;
@@ -510,13 +510,11 @@ html,body{
   color:#9b6900;
 }
 
-/* =========================
-   COMBO
-========================= */
+/* COMBO */
 
 #combo{
   position:absolute;
-  z-index:35;
+  z-index:45;
   left:50%;
   top:145px;
   transform:translateX(-50%) scale(.8);
@@ -528,13 +526,11 @@ html,body{
   transition:.15s;
 }
 
-/* =========================
-   TITLE
-========================= */
+/* TITLE */
 
 #title{
   position:absolute;
-  z-index:50;
+  z-index:60;
   left:50%;
   top:28%;
   transform:translateX(-50%);
@@ -554,41 +550,46 @@ html,body{
   font-size:16px;
 }
 
-/* =========================
-   START
-========================= */
+/* START */
 
 #start{
   position:absolute;
-  z-index:60;
+  z-index:70;
   left:50%;
   top:54%;
   transform:translate(-50%,-50%);
+
   border:0;
   border-radius:14px;
   padding:16px 50px;
+
   background:#111;
   color:#fff;
+
   font-size:23px;
   font-weight:bold;
+
   box-shadow:0 5px 0 #555;
 }
 
-/* =========================
-   RANKING
-========================= */
+/* RANKING */
 
 #ranking{
   position:absolute;
-  z-index:55;
+  z-index:65;
   left:50%;
   bottom:4%;
   transform:translateX(-50%);
+
   width:min(330px,88%);
+
   padding:10px;
+
   background:rgba(0,0,0,.75);
   color:#fff;
+
   border-radius:12px;
+
   font-size:13px;
 }
 
@@ -605,17 +606,17 @@ html,body{
   border-bottom:1px solid rgba(255,255,255,.15);
 }
 
-/* =========================
-   GAME OVER
-========================= */
+/* GAME OVER */
 
 #gameover{
   position:absolute;
   z-index:100;
   inset:0;
+
   background:rgba(0,0,0,.78);
 
   display:none;
+
   align-items:center;
   justify-content:center;
   flex-direction:column;
@@ -643,9 +644,7 @@ html,body{
   font-weight:bold;
 }
 
-/* =========================
-   IMPACT
-========================= */
+/* EFFECT */
 
 #flash{
   position:absolute;
@@ -659,29 +658,24 @@ html,body{
 #impactText{
   position:absolute;
   z-index:91;
+
   left:50%;
   top:40%;
-  transform:translate(-50%,-50%) rotate(-8deg) scale(.5);
+
+  transform:
+    translate(-50%,-50%)
+    rotate(-8deg)
+    scale(.5);
+
   opacity:0;
 
   color:#fff;
   font-size:45px;
   font-weight:900;
+
   text-shadow:0 5px 0 #000;
 
   pointer-events:none;
-}
-
-/* =========================
-   ANIMATION
-========================= */
-
-.fall{
-  animation:fall .45s forwards;
-}
-
-.fly{
-  animation:fly .65s forwards;
 }
 
 @keyframes fall{
@@ -707,7 +701,6 @@ html,body{
       translateX(120px)
       translateY(-70px)
       rotate(45deg);
-
     opacity:0;
   }
 }
@@ -736,6 +729,14 @@ html,body{
 
 .shake{
   animation:shake .22s linear;
+}
+
+.fall{
+  animation:fall .45s forwards;
+}
+
+.fly{
+  animation:fly .65s forwards;
 }
 
 @media(max-width:600px){
@@ -770,17 +771,34 @@ html,body{
   <div id="roadLines"></div>
 
   <div id="hud">
-    <div class="hudBox">距離 <span id="distance">0</span>m</div>
-    <div class="hudBox">速度 <span id="speed">7</span></div>
-    <div class="hudBox">上司 <span id="bossDistance">100</span>m</div>
-    <div class="hudBox">🪙 <span id="coins">0</span></div>
+    <div class="hudBox">
+      距離 <span id="distance">0</span>m
+    </div>
+
+    <div class="hudBox">
+      速度 <span id="speed">2.5</span>m/s
+    </div>
+
+    <div class="hudBox">
+      上司 <span id="bossDistance">100</span>m
+    </div>
+
+    <div class="hudBox">
+      🪙 <span id="coins">0</span>
+    </div>
   </div>
 
-  <div id="warning">⚠ 上司が近い！</div>
+  <div id="warning">
+    ⚠ 上司が近い！
+  </div>
 
-  <div id="combo">COMBO ×1</div>
+  <div id="combo">
+    COMBO ×1
+  </div>
+
 
   <!-- PLAYER -->
+
   <div id="player" class="face-normal">
 
     <div class="head">
@@ -809,31 +827,62 @@ html,body{
 
   </div>
 
+
   <!-- BOSS -->
-  <div id="boss">
-    <div class="head"></div>
+
+  <div id="boss" class="boss-face-normal">
+
+    <div class="head">
+
+      <div class="hair"></div>
+
+      <div class="brow left"></div>
+      <div class="brow right"></div>
+
+      <div class="eye left"></div>
+      <div class="eye right"></div>
+
+      <div class="nose"></div>
+      <div class="mouth"></div>
+
+    </div>
+
     <div class="body"></div>
     <div class="tie"></div>
+
     <div class="arm l"></div>
     <div class="arm r"></div>
+
     <div class="leg l"></div>
     <div class="leg r"></div>
+
   </div>
+
 
   <div id="title">
     <h1>社畜ダッシュ</h1>
     <p>上司から逃げ続けろ。</p>
   </div>
 
-  <button id="start">START</button>
+  <button id="start">
+    START
+  </button>
+
 
   <div id="ranking">
+
     <h2>🏆 ONLINE RANKING</h2>
-    <div id="rankingList">ランキング接続中…</div>
+
+    <div id="rankingList">
+      ランキング接続中…
+    </div>
+
   </div>
+
 
   <div id="flash"></div>
   <div id="impactText"></div>
+
 
   <div id="gameover">
 
@@ -854,7 +903,9 @@ html,body{
       <b><span id="finalScore">0</span></b>
     </p>
 
-    <button id="retry">もう一度走る</button>
+    <button id="retry">
+      もう一度走る
+    </button>
 
   </div>
 
@@ -883,7 +934,7 @@ import {
    FIREBASE
 ========================= */
 
-const firebaseConfig = {
+const firebaseConfig={
   apiKey:"AIzaSyDP7aQ8ylOIiOeLiKfawJVpGUEIt4Dr4e4",
   authDomain:"shachiku-dash.firebaseapp.com",
   projectId:"shachiku-dash",
@@ -893,6 +944,7 @@ const firebaseConfig = {
 };
 
 const app=initializeApp(firebaseConfig);
+
 const db=getDatabase(app);
 
 
@@ -901,6 +953,7 @@ const db=getDatabase(app);
 ========================= */
 
 const game=document.getElementById("game");
+
 const player=document.getElementById("player");
 const boss=document.getElementById("boss");
 
@@ -916,16 +969,27 @@ const startBtn=document.getElementById("start");
 const retryBtn=document.getElementById("retry");
 
 const title=document.getElementById("title");
-const rankingList=document.getElementById("rankingList");
 
-const gameover=document.getElementById("gameover");
+const rankingList=
+  document.getElementById("rankingList");
 
-const finalDistance=document.getElementById("finalDistance");
-const finalCoins=document.getElementById("finalCoins");
-const finalScore=document.getElementById("finalScore");
+const gameover=
+  document.getElementById("gameover");
 
-const flash=document.getElementById("flash");
-const impactText=document.getElementById("impactText");
+const finalDistance=
+  document.getElementById("finalDistance");
+
+const finalCoins=
+  document.getElementById("finalCoins");
+
+const finalScore=
+  document.getElementById("finalScore");
+
+const flash=
+  document.getElementById("flash");
+
+const impactText=
+  document.getElementById("impactText");
 
 
 /* =========================
@@ -934,7 +998,8 @@ const impactText=document.getElementById("impactText");
 
 for(let i=0;i<18;i++){
 
-  const b=document.createElement("div");
+  const b=
+    document.createElement("div");
 
   b.className="building";
 
@@ -946,7 +1011,8 @@ for(let i=0;i<18;i++){
 
   for(let w=0;w<4;w++){
 
-    const win=document.createElement("div");
+    const win=
+      document.createElement("div");
 
     win.className="window";
 
@@ -962,20 +1028,6 @@ for(let i=0;i<18;i++){
   document
     .getElementById("city")
     .appendChild(b);
-}
-
-
-for(let i=0;i<8;i++){
-
-  const line=document.createElement("div");
-
-  line.className="roadLine";
-
-  line.style.left=(i*15)+"%";
-
-  document
-    .getElementById("roadLines")
-    .appendChild(line);
 }
 
 
@@ -1007,11 +1059,26 @@ let obstacleTimer=0;
 let coinTimer=0;
 
 
+/*
+  現実的なランニング速度
+
+  2.5m/s = 9km/h
+  3.0m/s = 10.8km/h
+  3.5m/s = 12.6km/h
+  4.0m/s = 14.4km/h
+
+  徐々に上がるが、
+  ゲーム後半でも4m/s程度。
+*/
+const START_SPEED=2.5;
+const MAX_SPEED=4.0;
+
+
 /* =========================
    FACE
 ========================= */
 
-const faces=[
+const playerFaces=[
   "face-normal",
   "face-panic",
   "face-funny1",
@@ -1019,15 +1086,25 @@ const faces=[
   "face-funny3"
 ];
 
-let faceTimer=null;
+const bossFaces=[
+  "boss-face-normal",
+  "boss-face-grin",
+  "boss-face-angry",
+  "boss-face-funny",
+  "boss-face-smirk"
+];
 
-function changeFace(){
+let playerFaceTimer=null;
+let bossFaceTimer=null;
 
-  if(!running) return;
+
+function changePlayerFace(){
+
+  if(!running)return;
 
   const current=
-    faces.find(f=>
-      player.classList.contains(f)
+    playerFaces.find(
+      f=>player.classList.contains(f)
     );
 
   let next=current;
@@ -1035,51 +1112,136 @@ function changeFace(){
   while(next===current){
 
     next=
-      faces[
+      playerFaces[
         Math.floor(
-          Math.random()*faces.length
+          Math.random()*playerFaces.length
         )
       ];
   }
 
-  faces.forEach(f=>
-    player.classList.remove(f)
+  playerFaces.forEach(
+    f=>player.classList.remove(f)
   );
 
   player.classList.add(next);
 
+  playerFaceTimer=
+    setTimeout(
+      changePlayerFace,
+      2200+Math.random()*1800
+    );
+}
+
+
+function changeBossFace(){
+
+  if(!running)return;
+
+  const current=
+    bossFaces.find(
+      f=>boss.classList.contains(f)
+    );
+
+  let next=current;
+
+  while(next===current){
+
+    next=
+      bossFaces[
+        Math.floor(
+          Math.random()*bossFaces.length
+        )
+      ];
+  }
+
+  bossFaces.forEach(
+    f=>boss.classList.remove(f)
+  );
+
+  boss.classList.add(next);
+
+  bossFaceTimer=
+    setTimeout(
+      changeBossFace,
+      2500+Math.random()*2000
+    );
+}
+
+
+function startFaceAnimations(){
+
+  clearTimeout(playerFaceTimer);
+  clearTimeout(bossFaceTimer);
+
+  playerFaces.forEach(
+    f=>player.classList.remove(f)
+  );
+
+  bossFaces.forEach(
+    f=>boss.classList.remove(f)
+  );
+
+  player.classList.add(
+    "face-normal"
+  );
+
+  boss.classList.add(
+    "boss-face-normal"
+  );
+
+  playerFaceTimer=
+    setTimeout(
+      changePlayerFace,
+      2200
+    );
+
+  bossFaceTimer=
+    setTimeout(
+      changeBossFace,
+      2500
+    );
+}
+
+
+function stopFaceAnimations(){
+
+  clearTimeout(playerFaceTimer);
+  clearTimeout(bossFaceTimer);
+
+  playerFaceTimer=null;
+  bossFaceTimer=null;
+}
+
+
+/* =========================
+   REALISTIC SPEED
+========================= */
+
+function getRunSpeed(){
+
   /*
-    2〜4秒ごとに表情変更
+    0〜60mではゆっくり加速。
+
+    2.5m/s
+       ↓
+    3.0m/s
+       ↓
+    3.5m/s
+       ↓
+    最大4.0m/s
+
+    急激な加速をしない。
   */
-  const nextTime=
-    2000+Math.random()*2000;
 
-  faceTimer=setTimeout(
-    changeFace,
-    nextTime
-  );
-}
+  const acceleration=
+    Math.min(
+      distance/80,
+      1
+    );
 
-function startFaceAnimation(){
-
-  clearTimeout(faceTimer);
-
-  faces.forEach(f=>
-    player.classList.remove(f)
-  );
-
-  player.classList.add("face-normal");
-
-  faceTimer=setTimeout(
-    changeFace,
-    2200
-  );
-}
-
-function stopFaceAnimation(){
-
-  clearTimeout(faceTimer);
-  faceTimer=null;
+  return START_SPEED+
+    (MAX_SPEED-START_SPEED)*
+    acceleration;
 }
 
 
@@ -1091,12 +1253,13 @@ function startGame(){
 
   cancelAnimationFrame(raf);
 
-  stopFaceAnimation();
+  stopFaceAnimations();
 
   running=true;
 
   distance=0;
   coins=0;
+
   combo=0;
   bestCombo=0;
 
@@ -1106,25 +1269,36 @@ function startGame(){
   jumpVelocity=0;
   jumping=false;
 
-  obstacles.forEach(o=>
-    o.el.remove()
+  obstacles.forEach(
+    o=>o.el.remove()
   );
 
-  coinObjects.forEach(c=>
-    c.el.remove()
+  coinObjects.forEach(
+    c=>c.el.remove()
   );
 
   obstacles=[];
   coinObjects=[];
 
   distanceEl.textContent="0";
-  speedEl.textContent="7";
+  speedEl.textContent=
+    START_SPEED.toFixed(1);
+
   bossDistanceEl.textContent="100";
   coinsEl.textContent="0";
 
   player.classList.remove(
     "fall",
-    "fly"
+    "fly",
+    "face-shock",
+    "face-despair"
+  );
+
+  boss.classList.remove(
+    "boss-face-grin",
+    "boss-face-angry",
+    "boss-face-funny",
+    "boss-face-smirk"
   );
 
   player.style.bottom="49%";
@@ -1133,48 +1307,105 @@ function startGame(){
   boss.style.opacity="1";
 
   warning.style.opacity="0";
+
   comboEl.style.opacity="0";
 
   title.style.display="none";
   startBtn.style.display="none";
+
   gameover.style.display="none";
 
-  lastTime=performance.now();
+  /*
+    最初の障害物はすぐ出さない。
+  */
+  obstacleTimer=2200;
 
   /*
-    最初からすぐ目の前に出すのではなく、
-    十分遠い位置から障害物を走らせる。
+    コインも最初から
+    いきなり目の前に出さない。
   */
-  obstacleTimer=1100;
+  coinTimer=1700;
 
-  coinTimer=1300;
+  lastTime=
+    performance.now();
 
-  startFaceAnimation();
+  startFaceAnimations();
 
-  raf=requestAnimationFrame(loop);
+  raf=
+    requestAnimationFrame(loop);
 }
 
 
 /* =========================
-   SPEED
+   OBSTACLE SAFETY
 ========================= */
 
-function getSpeed(){
+/*
+  コインをジャンプで取った後に
+  着地地点へ障害物を置かないための
+  「安全時間」。
 
-  return 7+
-    Math.min(
-      distance/150,
-      7
-    );
+  ジャンプしてから着地するまでを
+  おおよそ1秒以上確保。
+*/
+let safeUntil=0;
 
+
+/*
+  直前に障害物が存在するか。
+*/
+function obstacleTooClose(){
+
+  const screenW=
+    window.innerWidth;
+
+  for(const o of obstacles){
+
+    /*
+      プレイヤーより右側700px以内に
+      障害物がいる場合は新しい障害物を
+      出さない。
+    */
+
+    if(
+      o.x >
+      screenW*0.35 &&
+      o.x <
+      screenW+700
+    ){
+      return true;
+    }
+  }
+
+  return false;
 }
 
 
 /* =========================
-   OBSTACLE
+   SPAWN OBSTACLE
 ========================= */
 
 function spawnObstacle(){
+
+  /*
+    コインを取った直後など、
+    安全時間中は障害物を生成しない。
+  */
+
+  if(
+    performance.now()<safeUntil
+  ){
+    return;
+  }
+
+  /*
+    すでに近くに障害物があれば
+    さらに出さない。
+  */
+
+  if(obstacleTooClose()){
+    return;
+  }
 
   const types=[
     ["cone","🚧"],
@@ -1197,26 +1428,28 @@ function spawnObstacle(){
   el.className=
     "obstacle "+type[0];
 
-  el.textContent=type[1];
-
-  /*
-    以前よりかなり遠くから出す。
-    これにより「気付いてからタップ」
-    でもジャンプ可能な時間を確保。
-  */
-  el.style.right="-240px";
+  el.textContent=
+    type[1];
 
   game.appendChild(el);
 
+  /*
+    かなり遠くから走らせる。
+  */
+
   obstacles.push({
+
     el,
-    x:window.innerWidth+240
+
+    x:
+      window.innerWidth+320
+
   });
 }
 
 
 /* =========================
-   COIN
+   SPAWN COIN
 ========================= */
 
 function spawnCoin(){
@@ -1227,13 +1460,19 @@ function spawnCoin(){
   el.className="coin";
   el.textContent="¥";
 
-  el.style.right="-80px";
-
   game.appendChild(el);
 
+  /*
+    コインはジャンプで取りやすい高さ。
+  */
+
   coinObjects.push({
+
     el,
-    x:window.innerWidth+80
+
+    x:
+      window.innerWidth+130
+
   });
 }
 
@@ -1251,14 +1490,29 @@ function jump(high=false){
     jumping=true;
 
     jumpVelocity=
-      high ? 15 : 11;
+      high ? 14 : 10;
+
+    /*
+      ジャンプ開始時点から
+      少なくとも一定時間は
+      新しい障害物を生成しない。
+
+      これで
+      「コインを取りにジャンプ
+       ↓
+       着地地点に障害物」
+      を防ぐ。
+    */
+
+    safeUntil=
+      performance.now()+1400;
 
   }else if(high){
 
     jumpVelocity=
       Math.max(
         jumpVelocity,
-        14
+        13
       );
   }
 }
@@ -1273,24 +1527,31 @@ let pressTimer=null;
 game.addEventListener(
   "pointerdown",
   ()=>{
+
     if(!running)return;
 
-    pressTimer=setTimeout(
-      ()=>{
-        jump(true);
-        pressTimer=null;
-      },
-      180
-    );
+    pressTimer=
+      setTimeout(
+        ()=>{
+          jump(true);
+          pressTimer=null;
+        },
+        180
+      );
   }
 );
+
 
 game.addEventListener(
   "pointerup",
   ()=>{
+
     if(pressTimer!==null){
 
-      clearTimeout(pressTimer);
+      clearTimeout(
+        pressTimer
+      );
+
       pressTimer=null;
 
       jump(false);
@@ -1298,16 +1559,22 @@ game.addEventListener(
   }
 );
 
+
 game.addEventListener(
   "pointercancel",
   ()=>{
+
     if(pressTimer!==null){
 
-      clearTimeout(pressTimer);
+      clearTimeout(
+        pressTimer
+      );
+
       pressTimer=null;
     }
   }
 );
+
 
 window.addEventListener(
   "keydown",
@@ -1333,12 +1600,18 @@ function playerRect(){
     player.getBoundingClientRect();
 
   return{
+
     left:r.left+8,
+
     right:r.right-8,
+
     top:r.top+8,
+
     bottom:r.bottom-3
+
   };
 }
+
 
 function obstacleRect(el){
 
@@ -1346,12 +1619,18 @@ function obstacleRect(el){
     el.getBoundingClientRect();
 
   return{
+
     left:r.left+5,
+
     right:r.right-5,
+
     top:r.top+5,
+
     bottom:r.bottom
+
   };
 }
+
 
 function hit(a,b){
 
@@ -1373,25 +1652,32 @@ function crash(){
   if(!running)return;
 
   combo=0;
+
   updateCombo();
+
+  /*
+    衝突したら上司が少し近づく。
+  */
 
   bossDistance=
     Math.max(
       0,
-      bossDistance-55
+      bossDistance-45
     );
 
-  stopFaceAnimation();
+  stopFaceAnimations();
 
-  faces.forEach(f=>
-    player.classList.remove(f)
+  playerFaces.forEach(
+    f=>player.classList.remove(f)
   );
 
   player.classList.add(
     "face-shock"
   );
 
-  player.classList.add("fall");
+  player.classList.add(
+    "fall"
+  );
 
   impactText.textContent=
     "CRASH!";
@@ -1401,15 +1687,21 @@ function crash(){
   impactText.style.transform=
     "translate(-50%,-50%) rotate(-8deg) scale(1)";
 
-  flash.style.opacity=".75";
+  flash.style.opacity=".7";
 
-  setTimeout(()=>{
-    flash.style.opacity="0";
-  },90);
+  setTimeout(
+    ()=>{
+      flash.style.opacity="0";
+    },
+    90
+  );
 
-  setTimeout(()=>{
-    impactText.style.opacity="0";
-  },350);
+  setTimeout(
+    ()=>{
+      impactText.style.opacity="0";
+    },
+    350
+  );
 
   game.classList.remove("shake");
 
@@ -1417,13 +1709,12 @@ function crash(){
 
   game.classList.add("shake");
 
-  setTimeout(()=>{
-
-    player.classList.remove(
-      "fall"
-    );
-
-  },450);
+  setTimeout(
+    ()=>{
+      player.classList.remove("fall");
+    },
+    450
+  );
 
   if(bossDistance<=25){
 
@@ -1445,14 +1736,22 @@ function caughtByBoss(){
 
   running=false;
 
-  stopFaceAnimation();
+  stopFaceAnimations();
 
-  faces.forEach(f=>
-    player.classList.remove(f)
+  playerFaces.forEach(
+    f=>player.classList.remove(f)
   );
 
   player.classList.add(
     "face-despair"
+  );
+
+  bossFaces.forEach(
+    f=>boss.classList.remove(f)
+  );
+
+  boss.classList.add(
+    "boss-face-grin"
   );
 
   warning.style.opacity="1";
@@ -1460,9 +1759,6 @@ function caughtByBoss(){
   warning.textContent=
     "⚠ 上司に捕まった！";
 
-  /*
-    上司が画面内へ入る
-  */
   boss.style.left="35%";
 
   player.classList.remove(
@@ -1475,19 +1771,18 @@ function caughtByBoss(){
 
   flash.style.opacity=".9";
 
-  setTimeout(()=>{
-    flash.style.opacity="0";
-  },130);
-
-  game.classList.remove(
-    "shake"
+  setTimeout(
+    ()=>{
+      flash.style.opacity="0";
+    },
+    130
   );
+
+  game.classList.remove("shake");
 
   void game.offsetWidth;
 
-  game.classList.add(
-    "shake"
-  );
+  game.classList.add("shake");
 
   setTimeout(
     finishGame,
@@ -1506,14 +1801,27 @@ function collectCoin(index){
     coinObjects[index];
 
   coins++;
+
   combo++;
 
   if(combo>bestCombo){
+
     bestCombo=combo;
   }
 
   coinsEl.textContent=
     coins;
+
+  /*
+    コインを取った直後も
+    着地まで安全時間を延長。
+  */
+
+  safeUntil=
+    Math.max(
+      safeUntil,
+      performance.now()+1100
+    );
 
   c.el.remove();
 
@@ -1539,24 +1847,27 @@ function updateCombo(){
     return;
   }
 
-  comboEl.textContent=
-    "COMBO ×"+
+  const multiplier=
     Math.min(
       1+Math.floor(combo/5),
       5
     );
+
+  comboEl.textContent=
+    "COMBO ×"+multiplier;
 
   comboEl.style.opacity="1";
 
   comboEl.style.transform=
     "translateX(-50%) scale(1.15)";
 
-  setTimeout(()=>{
-
-    comboEl.style.transform=
-      "translateX(-50%) scale(1)";
-
-  },100);
+  setTimeout(
+    ()=>{
+      comboEl.style.transform=
+        "translateX(-50%) scale(1)";
+    },
+    100
+  );
 }
 
 
@@ -1578,29 +1889,40 @@ function getFinalScore(){
 
 
 /* =========================
-   LOOP
+   MAIN LOOP
 ========================= */
 
 function loop(now){
 
   if(!running)return;
 
-  const dt=
+  const dtSec=
     Math.min(
-      (now-lastTime)/16.67,
-      2
+      (now-lastTime)/1000,
+      .05
     );
 
   lastTime=now;
 
   const speed=
-    getSpeed();
+    getRunSpeed();
 
-  /*
-    mは走った距離だけ増える
-  */
+
+  /* =====================
+     DISTANCE
+
+     ここは「現実のメートル」。
+
+     2.5m/sなら
+     10秒 = 25m
+     30秒 = 75m
+     60秒 = 150m
+
+     という感覚。
+  ===================== */
+
   distance+=
-    speed*0.035*dt;
+    speed*dtSec;
 
   distanceEl.textContent=
     Math.floor(distance);
@@ -1616,16 +1938,32 @@ function loop(now){
   if(jumping){
 
     jumpY+=
-      jumpVelocity*dt;
+      jumpVelocity*
+      dtSec*
+      60;
 
     jumpVelocity-=
-      0.75*dt;
+      24*
+      dtSec;
 
     if(jumpY<=0){
 
       jumpY=0;
+
       jumpVelocity=0;
+
       jumping=false;
+
+      /*
+        着地後も少しだけ
+        安全時間を残す。
+      */
+
+      safeUntil=
+        Math.max(
+          safeUntil,
+          performance.now()+350
+        );
     }
   }
 
@@ -1636,12 +1974,25 @@ function loop(now){
 
   /* =====================
      BOSS
+
+     100mから徐々に迫る
   ===================== */
 
+  /*
+    距離に応じて少しずつ接近。
+    急激に減らさない。
+  */
+
+  const bossApproach=
+    0.8+
+    Math.min(
+      distance/250,
+      0.8
+    );
+
   bossDistance-=
-    0.0025*
-    speed*
-    dt;
+    bossApproach*
+    dtSec;
 
   bossDistance=
     Math.max(
@@ -1692,18 +2043,14 @@ function loop(now){
 
     if(
       bossDistance<45 &&
-      Math.random()<.08
+      Math.random()<.035
     ){
 
-      game.classList.remove(
-        "shake"
-      );
+      game.classList.remove("shake");
 
       void game.offsetWidth;
 
-      game.classList.add(
-        "shake"
-      );
+      game.classList.add("shake");
     }
 
   }else{
@@ -1713,30 +2060,75 @@ function loop(now){
 
 
   /* =====================
-     OBSTACLES
+     OBSTACLE TIMER
+
+     現実の速度と別管理。
+
+     プレイヤーの走行距離が
+     伸びても急激に障害物が
+     速くならない。
   ===================== */
 
   obstacleTimer-=
-    dt*16.67;
+    dtSec*1000;
+
 
   /*
-    初期より長め。
-    距離が伸びるほど短くする。
-    ただし最低でも0.95秒。
+    最初は約2.4秒間隔。
+
+    後半でも最低1.7秒程度。
   */
-  const interval=
+
+  const obstacleInterval=
     Math.max(
-      950,
-      1800-distance*0.9
+      1700,
+      2400-
+      distance*1.2
     );
 
-  if(obstacleTimer<=0){
 
-    spawnObstacle();
+  if(
+    obstacleTimer<=0 &&
+    performance.now()>safeUntil
+  ){
 
-    obstacleTimer=
-      interval;
+    /*
+      近くに障害物があるなら
+      今回は生成を見送る。
+    */
+
+    if(!obstacleTooClose()){
+
+      spawnObstacle();
+
+      obstacleTimer=
+        obstacleInterval;
+    }else{
+
+      obstacleTimer=500;
+    }
   }
+
+
+  /* =====================
+     MOVE OBSTACLES
+  ===================== */
+
+  /*
+    画面上の障害物速度。
+    現実のmとは別。
+
+    これを分離することで
+    「距離mが急激に増える」
+    問題を防ぐ。
+  */
+
+  const obstaclePixelSpeed=
+    300+
+    Math.min(
+      distance*0.8,
+      70
+    );
 
 
   for(
@@ -1749,17 +2141,20 @@ function loop(now){
       obstacles[i];
 
     o.x-=
-      speed*dt;
+      obstaclePixelSpeed*
+      dtSec;
 
     o.el.style.right=
       (window.innerWidth-o.x)
       +"px";
+
 
     const pr=
       playerRect();
 
     const or=
       obstacleRect(o.el);
+
 
     if(hit(pr,or)){
 
@@ -1775,7 +2170,8 @@ function loop(now){
       continue;
     }
 
-    if(o.x<-250){
+
+    if(o.x<-300){
 
       o.el.remove();
 
@@ -1788,20 +2184,63 @@ function loop(now){
 
 
   /* =====================
-     COINS
+     COIN TIMER
   ===================== */
 
   coinTimer-=
-    dt*16.67;
+    dtSec*1000;
+
 
   if(coinTimer<=0){
 
-    spawnCoin();
+    /*
+      コインの出現位置付近に
+      障害物がないことを確認。
+    */
 
-    coinTimer=
-      1200+
-      Math.random()*700;
+    let safe=true;
+
+    for(const o of obstacles){
+
+      if(
+        o.x >
+        window.innerWidth-100 &&
+        o.x <
+        window.innerWidth+500
+      ){
+
+        safe=false;
+
+        break;
+      }
+    }
+
+
+    if(safe){
+
+      spawnCoin();
+
+      coinTimer=
+        1800+
+        Math.random()*900;
+
+    }else{
+
+      coinTimer=700;
+    }
   }
+
+
+  /* =====================
+     MOVE COINS
+  ===================== */
+
+  const coinPixelSpeed=
+    300+
+    Math.min(
+      distance*.8,
+      70
+    );
 
 
   for(
@@ -1814,17 +2253,20 @@ function loop(now){
       coinObjects[i];
 
     c.x-=
-      speed*dt;
+      coinPixelSpeed*
+      dtSec;
 
     c.el.style.right=
       (window.innerWidth-c.x)
       +"px";
+
 
     const pr=
       playerRect();
 
     const cr=
       c.el.getBoundingClientRect();
+
 
     if(
       pr.right>cr.left &&
@@ -1837,6 +2279,7 @@ function loop(now){
 
       continue;
     }
+
 
     if(c.x<-100){
 
@@ -1860,22 +2303,28 @@ function loop(now){
 
       let x=
         parseFloat(
-          line.style.left
-        )||0;
+          line.dataset.x||"0"
+        );
 
       x-=
-        speed*
-        0.03*
-        dt;
+        obstaclePixelSpeed*
+        dtSec*
+        .025;
 
       if(x<-12){
         x=100;
       }
 
+      line.dataset.x=x;
+
       line.style.left=
         x+"%";
     });
 
+
+  /* =====================
+     BOSS CATCH
+  ===================== */
 
   if(bossDistance<=25){
 
@@ -1886,9 +2335,7 @@ function loop(now){
 
 
   raf=
-    requestAnimationFrame(
-      loop
-    );
+    requestAnimationFrame(loop);
 }
 
 
@@ -1902,7 +2349,7 @@ async function finishGame(){
 
   cancelAnimationFrame(raf);
 
-  stopFaceAnimation();
+  stopFaceAnimations();
 
   finalDistance.textContent=
     Math.floor(distance);
@@ -1915,23 +2362,6 @@ async function finishGame(){
 
   finalScore.textContent=
     score;
-
-  const best=
-    Number(
-      localStorage.getItem(
-        "shachikuBest"
-      )||0
-    );
-
-  if(
-    Math.floor(distance)>best
-  ){
-
-    localStorage.setItem(
-      "shachikuBest",
-      Math.floor(distance)
-    );
-  }
 
   gameover.style.display=
     "flex";
@@ -1999,6 +2429,7 @@ async function loadRanking(){
     const snapshot=
       await get(q);
 
+
     if(!snapshot.exists()){
 
       rankingList.innerHTML=
@@ -2006,6 +2437,7 @@ async function loadRanking(){
 
       return;
     }
+
 
     const data=[];
 
@@ -2017,21 +2449,22 @@ async function loadRanking(){
       }
     );
 
+
     data.sort(
       (a,b)=>
         Number(b.score||0)-
         Number(a.score||0)
     );
 
+
     rankingList.innerHTML="";
+
 
     data.forEach(
       (item,index)=>{
 
         const row=
-          document.createElement(
-            "div"
-          );
+          document.createElement("div");
 
         row.className=
           "rankRow";
@@ -2040,14 +2473,15 @@ async function loadRanking(){
           <span>
             ${index+1}位　${item.name||"社畜"}
           </span>
+
           <b>
-            ${Number(item.score||0).toLocaleString()}
+            ${Number(
+              item.score||0
+            ).toLocaleString()}
           </b>
         `;
 
-        rankingList.appendChild(
-          row
-        );
+        rankingList.appendChild(row);
       }
     );
 
