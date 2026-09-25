@@ -2,316 +2,845 @@
 <html lang="ja">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1.0,user-scalable=no">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
 <title>社畜ダッシュ</title>
 <style>
-*{box-sizing:border-box}
-body{
- margin:0;
- overflow:hidden;
- background:#222;
- font-family:Arial,sans-serif;
- touch-action:none;
+html,body{
+    margin:0;
+    padding:0;
+    width:100%;
+    height:100%;
+    overflow:hidden;
+    background:#111;
+    touch-action:none;
+    font-family:-apple-system,BlinkMacSystemFont,"Helvetica Neue",Arial,sans-serif;
 }
-#game{
- position:relative;
- width:100vw;
- height:100vh;
- overflow:hidden;
- background:linear-gradient(#75c8ff 0%,#dff5ff 65%,#777 65%);
+canvas{
+    display:block;
+    width:100vw;
+    height:100vh;
 }
-#title{
- position:absolute;
- top:35px;
- width:100%;
- text-align:center;
- font-size:34px;
- font-weight:bold;
- color:#222;
- text-shadow:2px 2px white;
- z-index:5;
+#ui{
+    position:fixed;
+    top:0;
+    left:0;
+    width:100%;
+    pointer-events:none;
+    color:white;
+    text-shadow:0 2px 4px #000;
+    z-index:5;
 }
-#info{
- position:absolute;
- top:85px;
- left:15px;
- right:15px;
- display:flex;
- justify-content:space-between;
- font-size:20px;
- font-weight:bold;
- z-index:5;
+#distance{
+    position:absolute;
+    top:18px;
+    left:18px;
+    font-size:24px;
+    font-weight:800;
 }
-#player{
- position:absolute;
- left:70px;
- bottom:120px;
- width:48px;
- height:70px;
- background:#222;
- border-radius:18px 18px 8px 8px;
- z-index:3;
-}
-#player:before{
- content:"";
- position:absolute;
- width:32px;
- height:32px;
- background:#f2c09b;
- border-radius:50%;
- left:8px;
- top:-28px;
-}
-#player:after{
- content:"";
- position:absolute;
- width:25px;
- height:8px;
- background:#111;
- left:11px;
- top:-25px;
- border-radius:10px;
-}
-.obstacle{
- position:absolute;
- bottom:120px;
- width:42px;
- height:55px;
- background:#e33;
- border-radius:6px;
- z-index:2;
-}
-.coin{
- position:absolute;
- bottom:220px;
- width:28px;
- height:28px;
- border-radius:50%;
- background:#ffd21c;
- border:4px solid #f39c00;
- z-index:2;
-}
-#ground{
- position:absolute;
- bottom:0;
- width:100%;
- height:120px;
- background:#555;
- border-top:8px solid #333;
+#bossText{
+    position:absolute;
+    top:55px;
+    left:18px;
+    font-size:15px;
+    font-weight:bold;
 }
 #start,#gameover{
- position:absolute;
- inset:0;
- background:rgba(0,0,0,.7);
- z-index:10;
- display:flex;
- flex-direction:column;
- align-items:center;
- justify-content:center;
- color:white;
- text-align:center;
+    position:fixed;
+    inset:0;
+    z-index:10;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    flex-direction:column;
+    background:rgba(0,0,0,.62);
+    color:white;
+    text-align:center;
 }
-#gameover{display:none}
+#gameover{
+    display:none;
+}
+h1{
+    font-size:48px;
+    margin:0 0 10px;
+    letter-spacing:2px;
+}
+.sub{
+    font-size:18px;
+    margin:6px 20px;
+}
 button{
- border:0;
- border-radius:15px;
- padding:18px 40px;
- font-size:22px;
- font-weight:bold;
- background:#ffcc00;
- color:#222;
+    margin-top:25px;
+    padding:17px 42px;
+    border:0;
+    border-radius:12px;
+    background:#fff;
+    color:#111;
+    font-size:20px;
+    font-weight:800;
 }
-h1{font-size:42px;margin:10px}
-p{font-size:18px}
+.small{
+    margin-top:18px;
+    font-size:14px;
+    opacity:.8;
+}
 </style>
 </head>
 
 <body>
-<div id="game">
 
-<div id="title">社畜ダッシュ</div>
+<canvas id="game"></canvas>
 
-<div id="info">
-<span>💰 <span id="score">0</span></span>
-<span>⏰ <span id="time">30</span>秒</span>
+<div id="ui">
+    <div id="distance">0 m</div>
+    <div id="bossText">上司との距離　██████</div>
 </div>
 
-<div id="player"></div>
-<div id="ground"></div>
-
 <div id="start">
-<h1>社畜ダッシュ</h1>
-<p>遅刻するな！会社へ急げ！</p>
-<p>画面をタップしてジャンプ</p>
-<button id="startBtn">出社する</button>
+    <h1>社畜ダッシュ</h1>
+    <div class="sub">寝坊した会社員、出社まであとわずか。</div>
+    <div class="sub">しかも後ろから怒った上司が追ってくる。</div>
+    <div class="sub">画面を押す長さでジャンプの高さが変わる。</div>
+    <button id="startBtn">出社する</button>
+    <div class="small">どこまで逃げ切れるか。</div>
 </div>
 
 <div id="gameover">
-<h1>遅刻しました</h1>
-<p>スコア：<span id="finalScore">0</span></p>
-<button id="retryBtn">もう一度出社</button>
-</div>
-
+    <h1>捕まった</h1>
+    <div class="sub" id="result"></div>
+    <button id="retryBtn">もう一度走る</button>
 </div>
 
 <script>
-const game=document.getElementById("game");
-const player=document.getElementById("player");
-const scoreText=document.getElementById("score");
-const timeText=document.getElementById("time");
-const start=document.getElementById("start");
-const gameover=document.getElementById("gameover");
-const finalScore=document.getElementById("finalScore");
+const canvas=document.getElementById("game");
+const ctx=canvas.getContext("2d");
 
+let W,H,DPR;
 let running=false;
-let jumping=false;
-let score=0;
-let time=30;
-let speed=6;
-let objects=[];
-let timer;
+let distance=0;
+let speed=7;
+let playerX=0;
+let playerY=0;
+let playerVY=0;
+let groundY=0;
 
-function jump(){
- if(!running||jumping)return;
- jumping=true;
+let jumpHeld=false;
+let jumpPower=0;
 
- let y=0;
- let up=setInterval(()=>{
-   y+=7;
-   player.style.transform=`translateY(${-y}px)`;
-   if(y>=120){
-     clearInterval(up);
-     let down=setInterval(()=>{
-       y-=7;
-       player.style.transform=`translateY(${-y}px)`;
-       if(y<=0){
-         clearInterval(down);
-         player.style.transform="translateY(0)";
-         jumping=false;
-       }
-     },20);
-   }
- },20);
+let bossGap=130;
+let obstacles=[];
+let particles=[];
+let buildings=[];
+let roadObjects=[];
+
+let spawnTimer=0;
+let cityOffset=0;
+let last=0;
+
+function resize(){
+    DPR=Math.min(window.devicePixelRatio||1,2);
+    W=innerWidth;
+    H=innerHeight;
+
+    canvas.width=W*DPR;
+    canvas.height=H*DPR;
+    canvas.style.width=W+"px";
+    canvas.style.height=H+"px";
+
+    ctx.setTransform(DPR,0,0,DPR,0,0);
+
+    groundY=H*0.78;
+    playerX=W*0.22;
+}
+window.addEventListener("resize",resize);
+resize();
+
+function rand(a,b){
+    return a+Math.random()*(b-a);
 }
 
-game.addEventListener("touchstart",e=>{
- if(running){
-   e.preventDefault();
-   jump();
- }
-});
+function makeCity(){
+    buildings=[];
+    let x=0;
 
-game.addEventListener("click",e=>{
- if(running && e.target===game) jump();
-});
+    while(x<W*3){
+        let w=rand(65,150);
+        let h=rand(100,280);
 
-function createObstacle(){
- if(!running)return;
+        buildings.push({
+            x:x,
+            w:w,
+            h:h,
+            windows:Math.floor(rand(2,5)),
+            color:Math.floor(rand(0,3))
+        });
 
- const o=document.createElement("div");
- o.className="obstacle";
- o.style.right="-50px";
- game.appendChild(o);
- objects.push({el:o,type:"obstacle",x:-50});
+        x+=w+rand(5,22);
+    }
+}
+makeCity();
 
- if(Math.random()<0.7){
-   const c=document.createElement("div");
-   c.className="coin";
-   c.style.right="-50px";
-   game.appendChild(c);
-   objects.push({el:c,type:"coin",x:-50});
- }
+function drawSky(){
+    let g=ctx.createLinearGradient(0,0,0,H);
+    g.addColorStop(0,"#91c7e8");
+    g.addColorStop(.55,"#dce9ed");
+    g.addColorStop(1,"#e8e8e8");
+
+    ctx.fillStyle=g;
+    ctx.fillRect(0,0,W,H);
 }
 
-function hit(a,b){
- const r1=a.getBoundingClientRect();
- const r2=b.getBoundingClientRect();
+function drawBuildings(){
+    let base=groundY;
 
- return !(r1.right<r2.left||
-          r1.left>r2.right||
-          r1.bottom<r2.top||
-          r1.top>r2.bottom);
+    for(let b of buildings){
+        let bx=((b.x-cityOffset*.22)%(W*3)+W*3)%(W*3)-100;
+
+        ctx.fillStyle=
+            b.color===0 ? "#69737a" :
+            b.color===1 ? "#858b8e" :
+            "#596269";
+
+        ctx.fillRect(bx,base-b.h,b.w,b.h);
+
+        for(let r=0;r<b.windows;r++){
+            for(let c=0;c<3;c++){
+                let wy=base-b.h+28+r*35;
+
+                if(wy>base-25)continue;
+
+                ctx.fillStyle="#b9d1d8";
+                ctx.fillRect(
+                    bx+12+c*(b.w/3),
+                    wy,
+                    Math.max(7,b.w/7),
+                    12
+                );
+            }
+        }
+
+        if(b.w>110){
+            ctx.fillStyle="#343b40";
+            ctx.fillRect(bx+b.w*.1,base-b.h+8,b.w*.8,5);
+        }
+    }
 }
 
-function loop(){
- if(!running)return;
+function drawRoad(){
+    ctx.fillStyle="#777";
+    ctx.fillRect(0,groundY,W,H-groundY);
 
- objects.forEach((o,i)=>{
-   o.x+=speed;
-   o.el.style.right=o.x+"px";
+    ctx.fillStyle="#555";
+    ctx.fillRect(0,groundY,W,8);
 
-   if(o.type==="obstacle" && hit(player,o.el)){
-     const pr=player.getBoundingClientRect();
-     const or=o.el.getBoundingClientRect();
+    ctx.fillStyle="#ddd";
 
-     if(pr.bottom>or.top+15){
-       endGame();
-     }
-   }
+    let stripeOffset=(cityOffset*.8)%90;
 
-   if(o.type==="coin" && hit(player,o.el)){
-     score++;
-     scoreText.textContent=score;
-     o.el.remove();
-     objects.splice(i,1);
-   }
+    for(let x=-stripeOffset;x<W;x+=90){
+        ctx.fillRect(x,groundY+72,48,5);
+    }
 
-   if(o.x>window.innerWidth+100){
-     o.el.remove();
-     objects.splice(i,1);
-   }
- });
+    // sidewalk
+    ctx.fillStyle="#a7a7a7";
+    ctx.fillRect(0,groundY+8,W,32);
 
- requestAnimationFrame(loop);
+    ctx.strokeStyle="#777";
+    ctx.lineWidth=2;
+
+    for(let x=-((cityOffset*.5)%80);x<W;x+=80){
+        ctx.beginPath();
+        ctx.moveTo(x,groundY+8);
+        ctx.lineTo(x+25,groundY+40);
+        ctx.stroke();
+    }
 }
+
+function drawStreetObjects(){
+    let off=(cityOffset*.7)%W;
+
+    // 電柱
+    for(let x=-off;x<W+150;x+=260){
+        ctx.fillStyle="#444";
+        ctx.fillRect(x,groundY-180,8,180);
+
+        ctx.fillStyle="#333";
+        ctx.fillRect(x-35,groundY-175,78,6);
+
+        ctx.strokeStyle="#222";
+        ctx.lineWidth=2;
+
+        ctx.beginPath();
+        ctx.moveTo(x-30,groundY-175);
+        ctx.lineTo(x-100,groundY-210);
+        ctx.stroke();
+
+        ctx.beginPath();
+        ctx.moveTo(x+40,groundY-175);
+        ctx.lineTo(x+120,groundY-205);
+        ctx.stroke();
+    }
+
+    // 街路樹
+    let treeOff=(cityOffset*.55)%190;
+
+    for(let x=-treeOff;x<W+100;x+=190){
+        ctx.fillStyle="#594333";
+        ctx.fillRect(x,groundY-115,12,115);
+
+        ctx.fillStyle="#365b3b";
+        ctx.beginPath();
+        ctx.arc(x+6,groundY-135,34,0,Math.PI*2);
+        ctx.fill();
+
+        ctx.beginPath();
+        ctx.arc(x-18,groundY-115,25,0,Math.PI*2);
+        ctx.fill();
+
+        ctx.beginPath();
+        ctx.arc(x+28,groundY-115,25,0,Math.PI*2);
+        ctx.fill();
+    }
+}
+
+function drawConvenienceStore(){
+    let x=((350-cityOffset*.9)%W+W)%W;
+
+    ctx.fillStyle="#eeeeee";
+    ctx.fillRect(x,groundY-100,115,100);
+
+    ctx.fillStyle="#f2f2f2";
+    ctx.fillRect(x+8,groundY-70,99,60);
+
+    ctx.fillStyle="#222";
+    ctx.font="bold 15px Arial";
+    ctx.fillText("24H",x+35,groundY-78);
+
+    ctx.fillStyle="#333";
+    ctx.fillRect(x+12,groundY-92,90,14);
+
+    ctx.fillStyle="#fff";
+    ctx.fillRect(x+18,groundY-87,30,4);
+    ctx.fillRect(x+58,groundY-87,30,4);
+}
+
+function drawPlayer(){
+    let x=playerX;
+    let y=groundY-18-playerY;
+
+    // shadow
+    ctx.fillStyle="rgba(0,0,0,.22)";
+    ctx.beginPath();
+    ctx.ellipse(x,y+20,30,7,0,0,Math.PI*2);
+    ctx.fill();
+
+    // legs
+    ctx.strokeStyle="#222";
+    ctx.lineWidth=9;
+    ctx.lineCap="round";
+
+    let legSwing=Math.sin(Date.now()/90)*10;
+
+    ctx.beginPath();
+    ctx.moveTo(x-8,y+5);
+    ctx.lineTo(x-13+legSwing,y+40);
+    ctx.stroke();
+
+    ctx.beginPath();
+    ctx.moveTo(x+7,y+5);
+    ctx.lineTo(x+14-legSwing,y+40);
+    ctx.stroke();
+
+    // shoes
+    ctx.fillStyle="#111";
+    ctx.fillRect(x-24+legSwing,y+36,18,8);
+    ctx.fillRect(x+8-legSwing,y+36,18,8);
+
+    // body / suit
+    ctx.fillStyle="#20252a";
+    ctx.beginPath();
+    ctx.roundRect(x-20,y-48,40,58,8);
+    ctx.fill();
+
+    // shirt
+    ctx.fillStyle="#eee";
+    ctx.beginPath();
+    ctx.moveTo(x-7,y-47);
+    ctx.lineTo(x,y-25);
+    ctx.lineTo(x+7,y-47);
+    ctx.closePath();
+    ctx.fill();
+
+    // tie
+    ctx.fillStyle="#9b2226";
+    ctx.beginPath();
+    ctx.moveTo(x-3,y-44);
+    ctx.lineTo(x+3,y-44);
+    ctx.lineTo(x+4,y-18);
+    ctx.lineTo(x,y-13);
+    ctx.lineTo(x-4,y-18);
+    ctx.closePath();
+    ctx.fill();
+
+    // arm
+    ctx.strokeStyle="#20252a";
+    ctx.lineWidth=8;
+
+    ctx.beginPath();
+    ctx.moveTo(x-17,y-35);
+    ctx.lineTo(x-31,y-5);
+    ctx.stroke();
+
+    ctx.beginPath();
+    ctx.moveTo(x+17,y-35);
+    ctx.lineTo(x+31,y-8);
+    ctx.stroke();
+
+    // head
+    ctx.fillStyle="#d9a27e";
+    ctx.beginPath();
+    ctx.arc(x,y-67,17,0,Math.PI*2);
+    ctx.fill();
+
+    // hair
+    ctx.fillStyle="#252525";
+    ctx.beginPath();
+    ctx.arc(x,y-72,17,Math.PI,Math.PI*2);
+    ctx.fill();
+
+    // briefcase
+    ctx.fillStyle="#4a3024";
+    ctx.fillRect(x-45,y-4,20,16);
+    ctx.strokeStyle="#2a1b15";
+    ctx.lineWidth=2;
+    ctx.strokeRect(x-45,y-4,20,16);
+
+    // sweat
+    if(speed>9){
+        ctx.fillStyle="#68b6e8";
+        ctx.beginPath();
+        ctx.arc(x+23,y-75,3,0,Math.PI*2);
+        ctx.fill();
+    }
+}
+
+function drawBoss(){
+    let x=playerX-bossGap;
+    let y=groundY-18;
+
+    // shadow
+    ctx.fillStyle="rgba(0,0,0,.2)";
+    ctx.beginPath();
+    ctx.ellipse(x,y+20,31,7,0,0,Math.PI*2);
+    ctx.fill();
+
+    // legs
+    ctx.strokeStyle="#171717";
+    ctx.lineWidth=10;
+    ctx.lineCap="round";
+
+    let s=Math.sin(Date.now()/100)*9;
+
+    ctx.beginPath();
+    ctx.moveTo(x-8,y+5);
+    ctx.lineTo(x-13+s,y+40);
+    ctx.stroke();
+
+    ctx.beginPath();
+    ctx.moveTo(x+8,y+5);
+    ctx.lineTo(x+13-s,y+40);
+    ctx.stroke();
+
+    // body
+    ctx.fillStyle="#15191c";
+    ctx.beginPath();
+    ctx.roundRect(x-22,y-50,44,62,8);
+    ctx.fill();
+
+    // arms
+    ctx.strokeStyle="#15191c";
+    ctx.lineWidth=9;
+
+    ctx.beginPath();
+    ctx.moveTo(x-18,y-35);
+    ctx.lineTo(x-37,y-5);
+    ctx.stroke();
+
+    ctx.beginPath();
+    ctx.moveTo(x+18,y-35);
+    ctx.lineTo(x+37,y-5);
+    ctx.stroke();
+
+    // head
+    ctx.fillStyle="#d19a75";
+    ctx.beginPath();
+    ctx.arc(x,y-68,18,0,Math.PI*2);
+    ctx.fill();
+
+    // hair
+    ctx.fillStyle="#1c1c1c";
+    ctx.beginPath();
+    ctx.arc(x,y-74,18,Math.PI,Math.PI*2);
+    ctx.fill();
+
+    // angry eyebrows
+    ctx.strokeStyle="#111";
+    ctx.lineWidth=4;
+
+    ctx.beginPath();
+    ctx.moveTo(x-11,y-72);
+    ctx.lineTo(x-2,y-69);
+    ctx.stroke();
+
+    ctx.beginPath();
+    ctx.moveTo(x+11,y-72);
+    ctx.lineTo(x+2,y-69);
+    ctx.stroke();
+
+    // mouth
+    ctx.beginPath();
+    ctx.moveTo(x-7,y-60);
+    ctx.lineTo(x+7,y-60);
+    ctx.stroke();
+
+    // red anger effect
+    if(bossGap<100){
+        ctx.strokeStyle="rgba(220,30,30,.7)";
+        ctx.lineWidth=3;
+        ctx.beginPath();
+        ctx.arc(x,y-68,27,-.7,.7);
+        ctx.stroke();
+    }
+}
+
+function drawObstacle(o){
+    let x=o.x;
+    let y=groundY;
+
+    if(o.type==="cone"){
+        ctx.fillStyle="#e87527";
+        ctx.beginPath();
+        ctx.moveTo(x,y);
+        ctx.lineTo(x+15,y-45);
+        ctx.lineTo(x+30,y);
+        ctx.closePath();
+        ctx.fill();
+
+        ctx.fillStyle="#fff";
+        ctx.fillRect(x+8,y-27,16,7);
+    }
+
+    if(o.type==="bike"){
+        ctx.strokeStyle="#222";
+        ctx.lineWidth=4;
+
+        ctx.beginPath();
+        ctx.arc(x+10,y-10,14,0,Math.PI*2);
+        ctx.stroke();
+
+        ctx.beginPath();
+        ctx.arc(x+48,y-10,14,0,Math.PI*2);
+        ctx.stroke();
+
+        ctx.beginPath();
+        ctx.moveTo(x+10,y-10);
+        ctx.lineTo(x+28,y-32);
+        ctx.lineTo(x+48,y-10);
+        ctx.lineTo(x+10,y-10);
+        ctx.stroke();
+
+        ctx.beginPath();
+        ctx.moveTo(x+28,y-32);
+        ctx.lineTo(x+37,y-36);
+        ctx.stroke();
+    }
+
+    if(o.type==="sign"){
+        ctx.fillStyle="#777";
+        ctx.fillRect(x+20,y-100,6,100);
+
+        ctx.fillStyle="#fff";
+        ctx.fillRect(x-8,y-115,62,35);
+
+        ctx.strokeStyle="#444";
+        ctx.lineWidth=2;
+        ctx.strokeRect(x-8,y-115,62,35);
+
+        ctx.fillStyle="#333";
+        ctx.font="bold 11px Arial";
+        ctx.fillText("工事中",x+4,y-93);
+    }
+
+    if(o.type==="bench"){
+        ctx.fillStyle="#765034";
+        ctx.fillRect(x,y-38,65,8);
+        ctx.fillRect(x+8,y-30,7,30);
+        ctx.fillRect(x+50,y-30,7,30);
+    }
+
+    if(o.type==="car"){
+        ctx.fillStyle="#4c5961";
+        ctx.beginPath();
+        ctx.roundRect(x,y-48,100,48,8);
+        ctx.fill();
+
+        ctx.fillStyle="#273038";
+        ctx.fillRect(x+22,y-65,48,22);
+
+        ctx.fillStyle="#a9d0df";
+        ctx.fillRect(x+27,y-61,18,14);
+        ctx.fillRect(x+49,y-61,16,14);
+
+        ctx.fillStyle="#222";
+        ctx.beginPath();
+        ctx.arc(x+20,y,10,0,Math.PI*2);
+        ctx.fill();
+
+        ctx.beginPath();
+        ctx.arc(x+80,y,10,0,Math.PI*2);
+        ctx.fill();
+    }
+}
+
+function spawnObstacle(){
+    let types=["cone","bike","sign","bench","car"];
+
+    let type=types[Math.floor(Math.random()*types.length)];
+
+    obstacles.push({
+        x:W+100,
+        type:type
+    });
+}
+
+function updateObstacles(dt){
+    for(let i=obstacles.length-1;i>=0;i--){
+        let o=obstacles[i];
+
+        o.x-=speed*dt*60;
+
+        let ox=o.x;
+        let oy=groundY;
+
+        let w=
+            o.type==="car"?100:
+            o.type==="bike"?62:
+            o.type==="bench"?65:
+            45;
+
+        let h=
+            o.type==="car"?55:
+            o.type==="sign"?115:
+            o.type==="bike"?45:
+            o.type==="bench"?38:
+            45;
+
+        let px=playerX;
+        let py=groundY-playerY;
+
+        if(
+            px+20>ox &&
+            px-20<ox+w &&
+            py>oy-h+15
+        ){
+            bossGap-=55;
+            obstacles.splice(i,1);
+
+            for(let n=0;n<12;n++){
+                particles.push({
+                    x:px,
+                    y:py,
+                    vx:rand(-4,4),
+                    vy:rand(-6,-1),
+                    life:1
+                });
+            }
+
+            if(bossGap<=25){
+                gameOver();
+            }
+
+            continue;
+        }
+
+        if(o.x<-150){
+            obstacles.splice(i,1);
+        }
+    }
+}
+
+function updateParticles(dt){
+    for(let i=particles.length-1;i>=0;i--){
+        let p=particles[i];
+
+        p.x+=p.vx*dt*60;
+        p.y+=p.vy*dt*60;
+        p.vy+=.3*dt*60;
+        p.life-=dt;
+
+        if(p.life<=0){
+            particles.splice(i,1);
+        }
+    }
+}
+
+function drawParticles(){
+    for(let p of particles){
+        ctx.fillStyle=`rgba(255,220,80,${p.life})`;
+        ctx.fillRect(p.x,p.y,5,5);
+    }
+}
+
+function update(dt){
+    if(!running)return;
+
+    distance+=speed*dt*.13;
+
+    cityOffset+=speed*dt*60;
+
+    // 少しずつ加速
+    speed=7+Math.min(distance/150,7);
+
+    // ジャンプ
+    if(jumpHeld){
+        jumpPower=Math.min(jumpPower+dt*2.7,1);
+    }
+
+    // 重力
+    playerVY-=32*dt;
+
+    playerY+=playerVY*dt;
+
+    if(playerY<=0){
+        playerY=0;
+        playerVY=0;
+    }
+
+    // 上司は徐々に迫る
+    bossGap+=0.8*dt;
+
+    if(bossGap>145)bossGap=145;
+
+    // 障害物生成
+    spawnTimer-=dt;
+
+    let interval=Math.max(.75,1.5-distance/600);
+
+    if(spawnTimer<=0){
+        spawnObstacle();
+        spawnTimer=interval;
+    }
+
+    updateObstacles(dt);
+    updateParticles(dt);
+
+    document.getElementById("distance").textContent=
+        Math.floor(distance)+" m";
+
+    let blocks=Math.max(1,Math.floor(bossGap/22));
+    document.getElementById("bossText").textContent=
+        "上司との距離　"+"█".repeat(blocks);
+}
+
+function draw(){
+    drawSky();
+    drawBuildings();
+    drawStreetObjects();
+    drawConvenienceStore();
+    drawRoad();
+
+    for(let o of obstacles){
+        drawObstacle(o);
+    }
+
+    drawBoss();
+    drawPlayer();
+    drawParticles();
+
+    // 画面端の赤い警告
+    if(bossGap<70){
+        let alpha=(70-bossGap)/140;
+
+        ctx.fillStyle=`rgba(220,0,0,${alpha})`;
+        ctx.fillRect(0,0,W,7);
+
+        ctx.fillStyle=`rgba(220,0,0,${alpha*.35})`;
+        ctx.fillRect(0,0,W,H);
+    }
+}
+
+function loop(t){
+    let dt=Math.min((t-last)/1000,.033);
+    last=t;
+
+    update(dt);
+    draw();
+
+    requestAnimationFrame(loop);
+}
+
+function beginJump(){
+    if(!running)return;
+
+    if(playerY<=1){
+        jumpHeld=true;
+        jumpPower=0;
+        playerVY=13;
+    }
+}
+
+function endJump(){
+    if(!jumpHeld)return;
+
+    jumpHeld=false;
+
+    // 押した時間で追加上昇
+    playerVY+=17*jumpPower;
+}
+
+canvas.addEventListener("touchstart",e=>{
+    e.preventDefault();
+    beginJump();
+},{passive:false});
+
+canvas.addEventListener("touchend",e=>{
+    e.preventDefault();
+    endJump();
+},{passive:false});
+
+canvas.addEventListener("mousedown",beginJump);
+window.addEventListener("mouseup",endJump);
 
 function startGame(){
- running=true;
- score=0;
- time=30;
- speed=6;
- scoreText.textContent=0;
- timeText.textContent=30;
- start.style.display="none";
- gameover.style.display="none";
+    running=true;
+    distance=0;
+    speed=7;
+    playerY=0;
+    playerVY=0;
+    bossGap=130;
+    obstacles=[];
+    particles=[];
+    spawnTimer=.7;
+    cityOffset=0;
 
- objects.forEach(o=>o.el.remove());
- objects=[];
+    document.getElementById("start").style.display="none";
+    document.getElementById("gameover").style.display="none";
 
- timer=setInterval(()=>{
-   if(!running)return;
-
-   time--;
-   timeText.textContent=time;
-
-   if(time<=0)endGame();
- },1000);
-
- spawn();
- loop();
+    last=performance.now();
 }
 
-function spawn(){
- if(!running)return;
+function gameOver(){
+    running=false;
 
- createObstacle();
+    document.getElementById("result").textContent=
+        "あなたは "+Math.floor(distance)+"m 逃げた。";
 
- let delay=900+Math.random()*1000;
- setTimeout(spawn,delay);
-}
-
-function endGame(){
- if(!running)return;
-
- running=false;
- clearInterval(timer);
-
- finalScore.textContent=score;
- gameover.style.display="flex";
+    document.getElementById("gameover").style.display="flex";
 }
 
 document.getElementById("startBtn").onclick=startGame;
 document.getElementById("retryBtn").onclick=startGame;
+
+requestAnimationFrame(loop);
 </script>
 
 </body>
