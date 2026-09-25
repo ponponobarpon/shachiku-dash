@@ -4,84 +4,100 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
 <title>社畜ダッシュ</title>
+
 <style>
 html,body{
-    margin:0;
-    padding:0;
-    width:100%;
-    height:100%;
-    overflow:hidden;
-    background:#111;
-    touch-action:none;
-    font-family:-apple-system,BlinkMacSystemFont,"Helvetica Neue",Arial,sans-serif;
+  margin:0;
+  padding:0;
+  width:100%;
+  height:100%;
+  overflow:hidden;
+  background:#111;
+  touch-action:none;
+  -webkit-user-select:none;
+  user-select:none;
 }
+
 canvas{
-    display:block;
-    width:100vw;
-    height:100vh;
+  display:block;
+  width:100vw;
+  height:100vh;
+  touch-action:none;
 }
+
 #ui{
-    position:fixed;
-    top:0;
-    left:0;
-    width:100%;
-    pointer-events:none;
-    color:white;
-    text-shadow:0 2px 4px #000;
-    z-index:5;
+  position:fixed;
+  top:0;
+  left:0;
+  width:100%;
+  pointer-events:none;
+  color:white;
+  text-shadow:0 2px 4px #000;
+  z-index:5;
 }
+
 #distance{
-    position:absolute;
-    top:18px;
-    left:18px;
-    font-size:24px;
-    font-weight:800;
+  position:absolute;
+  top:18px;
+  left:18px;
+  font-size:24px;
+  font-weight:800;
 }
+
 #bossText{
-    position:absolute;
-    top:55px;
-    left:18px;
-    font-size:15px;
-    font-weight:bold;
+  position:absolute;
+  top:55px;
+  left:18px;
+  font-size:15px;
+  font-weight:bold;
 }
-#start,#gameover{
-    position:fixed;
-    inset:0;
-    z-index:10;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    flex-direction:column;
-    background:rgba(0,0,0,.62);
-    color:white;
-    text-align:center;
+
+.overlay{
+  position:fixed;
+  inset:0;
+  z-index:10;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  flex-direction:column;
+  background:rgba(0,0,0,.68);
+  color:white;
+  text-align:center;
+  padding:20px;
+  box-sizing:border-box;
 }
+
 #gameover{
-    display:none;
+  display:none;
 }
+
 h1{
-    font-size:48px;
-    margin:0 0 10px;
-    letter-spacing:2px;
+  font-size:48px;
+  margin:0 0 10px;
+  letter-spacing:2px;
 }
+
 .sub{
-    font-size:18px;
-    margin:6px 20px;
+  font-size:18px;
+  margin:6px 20px;
 }
+
 button{
-    margin-top:25px;
-    padding:17px 42px;
-    border:0;
-    border-radius:12px;
-    background:#fff;
-    color:#111;
-    font-size:20px;
-    font-weight:800;
+  margin-top:25px;
+  padding:17px 42px;
+  border:0;
+  border-radius:12px;
+  background:white;
+  color:#111;
+  font-size:20px;
+  font-weight:800;
+  touch-action:manipulation;
 }
+
 .small{
-    margin-top:18px;
-    font-size:14px;
-    opacity:.8;
+  margin-top:18px;
+  font-size:14px;
+  opacity:.8;
 }
 </style>
 </head>
@@ -91,756 +107,1383 @@ button{
 <canvas id="game"></canvas>
 
 <div id="ui">
-    <div id="distance">0 m</div>
-    <div id="bossText">上司との距離　██████</div>
+  <div id="distance">0 m</div>
+  <div id="bossText">上司との距離　██████</div>
 </div>
 
-<div id="start">
-    <h1>社畜ダッシュ</h1>
-    <div class="sub">寝坊した会社員、出社まであとわずか。</div>
-    <div class="sub">しかも後ろから怒った上司が追ってくる。</div>
-    <div class="sub">画面を押す長さでジャンプの高さが変わる。</div>
-    <button id="startBtn">出社する</button>
-    <div class="small">どこまで逃げ切れるか。</div>
+<div id="start" class="overlay">
+  <h1>社畜ダッシュ</h1>
+  <div class="sub">寝坊した会社員、出社まであとわずか。</div>
+  <div class="sub">しかも後ろから怒った上司が追ってくる。</div>
+  <div class="sub">タップでジャンプ。長押しで高くジャンプ。</div>
+  <button id="startBtn">出社する</button>
+  <div class="small">どこまで逃げ切れるか。</div>
 </div>
 
-<div id="gameover">
-    <h1>捕まった</h1>
-    <div class="sub" id="result"></div>
-    <button id="retryBtn">もう一度走る</button>
+<div id="gameover" class="overlay">
+  <h1>捕まった</h1>
+  <div class="sub" id="result"></div>
+  <button id="retryBtn">もう一度走る</button>
 </div>
 
 <script>
-const canvas=document.getElementById("game");
-const ctx=canvas.getContext("2d");
+const canvas = document.getElementById("game");
+const ctx = canvas.getContext("2d");
 
-let W,H,DPR;
-let running=false;
-let distance=0;
-let speed=7;
-let playerX=0;
-let playerY=0;
-let playerVY=0;
-let groundY=0;
+let W = 0;
+let H = 0;
+let DPR = 1;
 
-let jumpHeld=false;
-let jumpPower=0;
+let running = false;
 
-let bossGap=130;
-let obstacles=[];
-let particles=[];
-let buildings=[];
-let roadObjects=[];
+let distance = 0;
+let speed = 7;
 
-let spawnTimer=0;
-let cityOffset=0;
-let last=0;
+let playerX = 0;
+let playerY = 0;
+let playerVY = 0;
+
+let groundY = 0;
+
+let jumpHeld = false;
+let jumpPower = 0;
+
+let bossGap = 130;
+
+let obstacles = [];
+let particles = [];
+let buildings = [];
+
+let spawnTimer = 0;
+let cityOffset = 0;
+let lastTime = 0;
 
 function resize(){
-    DPR=Math.min(window.devicePixelRatio||1,2);
-    W=innerWidth;
-    H=innerHeight;
 
-    canvas.width=W*DPR;
-    canvas.height=H*DPR;
-    canvas.style.width=W+"px";
-    canvas.style.height=H+"px";
+  DPR = Math.min(window.devicePixelRatio || 1, 2);
 
-    ctx.setTransform(DPR,0,0,DPR,0,0);
+  W = window.innerWidth;
+  H = window.innerHeight;
 
-    groundY=H*0.78;
-    playerX=W*0.22;
+  canvas.width = W * DPR;
+  canvas.height = H * DPR;
+
+  canvas.style.width = W + "px";
+  canvas.style.height = H + "px";
+
+  ctx.setTransform(DPR,0,0,DPR,0,0);
+
+  groundY = H * 0.78;
+  playerX = W * 0.22;
 }
-window.addEventListener("resize",resize);
+
+window.addEventListener("resize", resize);
 resize();
 
 function rand(a,b){
-    return a+Math.random()*(b-a);
+  return a + Math.random() * (b-a);
 }
+
+/* =========================
+   街
+========================= */
 
 function makeCity(){
-    buildings=[];
-    let x=0;
 
-    while(x<W*3){
-        let w=rand(65,150);
-        let h=rand(100,280);
+  buildings = [];
 
-        buildings.push({
-            x:x,
-            w:w,
-            h:h,
-            windows:Math.floor(rand(2,5)),
-            color:Math.floor(rand(0,3))
-        });
+  let x = 0;
 
-        x+=w+rand(5,22);
-    }
+  while(x < W * 4){
+
+    const w = rand(65,150);
+    const h = rand(100,280);
+
+    buildings.push({
+      x:x,
+      w:w,
+      h:h,
+      windows:Math.floor(rand(2,6)),
+      color:Math.floor(rand(0,3))
+    });
+
+    x += w + rand(5,22);
+  }
 }
+
 makeCity();
 
 function drawSky(){
-    let g=ctx.createLinearGradient(0,0,0,H);
-    g.addColorStop(0,"#91c7e8");
-    g.addColorStop(.55,"#dce9ed");
-    g.addColorStop(1,"#e8e8e8");
 
-    ctx.fillStyle=g;
-    ctx.fillRect(0,0,W,H);
+  const g = ctx.createLinearGradient(0,0,0,H);
+
+  g.addColorStop(0,"#91c7e8");
+  g.addColorStop(.55,"#dce9ed");
+  g.addColorStop(1,"#eeeeee");
+
+  ctx.fillStyle = g;
+  ctx.fillRect(0,0,W,H);
 }
 
 function drawBuildings(){
-    let base=groundY;
 
-    for(let b of buildings){
-        let bx=((b.x-cityOffset*.22)%(W*3)+W*3)%(W*3)-100;
+  for(const b of buildings){
 
-        ctx.fillStyle=
-            b.color===0 ? "#69737a" :
-            b.color===1 ? "#858b8e" :
-            "#596269";
+    const bx =
+      ((b.x - cityOffset*.22) % (W*4) + W*4)
+      % (W*4) - 100;
 
-        ctx.fillRect(bx,base-b.h,b.w,b.h);
+    ctx.fillStyle =
+      b.color === 0 ? "#69737a" :
+      b.color === 1 ? "#858b8e" :
+      "#596269";
 
-        for(let r=0;r<b.windows;r++){
-            for(let c=0;c<3;c++){
-                let wy=base-b.h+28+r*35;
+    ctx.fillRect(
+      bx,
+      groundY-b.h,
+      b.w,
+      b.h
+    );
 
-                if(wy>base-25)continue;
+    for(let r=0;r<b.windows;r++){
 
-                ctx.fillStyle="#b9d1d8";
-                ctx.fillRect(
-                    bx+12+c*(b.w/3),
-                    wy,
-                    Math.max(7,b.w/7),
-                    12
-                );
-            }
-        }
+      for(let c=0;c<3;c++){
 
-        if(b.w>110){
-            ctx.fillStyle="#343b40";
-            ctx.fillRect(bx+b.w*.1,base-b.h+8,b.w*.8,5);
-        }
+        const wy =
+          groundY-b.h+28+r*35;
+
+        if(wy > groundY-25) continue;
+
+        ctx.fillStyle = "#b9d1d8";
+
+        ctx.fillRect(
+          bx+12+c*(b.w/3),
+          wy,
+          Math.max(7,b.w/7),
+          12
+        );
+      }
     }
+
+    if(b.w > 110){
+
+      ctx.fillStyle="#343b40";
+
+      ctx.fillRect(
+        bx+b.w*.1,
+        groundY-b.h+8,
+        b.w*.8,
+        5
+      );
+    }
+  }
 }
 
 function drawRoad(){
-    ctx.fillStyle="#777";
-    ctx.fillRect(0,groundY,W,H-groundY);
 
-    ctx.fillStyle="#555";
-    ctx.fillRect(0,groundY,W,8);
+  ctx.fillStyle="#777";
+  ctx.fillRect(
+    0,
+    groundY,
+    W,
+    H-groundY
+  );
 
-    ctx.fillStyle="#ddd";
+  ctx.fillStyle="#555";
+  ctx.fillRect(
+    0,
+    groundY,
+    W,
+    8
+  );
 
-    let stripeOffset=(cityOffset*.8)%90;
+  ctx.fillStyle="#a7a7a7";
 
-    for(let x=-stripeOffset;x<W;x+=90){
-        ctx.fillRect(x,groundY+72,48,5);
-    }
+  ctx.fillRect(
+    0,
+    groundY+8,
+    W,
+    32
+  );
 
-    // sidewalk
-    ctx.fillStyle="#a7a7a7";
-    ctx.fillRect(0,groundY+8,W,32);
+  ctx.strokeStyle="#777";
+  ctx.lineWidth=2;
 
-    ctx.strokeStyle="#777";
-    ctx.lineWidth=2;
+  for(
+    let x=-((cityOffset*.5)%80);
+    x<W;
+    x+=80
+  ){
 
-    for(let x=-((cityOffset*.5)%80);x<W;x+=80){
-        ctx.beginPath();
-        ctx.moveTo(x,groundY+8);
-        ctx.lineTo(x+25,groundY+40);
-        ctx.stroke();
-    }
+    ctx.beginPath();
+
+    ctx.moveTo(
+      x,
+      groundY+8
+    );
+
+    ctx.lineTo(
+      x+25,
+      groundY+40
+    );
+
+    ctx.stroke();
+  }
+
+  ctx.fillStyle="#ddd";
+
+  const stripeOffset =
+    (cityOffset*.8)%90;
+
+  for(
+    let x=-stripeOffset;
+    x<W;
+    x+=90
+  ){
+
+    ctx.fillRect(
+      x,
+      groundY+72,
+      48,
+      5
+    );
+  }
 }
 
 function drawStreetObjects(){
-    let off=(cityOffset*.7)%W;
 
-    // 電柱
-    for(let x=-off;x<W+150;x+=260){
-        ctx.fillStyle="#444";
-        ctx.fillRect(x,groundY-180,8,180);
+  const off =
+    (cityOffset*.7)%260;
 
-        ctx.fillStyle="#333";
-        ctx.fillRect(x-35,groundY-175,78,6);
+  /* 電柱 */
 
-        ctx.strokeStyle="#222";
-        ctx.lineWidth=2;
+  for(
+    let x=-off;
+    x<W+150;
+    x+=260
+  ){
 
-        ctx.beginPath();
-        ctx.moveTo(x-30,groundY-175);
-        ctx.lineTo(x-100,groundY-210);
-        ctx.stroke();
+    ctx.fillStyle="#444";
 
-        ctx.beginPath();
-        ctx.moveTo(x+40,groundY-175);
-        ctx.lineTo(x+120,groundY-205);
-        ctx.stroke();
-    }
+    ctx.fillRect(
+      x,
+      groundY-180,
+      8,
+      180
+    );
 
-    // 街路樹
-    let treeOff=(cityOffset*.55)%190;
+    ctx.fillStyle="#333";
 
-    for(let x=-treeOff;x<W+100;x+=190){
-        ctx.fillStyle="#594333";
-        ctx.fillRect(x,groundY-115,12,115);
+    ctx.fillRect(
+      x-35,
+      groundY-175,
+      78,
+      6
+    );
 
-        ctx.fillStyle="#365b3b";
-        ctx.beginPath();
-        ctx.arc(x+6,groundY-135,34,0,Math.PI*2);
-        ctx.fill();
+    ctx.strokeStyle="#222";
+    ctx.lineWidth=2;
 
-        ctx.beginPath();
-        ctx.arc(x-18,groundY-115,25,0,Math.PI*2);
-        ctx.fill();
+    ctx.beginPath();
+    ctx.moveTo(x-30,groundY-175);
+    ctx.lineTo(x-100,groundY-210);
+    ctx.stroke();
 
-        ctx.beginPath();
-        ctx.arc(x+28,groundY-115,25,0,Math.PI*2);
-        ctx.fill();
-    }
+    ctx.beginPath();
+    ctx.moveTo(x+40,groundY-175);
+    ctx.lineTo(x+120,groundY-205);
+    ctx.stroke();
+  }
+
+  /* 街路樹 */
+
+  const treeOff =
+    (cityOffset*.55)%190;
+
+  for(
+    let x=-treeOff;
+    x<W+100;
+    x+=190
+  ){
+
+    ctx.fillStyle="#594333";
+
+    ctx.fillRect(
+      x,
+      groundY-115,
+      12,
+      115
+    );
+
+    ctx.fillStyle="#365b3b";
+
+    ctx.beginPath();
+    ctx.arc(
+      x+6,
+      groundY-135,
+      34,
+      0,
+      Math.PI*2
+    );
+    ctx.fill();
+
+    ctx.beginPath();
+    ctx.arc(
+      x-18,
+      groundY-115,
+      25,
+      0,
+      Math.PI*2
+    );
+    ctx.fill();
+
+    ctx.beginPath();
+    ctx.arc(
+      x+28,
+      groundY-115,
+      25,
+      0,
+      Math.PI*2
+    );
+    ctx.fill();
+  }
 }
 
 function drawConvenienceStore(){
-    let x=((350-cityOffset*.9)%W+W)%W;
 
-    ctx.fillStyle="#eeeeee";
-    ctx.fillRect(x,groundY-100,115,100);
+  const x =
+    ((350-cityOffset*.9)%W+W)%W;
 
-    ctx.fillStyle="#f2f2f2";
-    ctx.fillRect(x+8,groundY-70,99,60);
+  ctx.fillStyle="#eeeeee";
 
-    ctx.fillStyle="#222";
-    ctx.font="bold 15px Arial";
-    ctx.fillText("24H",x+35,groundY-78);
+  ctx.fillRect(
+    x,
+    groundY-100,
+    115,
+    100
+  );
 
-    ctx.fillStyle="#333";
-    ctx.fillRect(x+12,groundY-92,90,14);
+  ctx.fillStyle="#f2f2f2";
 
-    ctx.fillStyle="#fff";
-    ctx.fillRect(x+18,groundY-87,30,4);
-    ctx.fillRect(x+58,groundY-87,30,4);
+  ctx.fillRect(
+    x+8,
+    groundY-70,
+    99,
+    60
+  );
+
+  ctx.fillStyle="#222";
+  ctx.font="bold 15px Arial";
+
+  ctx.fillText(
+    "24H",
+    x+35,
+    groundY-78
+  );
+
+  ctx.fillStyle="#333";
+
+  ctx.fillRect(
+    x+12,
+    groundY-92,
+    90,
+    14
+  );
+
+  ctx.fillStyle="#fff";
+
+  ctx.fillRect(
+    x+18,
+    groundY-87,
+    30,
+    4
+  );
+
+  ctx.fillRect(
+    x+58,
+    groundY-87,
+    30,
+    4
+  );
 }
+
+/* =========================
+   プレイヤー
+========================= */
 
 function drawPlayer(){
-    let x=playerX;
-    let y=groundY-18-playerY;
 
-    // shadow
-    ctx.fillStyle="rgba(0,0,0,.22)";
+  const x = playerX;
+  const y = groundY-18-playerY;
+
+  ctx.fillStyle="rgba(0,0,0,.22)";
+
+  ctx.beginPath();
+
+  ctx.ellipse(
+    x,
+    groundY+2,
+    30,
+    7,
+    0,
+    0,
+    Math.PI*2
+  );
+
+  ctx.fill();
+
+  const swing =
+    Math.sin(Date.now()/90)*10;
+
+  /* 足 */
+
+  ctx.strokeStyle="#222";
+  ctx.lineWidth=9;
+  ctx.lineCap="round";
+
+  ctx.beginPath();
+
+  ctx.moveTo(
+    x-8,
+    y+5
+  );
+
+  ctx.lineTo(
+    x-13+swing,
+    y+40
+  );
+
+  ctx.stroke();
+
+  ctx.beginPath();
+
+  ctx.moveTo(
+    x+7,
+    y+5
+  );
+
+  ctx.lineTo(
+    x+14-swing,
+    y+40
+  );
+
+  ctx.stroke();
+
+  /* 靴 */
+
+  ctx.fillStyle="#111";
+
+  ctx.fillRect(
+    x-24+swing,
+    y+36,
+    18,
+    8
+  );
+
+  ctx.fillRect(
+    x+8-swing,
+    y+36,
+    18,
+    8
+  );
+
+  /* スーツ */
+
+  ctx.fillStyle="#20252a";
+
+  ctx.beginPath();
+
+  ctx.roundRect(
+    x-20,
+    y-48,
+    40,
+    58,
+    8
+  );
+
+  ctx.fill();
+
+  /* シャツ */
+
+  ctx.fillStyle="#eee";
+
+  ctx.beginPath();
+
+  ctx.moveTo(x-7,y-47);
+  ctx.lineTo(x,y-25);
+  ctx.lineTo(x+7,y-47);
+  ctx.closePath();
+
+  ctx.fill();
+
+  /* ネクタイ */
+
+  ctx.fillStyle="#9b2226";
+
+  ctx.beginPath();
+
+  ctx.moveTo(x-3,y-44);
+  ctx.lineTo(x+3,y-44);
+  ctx.lineTo(x+4,y-18);
+  ctx.lineTo(x,y-13);
+  ctx.lineTo(x-4,y-18);
+  ctx.closePath();
+
+  ctx.fill();
+
+  /* 腕 */
+
+  ctx.strokeStyle="#20252a";
+  ctx.lineWidth=8;
+
+  ctx.beginPath();
+  ctx.moveTo(x-17,y-35);
+  ctx.lineTo(x-31,y-5);
+  ctx.stroke();
+
+  ctx.beginPath();
+  ctx.moveTo(x+17,y-35);
+  ctx.lineTo(x+31,y-8);
+  ctx.stroke();
+
+  /* 顔 */
+
+  ctx.fillStyle="#d9a27e";
+
+  ctx.beginPath();
+
+  ctx.arc(
+    x,
+    y-67,
+    17,
+    0,
+    Math.PI*2
+  );
+
+  ctx.fill();
+
+  /* 髪 */
+
+  ctx.fillStyle="#252525";
+
+  ctx.beginPath();
+
+  ctx.arc(
+    x,
+    y-72,
+    17,
+    Math.PI,
+    Math.PI*2
+  );
+
+  ctx.fill();
+
+  /* カバン */
+
+  ctx.fillStyle="#4a3024";
+
+  ctx.fillRect(
+    x-45,
+    y-4,
+    20,
+    16
+  );
+
+  ctx.strokeStyle="#2a1b15";
+  ctx.lineWidth=2;
+
+  ctx.strokeRect(
+    x-45,
+    y-4,
+    20,
+    16
+  );
+
+  if(speed>9){
+
+    ctx.fillStyle="#68b6e8";
+
     ctx.beginPath();
-    ctx.ellipse(x,y+20,30,7,0,0,Math.PI*2);
+
+    ctx.arc(
+      x+23,
+      y-75,
+      3,
+      0,
+      Math.PI*2
+    );
+
     ctx.fill();
-
-    // legs
-    ctx.strokeStyle="#222";
-    ctx.lineWidth=9;
-    ctx.lineCap="round";
-
-    let legSwing=Math.sin(Date.now()/90)*10;
-
-    ctx.beginPath();
-    ctx.moveTo(x-8,y+5);
-    ctx.lineTo(x-13+legSwing,y+40);
-    ctx.stroke();
-
-    ctx.beginPath();
-    ctx.moveTo(x+7,y+5);
-    ctx.lineTo(x+14-legSwing,y+40);
-    ctx.stroke();
-
-    // shoes
-    ctx.fillStyle="#111";
-    ctx.fillRect(x-24+legSwing,y+36,18,8);
-    ctx.fillRect(x+8-legSwing,y+36,18,8);
-
-    // body / suit
-    ctx.fillStyle="#20252a";
-    ctx.beginPath();
-    ctx.roundRect(x-20,y-48,40,58,8);
-    ctx.fill();
-
-    // shirt
-    ctx.fillStyle="#eee";
-    ctx.beginPath();
-    ctx.moveTo(x-7,y-47);
-    ctx.lineTo(x,y-25);
-    ctx.lineTo(x+7,y-47);
-    ctx.closePath();
-    ctx.fill();
-
-    // tie
-    ctx.fillStyle="#9b2226";
-    ctx.beginPath();
-    ctx.moveTo(x-3,y-44);
-    ctx.lineTo(x+3,y-44);
-    ctx.lineTo(x+4,y-18);
-    ctx.lineTo(x,y-13);
-    ctx.lineTo(x-4,y-18);
-    ctx.closePath();
-    ctx.fill();
-
-    // arm
-    ctx.strokeStyle="#20252a";
-    ctx.lineWidth=8;
-
-    ctx.beginPath();
-    ctx.moveTo(x-17,y-35);
-    ctx.lineTo(x-31,y-5);
-    ctx.stroke();
-
-    ctx.beginPath();
-    ctx.moveTo(x+17,y-35);
-    ctx.lineTo(x+31,y-8);
-    ctx.stroke();
-
-    // head
-    ctx.fillStyle="#d9a27e";
-    ctx.beginPath();
-    ctx.arc(x,y-67,17,0,Math.PI*2);
-    ctx.fill();
-
-    // hair
-    ctx.fillStyle="#252525";
-    ctx.beginPath();
-    ctx.arc(x,y-72,17,Math.PI,Math.PI*2);
-    ctx.fill();
-
-    // briefcase
-    ctx.fillStyle="#4a3024";
-    ctx.fillRect(x-45,y-4,20,16);
-    ctx.strokeStyle="#2a1b15";
-    ctx.lineWidth=2;
-    ctx.strokeRect(x-45,y-4,20,16);
-
-    // sweat
-    if(speed>9){
-        ctx.fillStyle="#68b6e8";
-        ctx.beginPath();
-        ctx.arc(x+23,y-75,3,0,Math.PI*2);
-        ctx.fill();
-    }
+  }
 }
 
+/* =========================
+   上司
+========================= */
+
 function drawBoss(){
-    let x=playerX-bossGap;
-    let y=groundY-18;
 
-    // shadow
-    ctx.fillStyle="rgba(0,0,0,.2)";
+  const x =
+    playerX-bossGap;
+
+  const y =
+    groundY-18;
+
+  ctx.fillStyle="rgba(0,0,0,.2)";
+
+  ctx.beginPath();
+
+  ctx.ellipse(
+    x,
+    y+20,
+    31,
+    7,
+    0,
+    0,
+    Math.PI*2
+  );
+
+  ctx.fill();
+
+  const s =
+    Math.sin(Date.now()/100)*9;
+
+  ctx.strokeStyle="#171717";
+  ctx.lineWidth=10;
+  ctx.lineCap="round";
+
+  ctx.beginPath();
+
+  ctx.moveTo(x-8,y+5);
+  ctx.lineTo(x-13+s,y+40);
+  ctx.stroke();
+
+  ctx.beginPath();
+
+  ctx.moveTo(x+8,y+5);
+  ctx.lineTo(x+13-s,y+40);
+  ctx.stroke();
+
+  ctx.fillStyle="#15191c";
+
+  ctx.beginPath();
+
+  ctx.roundRect(
+    x-22,
+    y-50,
+    44,
+    62,
+    8
+  );
+
+  ctx.fill();
+
+  ctx.strokeStyle="#15191c";
+  ctx.lineWidth=9;
+
+  ctx.beginPath();
+  ctx.moveTo(x-18,y-35);
+  ctx.lineTo(x-37,y-5);
+  ctx.stroke();
+
+  ctx.beginPath();
+  ctx.moveTo(x+18,y-35);
+  ctx.lineTo(x+37,y-5);
+  ctx.stroke();
+
+  ctx.fillStyle="#d19a75";
+
+  ctx.beginPath();
+
+  ctx.arc(
+    x,
+    y-68,
+    18,
+    0,
+    Math.PI*2
+  );
+
+  ctx.fill();
+
+  ctx.fillStyle="#1c1c1c";
+
+  ctx.beginPath();
+
+  ctx.arc(
+    x,
+    y-74,
+    18,
+    Math.PI,
+    Math.PI*2
+  );
+
+  ctx.fill();
+
+  /* 怒った眉 */
+
+  ctx.strokeStyle="#111";
+  ctx.lineWidth=4;
+
+  ctx.beginPath();
+  ctx.moveTo(x-11,y-72);
+  ctx.lineTo(x-2,y-69);
+  ctx.stroke();
+
+  ctx.beginPath();
+  ctx.moveTo(x+11,y-72);
+  ctx.lineTo(x+2,y-69);
+  ctx.stroke();
+
+  /* 口 */
+
+  ctx.beginPath();
+
+  ctx.moveTo(x-7,y-60);
+  ctx.lineTo(x+7,y-60);
+
+  ctx.stroke();
+
+  if(bossGap<100){
+
+    ctx.strokeStyle="rgba(220,30,30,.7)";
+    ctx.lineWidth=3;
+
     ctx.beginPath();
-    ctx.ellipse(x,y+20,31,7,0,0,Math.PI*2);
+
+    ctx.arc(
+      x,
+      y-68,
+      27,
+      -.7,
+      .7
+    );
+
+    ctx.stroke();
+  }
+}
+
+/* =========================
+   障害物
+========================= */
+
+function drawObstacle(o){
+
+  const x=o.x;
+  const y=groundY;
+
+  if(o.type==="cone"){
+
+    ctx.fillStyle="#e87527";
+
+    ctx.beginPath();
+
+    ctx.moveTo(x,y);
+    ctx.lineTo(x+15,y-45);
+    ctx.lineTo(x+30,y);
+
+    ctx.closePath();
+
     ctx.fill();
 
-    // legs
-    ctx.strokeStyle="#171717";
-    ctx.lineWidth=10;
-    ctx.lineCap="round";
+    ctx.fillStyle="#fff";
 
-    let s=Math.sin(Date.now()/100)*9;
+    ctx.fillRect(
+      x+8,
+      y-27,
+      16,
+      7
+    );
+  }
 
-    ctx.beginPath();
-    ctx.moveTo(x-8,y+5);
-    ctx.lineTo(x-13+s,y+40);
-    ctx.stroke();
+  if(o.type==="bike"){
 
-    ctx.beginPath();
-    ctx.moveTo(x+8,y+5);
-    ctx.lineTo(x+13-s,y+40);
-    ctx.stroke();
-
-    // body
-    ctx.fillStyle="#15191c";
-    ctx.beginPath();
-    ctx.roundRect(x-22,y-50,44,62,8);
-    ctx.fill();
-
-    // arms
-    ctx.strokeStyle="#15191c";
-    ctx.lineWidth=9;
-
-    ctx.beginPath();
-    ctx.moveTo(x-18,y-35);
-    ctx.lineTo(x-37,y-5);
-    ctx.stroke();
-
-    ctx.beginPath();
-    ctx.moveTo(x+18,y-35);
-    ctx.lineTo(x+37,y-5);
-    ctx.stroke();
-
-    // head
-    ctx.fillStyle="#d19a75";
-    ctx.beginPath();
-    ctx.arc(x,y-68,18,0,Math.PI*2);
-    ctx.fill();
-
-    // hair
-    ctx.fillStyle="#1c1c1c";
-    ctx.beginPath();
-    ctx.arc(x,y-74,18,Math.PI,Math.PI*2);
-    ctx.fill();
-
-    // angry eyebrows
-    ctx.strokeStyle="#111";
+    ctx.strokeStyle="#222";
     ctx.lineWidth=4;
 
     ctx.beginPath();
-    ctx.moveTo(x-11,y-72);
-    ctx.lineTo(x-2,y-69);
+    ctx.arc(x+10,y-10,14,0,Math.PI*2);
     ctx.stroke();
 
     ctx.beginPath();
-    ctx.moveTo(x+11,y-72);
-    ctx.lineTo(x+2,y-69);
+    ctx.arc(x+48,y-10,14,0,Math.PI*2);
     ctx.stroke();
 
-    // mouth
     ctx.beginPath();
-    ctx.moveTo(x-7,y-60);
-    ctx.lineTo(x+7,y-60);
+
+    ctx.moveTo(x+10,y-10);
+    ctx.lineTo(x+28,y-32);
+    ctx.lineTo(x+48,y-10);
+    ctx.lineTo(x+10,y-10);
+
     ctx.stroke();
+  }
 
-    // red anger effect
-    if(bossGap<100){
-        ctx.strokeStyle="rgba(220,30,30,.7)";
-        ctx.lineWidth=3;
-        ctx.beginPath();
-        ctx.arc(x,y-68,27,-.7,.7);
-        ctx.stroke();
-    }
-}
+  if(o.type==="sign"){
 
-function drawObstacle(o){
-    let x=o.x;
-    let y=groundY;
+    ctx.fillStyle="#777";
 
-    if(o.type==="cone"){
-        ctx.fillStyle="#e87527";
-        ctx.beginPath();
-        ctx.moveTo(x,y);
-        ctx.lineTo(x+15,y-45);
-        ctx.lineTo(x+30,y);
-        ctx.closePath();
-        ctx.fill();
+    ctx.fillRect(
+      x+20,
+      y-100,
+      6,
+      100
+    );
 
-        ctx.fillStyle="#fff";
-        ctx.fillRect(x+8,y-27,16,7);
-    }
+    ctx.fillStyle="#fff";
 
-    if(o.type==="bike"){
-        ctx.strokeStyle="#222";
-        ctx.lineWidth=4;
+    ctx.fillRect(
+      x-8,
+      y-115,
+      62,
+      35
+    );
 
-        ctx.beginPath();
-        ctx.arc(x+10,y-10,14,0,Math.PI*2);
-        ctx.stroke();
+    ctx.strokeStyle="#444";
+    ctx.lineWidth=2;
 
-        ctx.beginPath();
-        ctx.arc(x+48,y-10,14,0,Math.PI*2);
-        ctx.stroke();
+    ctx.strokeRect(
+      x-8,
+      y-115,
+      62,
+      35
+    );
 
-        ctx.beginPath();
-        ctx.moveTo(x+10,y-10);
-        ctx.lineTo(x+28,y-32);
-        ctx.lineTo(x+48,y-10);
-        ctx.lineTo(x+10,y-10);
-        ctx.stroke();
+    ctx.fillStyle="#333";
+    ctx.font="bold 11px Arial";
 
-        ctx.beginPath();
-        ctx.moveTo(x+28,y-32);
-        ctx.lineTo(x+37,y-36);
-        ctx.stroke();
-    }
+    ctx.fillText(
+      "工事中",
+      x+4,
+      y-93
+    );
+  }
 
-    if(o.type==="sign"){
-        ctx.fillStyle="#777";
-        ctx.fillRect(x+20,y-100,6,100);
+  if(o.type==="bench"){
 
-        ctx.fillStyle="#fff";
-        ctx.fillRect(x-8,y-115,62,35);
+    ctx.fillStyle="#765034";
 
-        ctx.strokeStyle="#444";
-        ctx.lineWidth=2;
-        ctx.strokeRect(x-8,y-115,62,35);
+    ctx.fillRect(
+      x,
+      y-38,
+      65,
+      8
+    );
 
-        ctx.fillStyle="#333";
-        ctx.font="bold 11px Arial";
-        ctx.fillText("工事中",x+4,y-93);
-    }
+    ctx.fillRect(
+      x+8,
+      y-30,
+      7,
+      30
+    );
 
-    if(o.type==="bench"){
-        ctx.fillStyle="#765034";
-        ctx.fillRect(x,y-38,65,8);
-        ctx.fillRect(x+8,y-30,7,30);
-        ctx.fillRect(x+50,y-30,7,30);
-    }
+    ctx.fillRect(
+      x+50,
+      y-30,
+      7,
+      30
+    );
+  }
 
-    if(o.type==="car"){
-        ctx.fillStyle="#4c5961";
-        ctx.beginPath();
-        ctx.roundRect(x,y-48,100,48,8);
-        ctx.fill();
+  if(o.type==="car"){
 
-        ctx.fillStyle="#273038";
-        ctx.fillRect(x+22,y-65,48,22);
+    ctx.fillStyle="#4c5961";
 
-        ctx.fillStyle="#a9d0df";
-        ctx.fillRect(x+27,y-61,18,14);
-        ctx.fillRect(x+49,y-61,16,14);
+    ctx.beginPath();
 
-        ctx.fillStyle="#222";
-        ctx.beginPath();
-        ctx.arc(x+20,y,10,0,Math.PI*2);
-        ctx.fill();
+    ctx.roundRect(
+      x,
+      y-48,
+      100,
+      48,
+      8
+    );
 
-        ctx.beginPath();
-        ctx.arc(x+80,y,10,0,Math.PI*2);
-        ctx.fill();
-    }
+    ctx.fill();
+
+    ctx.fillStyle="#273038";
+
+    ctx.fillRect(
+      x+22,
+      y-65,
+      48,
+      22
+    );
+
+    ctx.fillStyle="#a9d0df";
+
+    ctx.fillRect(
+      x+27,
+      y-61,
+      18,
+      14
+    );
+
+    ctx.fillRect(
+      x+49,
+      y-61,
+      16,
+      14
+    );
+
+    ctx.fillStyle="#222";
+
+    ctx.beginPath();
+    ctx.arc(x+20,y,10,0,Math.PI*2);
+    ctx.fill();
+
+    ctx.beginPath();
+    ctx.arc(x+80,y,10,0,Math.PI*2);
+    ctx.fill();
+  }
 }
 
 function spawnObstacle(){
-    let types=["cone","bike","sign","bench","car"];
 
-    let type=types[Math.floor(Math.random()*types.length)];
+  const types=[
+    "cone",
+    "bike",
+    "sign",
+    "bench",
+    "car"
+  ];
 
-    obstacles.push({
-        x:W+100,
-        type:type
-    });
+  const type =
+    types[
+      Math.floor(
+        Math.random()*types.length
+      )
+    ];
+
+  obstacles.push({
+    x:W+100,
+    type:type
+  });
 }
 
+/* =========================
+   更新
+========================= */
+
 function updateObstacles(dt){
-    for(let i=obstacles.length-1;i>=0;i--){
-        let o=obstacles[i];
 
-        o.x-=speed*dt*60;
+  for(
+    let i=obstacles.length-1;
+    i>=0;
+    i--
+  ){
 
-        let ox=o.x;
-        let oy=groundY;
+    const o=obstacles[i];
 
-        let w=
-            o.type==="car"?100:
-            o.type==="bike"?62:
-            o.type==="bench"?65:
-            45;
+    o.x -= speed*dt*60;
 
-        let h=
-            o.type==="car"?55:
-            o.type==="sign"?115:
-            o.type==="bike"?45:
-            o.type==="bench"?38:
-            45;
+    const ox=o.x;
 
-        let px=playerX;
-        let py=groundY-playerY;
+    const w =
+      o.type==="car" ? 100 :
+      o.type==="bike" ? 62 :
+      o.type==="bench" ? 65 :
+      45;
 
-        if(
-            px+20>ox &&
-            px-20<ox+w &&
-            py>oy-h+15
-        ){
-            bossGap-=55;
-            obstacles.splice(i,1);
+    const h =
+      o.type==="car" ? 55 :
+      o.type==="sign" ? 115 :
+      o.type==="bike" ? 45 :
+      o.type==="bench" ? 38 :
+      45;
 
-            for(let n=0;n<12;n++){
-                particles.push({
-                    x:px,
-                    y:py,
-                    vx:rand(-4,4),
-                    vy:rand(-6,-1),
-                    life:1
-                });
-            }
+    const px=playerX;
+    const py=groundY-playerY;
 
-            if(bossGap<=25){
-                gameOver();
-            }
+    if(
+      px+20>ox &&
+      px-20<ox+w &&
+      py>groundY-h+15
+    ){
 
-            continue;
-        }
+      bossGap-=55;
 
-        if(o.x<-150){
-            obstacles.splice(i,1);
-        }
+      obstacles.splice(i,1);
+
+      for(let n=0;n<12;n++){
+
+        particles.push({
+          x:px,
+          y:py,
+          vx:rand(-4,4),
+          vy:rand(-6,-1),
+          life:1
+        });
+      }
+
+      if(bossGap<=25){
+        gameOver();
+      }
+
+      continue;
     }
+
+    if(o.x<-150){
+      obstacles.splice(i,1);
+    }
+  }
 }
 
 function updateParticles(dt){
-    for(let i=particles.length-1;i>=0;i--){
-        let p=particles[i];
 
-        p.x+=p.vx*dt*60;
-        p.y+=p.vy*dt*60;
-        p.vy+=.3*dt*60;
-        p.life-=dt;
+  for(
+    let i=particles.length-1;
+    i>=0;
+    i--
+  ){
 
-        if(p.life<=0){
-            particles.splice(i,1);
-        }
+    const p=particles[i];
+
+    p.x+=p.vx*dt*60;
+    p.y+=p.vy*dt*60;
+
+    p.vy+=.3*dt*60;
+
+    p.life-=dt;
+
+    if(p.life<=0){
+      particles.splice(i,1);
     }
+  }
 }
 
 function drawParticles(){
-    for(let p of particles){
-        ctx.fillStyle=`rgba(255,220,80,${p.life})`;
-        ctx.fillRect(p.x,p.y,5,5);
-    }
+
+  for(const p of particles){
+
+    ctx.fillStyle =
+      `rgba(255,220,80,${p.life})`;
+
+    ctx.fillRect(
+      p.x,
+      p.y,
+      5,
+      5
+    );
+  }
 }
 
 function update(dt){
-    if(!running)return;
 
-    distance+=speed*dt*.13;
+  if(!running) return;
 
-    cityOffset+=speed*dt*60;
+  distance += speed*dt*.13;
 
-    // 少しずつ加速
-    speed=7+Math.min(distance/150,7);
+  cityOffset += speed*dt*60;
 
-    // ジャンプ
-    if(jumpHeld){
-        jumpPower=Math.min(jumpPower+dt*2.7,1);
-    }
+  speed =
+    7 + Math.min(distance/150,7);
 
-    // 重力
-    playerVY-=32*dt;
+  /* 長押し中は少しだけ上昇力を追加 */
 
-    playerY+=playerVY*dt;
+  if(jumpHeld){
 
-    if(playerY<=0){
-        playerY=0;
-        playerVY=0;
-    }
+    jumpPower =
+      Math.min(
+        jumpPower+dt*2.7,
+        1
+      );
 
-    // 上司は徐々に迫る
-    bossGap+=0.8*dt;
+    playerVY += 15*dt;
+  }
 
-    if(bossGap>145)bossGap=145;
+  /* 重力 */
 
-    // 障害物生成
-    spawnTimer-=dt;
+  playerVY -= 32*dt;
 
-    let interval=Math.max(.75,1.5-distance/600);
+  playerY += playerVY*dt;
 
-    if(spawnTimer<=0){
-        spawnObstacle();
-        spawnTimer=interval;
-    }
+  if(playerY<=0){
 
-    updateObstacles(dt);
-    updateParticles(dt);
+    playerY=0;
+    playerVY=0;
+  }
 
-    document.getElementById("distance").textContent=
-        Math.floor(distance)+" m";
+  /* 上司 */
 
-    let blocks=Math.max(1,Math.floor(bossGap/22));
-    document.getElementById("bossText").textContent=
-        "上司との距離　"+"█".repeat(blocks);
+  bossGap += .8*dt;
+
+  if(bossGap>145){
+    bossGap=145;
+  }
+
+  /* 障害物 */
+
+  spawnTimer-=dt;
+
+  const interval =
+    Math.max(
+      .75,
+      1.5-distance/600
+    );
+
+  if(spawnTimer<=0){
+
+    spawnObstacle();
+
+    spawnTimer=interval;
+  }
+
+  updateObstacles(dt);
+  updateParticles(dt);
+
+  document.getElementById(
+    "distance"
+  ).textContent =
+    Math.floor(distance)+" m";
+
+  const blocks =
+    Math.max(
+      1,
+      Math.floor(bossGap/22)
+    );
+
+  document.getElementById(
+    "bossText"
+  ).textContent =
+    "上司との距離　"+
+    "█".repeat(blocks);
 }
+
+/* =========================
+   描画
+========================= */
 
 function draw(){
-    drawSky();
-    drawBuildings();
-    drawStreetObjects();
-    drawConvenienceStore();
-    drawRoad();
 
-    for(let o of obstacles){
-        drawObstacle(o);
-    }
+  drawSky();
+  drawBuildings();
+  drawStreetObjects();
+  drawConvenienceStore();
+  drawRoad();
 
-    drawBoss();
-    drawPlayer();
-    drawParticles();
+  for(const o of obstacles){
+    drawObstacle(o);
+  }
 
-    // 画面端の赤い警告
-    if(bossGap<70){
-        let alpha=(70-bossGap)/140;
+  drawBoss();
+  drawPlayer();
+  drawParticles();
 
-        ctx.fillStyle=`rgba(220,0,0,${alpha})`;
-        ctx.fillRect(0,0,W,7);
+  if(bossGap<70){
 
-        ctx.fillStyle=`rgba(220,0,0,${alpha*.35})`;
-        ctx.fillRect(0,0,W,H);
-    }
+    const alpha =
+      (70-bossGap)/140;
+
+    ctx.fillStyle =
+      `rgba(220,0,0,${alpha})`;
+
+    ctx.fillRect(
+      0,
+      0,
+      W,
+      7
+    );
+
+    ctx.fillStyle =
+      `rgba(220,0,0,${alpha*.35})`;
+
+    ctx.fillRect(
+      0,
+      0,
+      W,
+      H
+    );
+  }
 }
+
+/* =========================
+   ゲームループ
+========================= */
 
 function loop(t){
-    let dt=Math.min((t-last)/1000,.033);
-    last=t;
 
-    update(dt);
-    draw();
+  let dt =
+    Math.min(
+      (t-lastTime)/1000,
+      .033
+    );
 
-    requestAnimationFrame(loop);
+  lastTime=t;
+
+  update(dt);
+  draw();
+
+  requestAnimationFrame(loop);
 }
 
-function beginJump(){
-    if(!running)return;
+/* =========================
+   ジャンプ
+========================= */
 
-    if(playerY<=1){
-        jumpHeld=true;
-        jumpPower=0;
-        playerVY=13;
-    }
+function beginJump(){
+
+  if(!running) return;
+
+  /* 地面にいる時だけジャンプ開始 */
+
+  if(playerY <= 1){
+
+    jumpHeld=true;
+    jumpPower=0;
+
+    /* 初速 */
+
+    playerVY=15;
+  }
 }
 
 function endJump(){
-    if(!jumpHeld)return;
 
-    jumpHeld=false;
+  if(!jumpHeld) return;
 
-    // 押した時間で追加上昇
-    playerVY+=17*jumpPower;
+  jumpHeld=false;
+
+  /*
+    長押し時間に応じて追加ジャンプ
+  */
+
+  playerVY +=
+    20 * jumpPower;
 }
 
-canvas.addEventListener("touchstart",e=>{
+/*
+  iPhone / iPad用
+  pointerイベントを使用
+*/
+
+canvas.addEventListener(
+  "pointerdown",
+  function(e){
+
     e.preventDefault();
+
     beginJump();
-},{passive:false});
 
-canvas.addEventListener("touchend",e=>{
+  },
+  {passive:false}
+);
+
+canvas.addEventListener(
+  "pointerup",
+  function(e){
+
     e.preventDefault();
-    endJump();
-},{passive:false});
 
-canvas.addEventListener("mousedown",beginJump);
-window.addEventListener("mouseup",endJump);
+    endJump();
+
+  },
+  {passive:false}
+);
+
+canvas.addEventListener(
+  "pointercancel",
+  function(e){
+
+    e.preventDefault();
+
+    endJump();
+
+  },
+  {passive:false}
+);
+
+/* マウスでも遊べる */
+
+canvas.addEventListener(
+  "mousedown",
+  function(e){
+
+    e.preventDefault();
+
+    beginJump();
+
+  }
+);
+
+window.addEventListener(
+  "mouseup",
+  function(){
+
+    endJump();
+
+  }
+);
+
+/* =========================
+   ゲーム開始
+========================= */
 
 function startGame(){
-    running=true;
-    distance=0;
-    speed=7;
-    playerY=0;
-    playerVY=0;
-    bossGap=130;
-    obstacles=[];
-    particles=[];
-    spawnTimer=.7;
-    cityOffset=0;
 
-    document.getElementById("start").style.display="none";
-    document.getElementById("gameover").style.display="none";
+  running=true;
 
-    last=performance.now();
+  distance=0;
+  speed=7;
+
+  playerY=0;
+  playerVY=0;
+
+  jumpHeld=false;
+  jumpPower=0;
+
+  bossGap=130;
+
+  obstacles=[];
+  particles=[];
+
+  spawnTimer=.7;
+  cityOffset=0;
+
+  document.getElementById(
+    "start"
+  ).style.display="none";
+
+  document.getElementById(
+    "gameover"
+  ).style.display="none";
+
+  lastTime=performance.now();
 }
 
 function gameOver(){
-    running=false;
 
-    document.getElementById("result").textContent=
-        "あなたは "+Math.floor(distance)+"m 逃げた。";
+  running=false;
 
-    document.getElementById("gameover").style.display="flex";
+  jumpHeld=false;
+
+  document.getElementById(
+    "result"
+  ).textContent =
+    "あなたは "+
+    Math.floor(distance)+
+    "m 逃げた。";
+
+  document.getElementById(
+    "gameover"
+  ).style.display="flex";
 }
 
-document.getElementById("startBtn").onclick=startGame;
-document.getElementById("retryBtn").onclick=startGame;
+document.getElementById(
+  "startBtn"
+).addEventListener(
+  "click",
+  startGame
+);
+
+document.getElementById(
+  "retryBtn"
+).addEventListener(
+  "click",
+  startGame
+);
 
 requestAnimationFrame(loop);
+
 </script>
 
 </body>
