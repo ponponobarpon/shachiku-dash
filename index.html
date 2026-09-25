@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,user-scalable=no">
+<title>社畜ダッシュ</title>
+<style>
+*{box-sizing:border-box}
+body{
+ margin:0;
+ overflow:hidden;
+ background:#222;
+ font-family:Arial,sans-serif;
+ touch-action:none;
+}
+#game{
+ position:relative;
+ width:100vw;
+ height:100vh;
+ overflow:hidden;
+ background:linear-gradient(#75c8ff 0%,#dff5ff 65%,#777 65%);
+}
+#title{
+ position:absolute;
+ top:35px;
+ width:100%;
+ text-align:center;
+ font-size:34px;
+ font-weight:bold;
+ color:#222;
+ text-shadow:2px 2px white;
+ z-index:5;
+}
+#info{
+ position:absolute;
+ top:85px;
+ left:15px;
+ right:15px;
+ display:flex;
+ justify-content:space-between;
+ font-size:20px;
+ font-weight:bold;
+ z-index:5;
+}
+#player{
+ position:absolute;
+ left:70px;
+ bottom:120px;
+ width:48px;
+ height:70px;
+ background:#222;
+ border-radius:18px 18px 8px 8px;
+ z-index:3;
+}
+#player:before{
+ content:"";
+ position:absolute;
+ width:32px;
+ height:32px;
+ background:#f2c09b;
+ border-radius:50%;
+ left:8px;
+ top:-28px;
+}
+#player:after{
+ content:"";
+ position:absolute;
+ width:25px;
+ height:8px;
+ background:#111;
+ left:11px;
+ top:-25px;
+ border-radius:10px;
+}
+.obstacle{
+ position:absolute;
+ bottom:120px;
+ width:42px;
+ height:55px;
+ background:#e33;
+ border-radius:6px;
+ z-index:2;
+}
+.coin{
+ position:absolute;
+ bottom:220px;
+ width:28px;
+ height:28px;
+ border-radius:50%;
+ background:#ffd21c;
+ border:4px solid #f39c00;
+ z-index:2;
+}
+#ground{
+ position:absolute;
+ bottom:0;
+ width:100%;
+ height:120px;
+ background:#555;
+ border-top:8px solid #333;
+}
+#start,#gameover{
+ position:absolute;
+ inset:0;
+ background:rgba(0,0,0,.7);
+ z-index:10;
+ display:flex;
+ flex-direction:column;
+ align-items:center;
+ justify-content:center;
+ color:white;
+ text-align:center;
+}
+#gameover{display:none}
+button{
+ border:0;
+ border-radius:15px;
+ padding:18px 40px;
+ font-size:22px;
+ font-weight:bold;
+ background:#ffcc00;
+ color:#222;
+}
+h1{font-size:42px;margin:10px}
+p{font-size:18px}
+</style>
+</head>
+
+<body>
+<div id="game">
+
+<div id="title">社畜ダッシュ</div>
+
+<div id="info">
+<span>💰 <span id="score">0</span></span>
+<span>⏰ <span id="time">30</span>秒</span>
+</div>
+
+<div id="player"></div>
+<div id="ground"></div>
+
+<div id="start">
+<h1>社畜ダッシュ</h1>
+<p>遅刻するな！会社へ急げ！</p>
+<p>画面をタップしてジャンプ</p>
+<button id="startBtn">出社する</button>
+</div>
+
+<div id="gameover">
+<h1>遅刻しました</h1>
+<p>スコア：<span id="finalScore">0</span></p>
+<button id="retryBtn">もう一度出社</button>
+</div>
+
+</div>
+
+<script>
+const game=document.getElementById("game");
+const player=document.getElementById("player");
+const scoreText=document.getElementById("score");
+const timeText=document.getElementById("time");
+const start=document.getElementById("start");
+const gameover=document.getElementById("gameover");
+const finalScore=document.getElementById("finalScore");
+
+let running=false;
+let jumping=false;
+let score=0;
+let time=30;
+let speed=6;
+let objects=[];
+let timer;
+
+function jump(){
+ if(!running||jumping)return;
+ jumping=true;
+
+ let y=0;
+ let up=setInterval(()=>{
+   y+=7;
+   player.style.transform=`translateY(${-y}px)`;
+   if(y>=120){
+     clearInterval(up);
+     let down=setInterval(()=>{
+       y-=7;
+       player.style.transform=`translateY(${-y}px)`;
+       if(y<=0){
+         clearInterval(down);
+         player.style.transform="translateY(0)";
+         jumping=false;
+       }
+     },20);
+   }
+ },20);
+}
+
+game.addEventListener("touchstart",e=>{
+ if(running){
+   e.preventDefault();
+   jump();
+ }
+});
+
+game.addEventListener("click",e=>{
+ if(running && e.target===game) jump();
+});
+
+function createObstacle(){
+ if(!running)return;
+
+ const o=document.createElement("div");
+ o.className="obstacle";
+ o.style.right="-50px";
+ game.appendChild(o);
+ objects.push({el:o,type:"obstacle",x:-50});
+
+ if(Math.random()<0.7){
+   const c=document.createElement("div");
+   c.className="coin";
+   c.style.right="-50px";
+   game.appendChild(c);
+   objects.push({el:c,type:"coin",x:-50});
+ }
+}
+
+function hit(a,b){
+ const r1=a.getBoundingClientRect();
+ const r2=b.getBoundingClientRect();
+
+ return !(r1.right<r2.left||
+          r1.left>r2.right||
+          r1.bottom<r2.top||
+          r1.top>r2.bottom);
+}
+
+function loop(){
+ if(!running)return;
+
+ objects.forEach((o,i)=>{
+   o.x+=speed;
+   o.el.style.right=o.x+"px";
+
+   if(o.type==="obstacle" && hit(player,o.el)){
+     const pr=player.getBoundingClientRect();
+     const or=o.el.getBoundingClientRect();
+
+     if(pr.bottom>or.top+15){
+       endGame();
+     }
+   }
+
+   if(o.type==="coin" && hit(player,o.el)){
+     score++;
+     scoreText.textContent=score;
+     o.el.remove();
+     objects.splice(i,1);
+   }
+
+   if(o.x>window.innerWidth+100){
+     o.el.remove();
+     objects.splice(i,1);
+   }
+ });
+
+ requestAnimationFrame(loop);
+}
+
+function startGame(){
+ running=true;
+ score=0;
+ time=30;
+ speed=6;
+ scoreText.textContent=0;
+ timeText.textContent=30;
+ start.style.display="none";
+ gameover.style.display="none";
+
+ objects.forEach(o=>o.el.remove());
+ objects=[];
+
+ timer=setInterval(()=>{
+   if(!running)return;
+
+   time--;
+   timeText.textContent=time;
+
+   if(time<=0)endGame();
+ },1000);
+
+ spawn();
+ loop();
+}
+
+function spawn(){
+ if(!running)return;
+
+ createObstacle();
+
+ let delay=900+Math.random()*1000;
+ setTimeout(spawn,delay);
+}
+
+function endGame(){
+ if(!running)return;
+
+ running=false;
+ clearInterval(timer);
+
+ finalScore.textContent=score;
+ gameover.style.display="flex";
+}
+
+document.getElementById("startBtn").onclick=startGame;
+document.getElementById("retryBtn").onclick=startGame;
+</script>
+
+</body>
+</html>
