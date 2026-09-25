@@ -2,1487 +2,1350 @@
 <html lang="ja">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
 <title>社畜ダッシュ</title>
 
 <style>
-html,body{
-  margin:0;
-  padding:0;
-  width:100%;
-  height:100%;
-  overflow:hidden;
-  background:#111;
-  touch-action:none;
-  -webkit-user-select:none;
-  user-select:none;
+* {
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
 }
 
-canvas{
-  display:block;
-  width:100vw;
-  height:100vh;
-  touch-action:none;
+html,
+body {
+  margin: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  font-family:
+    -apple-system,
+    BlinkMacSystemFont,
+    "Hiragino Kaku Gothic ProN",
+    "Yu Gothic",
+    sans-serif;
+  touch-action: none;
 }
 
-#ui{
-  position:fixed;
-  top:0;
-  left:0;
-  width:100%;
-  pointer-events:none;
-  color:white;
-  text-shadow:0 2px 4px #000;
-  z-index:5;
+body {
+  background: #111;
 }
 
-#distance{
-  position:absolute;
-  top:18px;
-  left:18px;
-  font-size:24px;
-  font-weight:800;
+#game {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background:
+    linear-gradient(
+      to bottom,
+      #dff3ff 0%,
+      #dff3ff 60%,
+      #79b957 60%,
+      #79b957 100%
+    );
 }
 
-#bossText{
-  position:absolute;
-  top:55px;
-  left:18px;
-  font-size:15px;
-  font-weight:bold;
+/* 道路 */
+
+#road {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 40%;
+  background: #555;
 }
 
-.overlay{
-  position:fixed;
-  inset:0;
-  z-index:10;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  flex-direction:column;
-  background:rgba(0,0,0,.68);
-  color:white;
-  text-align:center;
-  padding:20px;
-  box-sizing:border-box;
+#road::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 48%;
+  height: 7px;
+
+  background:
+    repeating-linear-gradient(
+      90deg,
+      #fff 0px,
+      #fff 70px,
+      transparent 70px,
+      transparent 140px
+    );
 }
 
-#gameover{
-  display:none;
+/* HUD */
+
+#hud {
+  position: absolute;
+  z-index: 20;
+
+  top: 12px;
+  left: 0;
+  right: 0;
+
+  display: flex;
+  justify-content: space-between;
+
+  padding: 0 16px;
+
+  font-size: 18px;
+  font-weight: 900;
+
+  color: #111;
+  text-shadow: 0 1px #fff;
 }
 
-h1{
-  font-size:48px;
-  margin:0 0 10px;
-  letter-spacing:2px;
+/* タイトル */
+
+#title {
+  position: absolute;
+
+  top: 18%;
+  left: 50%;
+
+  width: 92%;
+
+  transform: translateX(-50%);
+
+  text-align: center;
+
+  z-index: 10;
 }
 
-.sub{
-  font-size:18px;
-  margin:6px 20px;
+#title h1 {
+  margin: 0;
+
+  font-size:
+    clamp(38px, 10vw, 68px);
+
+  font-weight: 900;
 }
 
-button{
-  margin-top:25px;
-  padding:17px 42px;
-  border:0;
-  border-radius:12px;
-  background:white;
-  color:#111;
-  font-size:20px;
-  font-weight:800;
-  touch-action:manipulation;
+#title p {
+  margin-top: 8px;
+
+  font-size:
+    clamp(17px, 4.5vw, 25px);
+
+  font-weight: 700;
 }
 
-.small{
-  margin-top:18px;
-  font-size:14px;
-  opacity:.8;
+/* キャラクター */
+
+#player,
+#boss {
+  position: absolute;
+
+  bottom: 40%;
+
+  transform:
+    translate(-50%, 50%);
+
+  z-index: 8;
+}
+
+#player {
+  left: 24%;
+
+  width: 45px;
+  height: 58px;
+
+  background: #1976d2;
+
+  border-radius: 12px;
+}
+
+#player::before,
+#boss::before {
+  content: "";
+
+  position: absolute;
+
+  width: 29px;
+  height: 29px;
+
+  background: #ffd5b5;
+
+  border-radius: 50%;
+
+  top: -20px;
+  left: 8px;
+}
+
+#player::after,
+#boss::after {
+  content: "";
+
+  position: absolute;
+
+  bottom: -8px;
+  left: -5px;
+
+  width: 55px;
+  height: 10px;
+
+  background: #222;
+
+  border-radius: 10px;
+}
+
+#boss {
+  right: 13%;
+
+  width: 49px;
+  height: 62px;
+
+  background: #222;
+
+  border-radius: 10px;
+}
+
+#boss::before {
+  left: 10px;
+}
+
+/* START */
+
+#start,
+#restart {
+  border: 0;
+
+  border-radius: 14px;
+
+  background: #ffcc00;
+
+  padding: 15px 42px;
+
+  font-size: 24px;
+  font-weight: 900;
+
+  box-shadow:
+    0 5px 0 #aa8800;
+}
+
+#start {
+  position: absolute;
+
+  left: 50%;
+  top: 55%;
+
+  transform:
+    translate(-50%, -50%);
+
+  z-index: 30;
+}
+
+/* 説明 */
+
+#hint {
+  position: absolute;
+
+  left: 0;
+  right: 0;
+  bottom: 5%;
+
+  text-align: center;
+
+  color: #fff;
+
+  font-size: 13px;
+  font-weight: 700;
+
+  text-shadow:
+    0 1px 3px #000;
+
+  z-index: 15;
+}
+
+/* Firebase状態 */
+
+#status {
+  position: absolute;
+
+  left: 0;
+  right: 0;
+
+  bottom: 12%;
+
+  text-align: center;
+
+  font-size: 13px;
+  font-weight: 700;
+
+  z-index: 20;
+}
+
+/* ランキング */
+
+#ranking {
+  position: absolute;
+
+  top: 55px;
+  right: 10px;
+
+  min-width: 160px;
+
+  padding: 10px 12px;
+
+  background: rgba(255,255,255,0.94);
+
+  border-radius: 12px;
+
+  z-index: 25;
+
+  display: none;
+}
+
+#ranking h3 {
+  margin: 0 0 5px;
+
+  font-size: 15px;
+}
+
+#ranking ol {
+  margin: 0;
+
+  padding-left: 23px;
+
+  font-size: 13px;
+}
+
+/* GAME OVER */
+
+#gameover {
+  position: absolute;
+
+  inset: 0;
+
+  background: rgba(0,0,0,0.7);
+
+  z-index: 50;
+
+  display: none;
+
+  color: #fff;
+
+  text-align: center;
+
+  padding-top: 23vh;
+}
+
+#gameover h2 {
+  margin: 0 0 10px;
+
+  font-size: 42px;
+}
+
+#gameover p {
+  margin: 8px;
+
+  font-size: 20px;
+}
+
+/* 障害物 */
+
+.obstacle {
+  position: absolute;
+
+  bottom: 40%;
+
+  width: 32px;
+  height: 38px;
+
+  background: #c77935;
+
+  border-radius: 5px;
+
+  z-index: 7;
+}
+
+/* コイン */
+
+.coin {
+  position: absolute;
+
+  bottom: 40%;
+
+  width: 24px;
+  height: 24px;
+
+  background: #ffd21c;
+
+  border: 3px solid #b78d00;
+
+  border-radius: 50%;
+
+  z-index: 7;
+}
+
+.hidden {
+  display: none !important;
 }
 </style>
 </head>
 
 <body>
 
-<canvas id="game"></canvas>
+<div id="game">
 
-<div id="ui">
-  <div id="distance">0 m</div>
-  <div id="bossText">上司との距離　██████</div>
+  <div id="road"></div>
+
+  <div id="hud">
+    <span id="score">0m</span>
+    <span id="best">BEST 0m</span>
+  </div>
+
+  <div id="title">
+    <h1>社畜ダッシュ</h1>
+    <p>上司から逃げ続けろ。</p>
+  </div>
+
+  <div id="player"></div>
+
+  <div id="boss"></div>
+
+  <button id="start">
+    START
+  </button>
+
+  <div id="status">
+    ランキング接続準備中…
+  </div>
+
+  <div id="hint">
+    タップ＝ジャンプ　長押し＝高くジャンプ
+  </div>
+
+  <div id="ranking">
+
+    <h3>🏆 ランキング</h3>
+
+    <ol id="rankingList"></ol>
+
+  </div>
+
+  <div id="gameover">
+
+    <h2>GAME OVER</h2>
+
+    <p id="finalScore">
+      0m
+    </p>
+
+    <button id="restart">
+      もう一度走る
+    </button>
+
+  </div>
+
 </div>
 
-<div id="start" class="overlay">
-  <h1>社畜ダッシュ</h1>
-  <div class="sub">寝坊した会社員、出社まであとわずか。</div>
-  <div class="sub">しかも後ろから怒った上司が追ってくる。</div>
-  <div class="sub">タップでジャンプ。長押しで高くジャンプ。</div>
-  <button id="startBtn">出社する</button>
-  <div class="small">どこまで逃げ切れるか。</div>
-</div>
 
-<div id="gameover" class="overlay">
-  <h1>捕まった</h1>
-  <div class="sub" id="result"></div>
-  <button id="retryBtn">もう一度走る</button>
-</div>
+<script type="module">
 
-<script>
-const canvas = document.getElementById("game");
-const ctx = canvas.getContext("2d");
+/* ==================================================
+   Firebase
+================================================== */
 
-let W = 0;
-let H = 0;
-let DPR = 1;
+import {
+  initializeApp
+} from
+"https://www.gstatic.com/firebasejs/12.19.0/firebase-app.js";
+
+import {
+  getDatabase,
+  ref,
+  push,
+  set,
+  query,
+  orderByChild,
+  limitToLast,
+  get
+} from
+"https://www.gstatic.com/firebasejs/12.19.0/firebase-database.js";
+
+
+const firebaseConfig = {
+
+  apiKey:
+    "AIzaSyDP7aQ8ylOIiOeLiKfawJVpGUEIt4Dr4e4",
+
+  authDomain:
+    "shachiku-dash.firebaseapp.com",
+
+  projectId:
+    "shachiku-dash",
+
+  storageBucket:
+    "shachiku-dash.firebasestorage.app",
+
+  messagingSenderId:
+    "416033862481",
+
+  appId:
+    "1:416033862481:web:5e951a935e0d80fdd6d970"
+};
+
+
+const app =
+  initializeApp(firebaseConfig);
+
+const db =
+  getDatabase(app);
+
+
+/* ==================================================
+   DOM
+================================================== */
+
+const game =
+  document.getElementById("game");
+
+const player =
+  document.getElementById("player");
+
+const boss =
+  document.getElementById("boss");
+
+const scoreEl =
+  document.getElementById("score");
+
+const bestEl =
+  document.getElementById("best");
+
+const startBtn =
+  document.getElementById("start");
+
+const restartBtn =
+  document.getElementById("restart");
+
+const statusEl =
+  document.getElementById("status");
+
+const ranking =
+  document.getElementById("ranking");
+
+const rankingList =
+  document.getElementById("rankingList");
+
+const gameover =
+  document.getElementById("gameover");
+
+const finalScore =
+  document.getElementById("finalScore");
+
+const title =
+  document.getElementById("title");
+
+const hint =
+  document.getElementById("hint");
+
+
+/* ==================================================
+   GAME STATE
+================================================== */
 
 let running = false;
 
-let distance = 0;
-let speed = 7;
+let score = 0;
 
-let playerX = 0;
-let playerY = 0;
-let playerVY = 0;
+let best =
+  Number(
+    localStorage.getItem(
+      "shachikuBest"
+    )
+  ) || 0;
 
-let groundY = 0;
+let startTime = 0;
 
-let jumpHeld = false;
-let jumpPower = 0;
+let animationFrame = 0;
 
-let bossGap = 130;
+let jumping = false;
 
-let obstacles = [];
-let particles = [];
-let buildings = [];
+let jumpStart = 0;
 
-let spawnTimer = 0;
-let cityOffset = 0;
-let lastTime = 0;
+let jumpDuration = 0;
 
-function resize(){
+let jumpHeight = 0;
 
-  DPR = Math.min(window.devicePixelRatio || 1, 2);
+let holding = false;
 
-  W = window.innerWidth;
-  H = window.innerHeight;
+let holdTimer = null;
 
-  canvas.width = W * DPR;
-  canvas.height = H * DPR;
+let objects = [];
 
-  canvas.style.width = W + "px";
-  canvas.style.height = H + "px";
+let lastSubmit = 0;
 
-  ctx.setTransform(DPR,0,0,DPR,0,0);
 
-  groundY = H * 0.78;
-  playerX = W * 0.22;
+bestEl.textContent =
+  `BEST ${best}m`;
+
+
+/* ==================================================
+   JUMP
+================================================== */
+
+function jump(high = false) {
+
+  if (!running) return;
+
+  if (jumping) return;
+
+  jumping = true;
+
+  jumpStart =
+    performance.now();
+
+  jumpDuration =
+    high ? 850 : 600;
+
+  jumpHeight =
+    high ? 190 : 115;
 }
 
-window.addEventListener("resize", resize);
-resize();
 
-function rand(a,b){
-  return a + Math.random() * (b-a);
-}
+/* ==================================================
+   OBJECT
+================================================== */
 
-/* =========================
-   街
-========================= */
+function spawnObject() {
 
-function makeCity(){
+  const object =
+    document.createElement("div");
 
-  buildings = [];
+  const isCoin =
+    Math.random() < 0.45;
 
-  let x = 0;
+  object.className =
+    isCoin
+      ? "coin"
+      : "obstacle";
 
-  while(x < W * 4){
+  object.style.left =
+    (105 + Math.random() * 15) + "%";
 
-    const w = rand(65,150);
-    const h = rand(100,280);
+  game.appendChild(object);
 
-    buildings.push({
-      x:x,
-      w:w,
-      h:h,
-      windows:Math.floor(rand(2,6)),
-      color:Math.floor(rand(0,3))
-    });
+  objects.push({
 
-    x += w + rand(5,22);
-  }
-}
+    element: object,
 
-makeCity();
+    x:
+      105 + Math.random() * 15,
 
-function drawSky(){
+    type:
+      isCoin
+        ? "coin"
+        : "obstacle"
 
-  const g = ctx.createLinearGradient(0,0,0,H);
-
-  g.addColorStop(0,"#91c7e8");
-  g.addColorStop(.55,"#dce9ed");
-  g.addColorStop(1,"#eeeeee");
-
-  ctx.fillStyle = g;
-  ctx.fillRect(0,0,W,H);
-}
-
-function drawBuildings(){
-
-  for(const b of buildings){
-
-    const bx =
-      ((b.x - cityOffset*.22) % (W*4) + W*4)
-      % (W*4) - 100;
-
-    ctx.fillStyle =
-      b.color === 0 ? "#69737a" :
-      b.color === 1 ? "#858b8e" :
-      "#596269";
-
-    ctx.fillRect(
-      bx,
-      groundY-b.h,
-      b.w,
-      b.h
-    );
-
-    for(let r=0;r<b.windows;r++){
-
-      for(let c=0;c<3;c++){
-
-        const wy =
-          groundY-b.h+28+r*35;
-
-        if(wy > groundY-25) continue;
-
-        ctx.fillStyle = "#b9d1d8";
-
-        ctx.fillRect(
-          bx+12+c*(b.w/3),
-          wy,
-          Math.max(7,b.w/7),
-          12
-        );
-      }
-    }
-
-    if(b.w > 110){
-
-      ctx.fillStyle="#343b40";
-
-      ctx.fillRect(
-        bx+b.w*.1,
-        groundY-b.h+8,
-        b.w*.8,
-        5
-      );
-    }
-  }
-}
-
-function drawRoad(){
-
-  ctx.fillStyle="#777";
-  ctx.fillRect(
-    0,
-    groundY,
-    W,
-    H-groundY
-  );
-
-  ctx.fillStyle="#555";
-  ctx.fillRect(
-    0,
-    groundY,
-    W,
-    8
-  );
-
-  ctx.fillStyle="#a7a7a7";
-
-  ctx.fillRect(
-    0,
-    groundY+8,
-    W,
-    32
-  );
-
-  ctx.strokeStyle="#777";
-  ctx.lineWidth=2;
-
-  for(
-    let x=-((cityOffset*.5)%80);
-    x<W;
-    x+=80
-  ){
-
-    ctx.beginPath();
-
-    ctx.moveTo(
-      x,
-      groundY+8
-    );
-
-    ctx.lineTo(
-      x+25,
-      groundY+40
-    );
-
-    ctx.stroke();
-  }
-
-  ctx.fillStyle="#ddd";
-
-  const stripeOffset =
-    (cityOffset*.8)%90;
-
-  for(
-    let x=-stripeOffset;
-    x<W;
-    x+=90
-  ){
-
-    ctx.fillRect(
-      x,
-      groundY+72,
-      48,
-      5
-    );
-  }
-}
-
-function drawStreetObjects(){
-
-  const off =
-    (cityOffset*.7)%260;
-
-  /* 電柱 */
-
-  for(
-    let x=-off;
-    x<W+150;
-    x+=260
-  ){
-
-    ctx.fillStyle="#444";
-
-    ctx.fillRect(
-      x,
-      groundY-180,
-      8,
-      180
-    );
-
-    ctx.fillStyle="#333";
-
-    ctx.fillRect(
-      x-35,
-      groundY-175,
-      78,
-      6
-    );
-
-    ctx.strokeStyle="#222";
-    ctx.lineWidth=2;
-
-    ctx.beginPath();
-    ctx.moveTo(x-30,groundY-175);
-    ctx.lineTo(x-100,groundY-210);
-    ctx.stroke();
-
-    ctx.beginPath();
-    ctx.moveTo(x+40,groundY-175);
-    ctx.lineTo(x+120,groundY-205);
-    ctx.stroke();
-  }
-
-  /* 街路樹 */
-
-  const treeOff =
-    (cityOffset*.55)%190;
-
-  for(
-    let x=-treeOff;
-    x<W+100;
-    x+=190
-  ){
-
-    ctx.fillStyle="#594333";
-
-    ctx.fillRect(
-      x,
-      groundY-115,
-      12,
-      115
-    );
-
-    ctx.fillStyle="#365b3b";
-
-    ctx.beginPath();
-    ctx.arc(
-      x+6,
-      groundY-135,
-      34,
-      0,
-      Math.PI*2
-    );
-    ctx.fill();
-
-    ctx.beginPath();
-    ctx.arc(
-      x-18,
-      groundY-115,
-      25,
-      0,
-      Math.PI*2
-    );
-    ctx.fill();
-
-    ctx.beginPath();
-    ctx.arc(
-      x+28,
-      groundY-115,
-      25,
-      0,
-      Math.PI*2
-    );
-    ctx.fill();
-  }
-}
-
-function drawConvenienceStore(){
-
-  const x =
-    ((350-cityOffset*.9)%W+W)%W;
-
-  ctx.fillStyle="#eeeeee";
-
-  ctx.fillRect(
-    x,
-    groundY-100,
-    115,
-    100
-  );
-
-  ctx.fillStyle="#f2f2f2";
-
-  ctx.fillRect(
-    x+8,
-    groundY-70,
-    99,
-    60
-  );
-
-  ctx.fillStyle="#222";
-  ctx.font="bold 15px Arial";
-
-  ctx.fillText(
-    "24H",
-    x+35,
-    groundY-78
-  );
-
-  ctx.fillStyle="#333";
-
-  ctx.fillRect(
-    x+12,
-    groundY-92,
-    90,
-    14
-  );
-
-  ctx.fillStyle="#fff";
-
-  ctx.fillRect(
-    x+18,
-    groundY-87,
-    30,
-    4
-  );
-
-  ctx.fillRect(
-    x+58,
-    groundY-87,
-    30,
-    4
-  );
-}
-
-/* =========================
-   プレイヤー
-========================= */
-
-function drawPlayer(){
-
-  const x = playerX;
-  const y = groundY-18-playerY;
-
-  ctx.fillStyle="rgba(0,0,0,.22)";
-
-  ctx.beginPath();
-
-  ctx.ellipse(
-    x,
-    groundY+2,
-    30,
-    7,
-    0,
-    0,
-    Math.PI*2
-  );
-
-  ctx.fill();
-
-  const swing =
-    Math.sin(Date.now()/90)*10;
-
-  /* 足 */
-
-  ctx.strokeStyle="#222";
-  ctx.lineWidth=9;
-  ctx.lineCap="round";
-
-  ctx.beginPath();
-
-  ctx.moveTo(
-    x-8,
-    y+5
-  );
-
-  ctx.lineTo(
-    x-13+swing,
-    y+40
-  );
-
-  ctx.stroke();
-
-  ctx.beginPath();
-
-  ctx.moveTo(
-    x+7,
-    y+5
-  );
-
-  ctx.lineTo(
-    x+14-swing,
-    y+40
-  );
-
-  ctx.stroke();
-
-  /* 靴 */
-
-  ctx.fillStyle="#111";
-
-  ctx.fillRect(
-    x-24+swing,
-    y+36,
-    18,
-    8
-  );
-
-  ctx.fillRect(
-    x+8-swing,
-    y+36,
-    18,
-    8
-  );
-
-  /* スーツ */
-
-  ctx.fillStyle="#20252a";
-
-  ctx.beginPath();
-
-  ctx.roundRect(
-    x-20,
-    y-48,
-    40,
-    58,
-    8
-  );
-
-  ctx.fill();
-
-  /* シャツ */
-
-  ctx.fillStyle="#eee";
-
-  ctx.beginPath();
-
-  ctx.moveTo(x-7,y-47);
-  ctx.lineTo(x,y-25);
-  ctx.lineTo(x+7,y-47);
-  ctx.closePath();
-
-  ctx.fill();
-
-  /* ネクタイ */
-
-  ctx.fillStyle="#9b2226";
-
-  ctx.beginPath();
-
-  ctx.moveTo(x-3,y-44);
-  ctx.lineTo(x+3,y-44);
-  ctx.lineTo(x+4,y-18);
-  ctx.lineTo(x,y-13);
-  ctx.lineTo(x-4,y-18);
-  ctx.closePath();
-
-  ctx.fill();
-
-  /* 腕 */
-
-  ctx.strokeStyle="#20252a";
-  ctx.lineWidth=8;
-
-  ctx.beginPath();
-  ctx.moveTo(x-17,y-35);
-  ctx.lineTo(x-31,y-5);
-  ctx.stroke();
-
-  ctx.beginPath();
-  ctx.moveTo(x+17,y-35);
-  ctx.lineTo(x+31,y-8);
-  ctx.stroke();
-
-  /* 顔 */
-
-  ctx.fillStyle="#d9a27e";
-
-  ctx.beginPath();
-
-  ctx.arc(
-    x,
-    y-67,
-    17,
-    0,
-    Math.PI*2
-  );
-
-  ctx.fill();
-
-  /* 髪 */
-
-  ctx.fillStyle="#252525";
-
-  ctx.beginPath();
-
-  ctx.arc(
-    x,
-    y-72,
-    17,
-    Math.PI,
-    Math.PI*2
-  );
-
-  ctx.fill();
-
-  /* カバン */
-
-  ctx.fillStyle="#4a3024";
-
-  ctx.fillRect(
-    x-45,
-    y-4,
-    20,
-    16
-  );
-
-  ctx.strokeStyle="#2a1b15";
-  ctx.lineWidth=2;
-
-  ctx.strokeRect(
-    x-45,
-    y-4,
-    20,
-    16
-  );
-
-  if(speed>9){
-
-    ctx.fillStyle="#68b6e8";
-
-    ctx.beginPath();
-
-    ctx.arc(
-      x+23,
-      y-75,
-      3,
-      0,
-      Math.PI*2
-    );
-
-    ctx.fill();
-  }
-}
-
-/* =========================
-   上司
-========================= */
-
-function drawBoss(){
-
-  const x =
-    playerX-bossGap;
-
-  const y =
-    groundY-18;
-
-  ctx.fillStyle="rgba(0,0,0,.2)";
-
-  ctx.beginPath();
-
-  ctx.ellipse(
-    x,
-    y+20,
-    31,
-    7,
-    0,
-    0,
-    Math.PI*2
-  );
-
-  ctx.fill();
-
-  const s =
-    Math.sin(Date.now()/100)*9;
-
-  ctx.strokeStyle="#171717";
-  ctx.lineWidth=10;
-  ctx.lineCap="round";
-
-  ctx.beginPath();
-
-  ctx.moveTo(x-8,y+5);
-  ctx.lineTo(x-13+s,y+40);
-  ctx.stroke();
-
-  ctx.beginPath();
-
-  ctx.moveTo(x+8,y+5);
-  ctx.lineTo(x+13-s,y+40);
-  ctx.stroke();
-
-  ctx.fillStyle="#15191c";
-
-  ctx.beginPath();
-
-  ctx.roundRect(
-    x-22,
-    y-50,
-    44,
-    62,
-    8
-  );
-
-  ctx.fill();
-
-  ctx.strokeStyle="#15191c";
-  ctx.lineWidth=9;
-
-  ctx.beginPath();
-  ctx.moveTo(x-18,y-35);
-  ctx.lineTo(x-37,y-5);
-  ctx.stroke();
-
-  ctx.beginPath();
-  ctx.moveTo(x+18,y-35);
-  ctx.lineTo(x+37,y-5);
-  ctx.stroke();
-
-  ctx.fillStyle="#d19a75";
-
-  ctx.beginPath();
-
-  ctx.arc(
-    x,
-    y-68,
-    18,
-    0,
-    Math.PI*2
-  );
-
-  ctx.fill();
-
-  ctx.fillStyle="#1c1c1c";
-
-  ctx.beginPath();
-
-  ctx.arc(
-    x,
-    y-74,
-    18,
-    Math.PI,
-    Math.PI*2
-  );
-
-  ctx.fill();
-
-  /* 怒った眉 */
-
-  ctx.strokeStyle="#111";
-  ctx.lineWidth=4;
-
-  ctx.beginPath();
-  ctx.moveTo(x-11,y-72);
-  ctx.lineTo(x-2,y-69);
-  ctx.stroke();
-
-  ctx.beginPath();
-  ctx.moveTo(x+11,y-72);
-  ctx.lineTo(x+2,y-69);
-  ctx.stroke();
-
-  /* 口 */
-
-  ctx.beginPath();
-
-  ctx.moveTo(x-7,y-60);
-  ctx.lineTo(x+7,y-60);
-
-  ctx.stroke();
-
-  if(bossGap<100){
-
-    ctx.strokeStyle="rgba(220,30,30,.7)";
-    ctx.lineWidth=3;
-
-    ctx.beginPath();
-
-    ctx.arc(
-      x,
-      y-68,
-      27,
-      -.7,
-      .7
-    );
-
-    ctx.stroke();
-  }
-}
-
-/* =========================
-   障害物
-========================= */
-
-function drawObstacle(o){
-
-  const x=o.x;
-  const y=groundY;
-
-  if(o.type==="cone"){
-
-    ctx.fillStyle="#e87527";
-
-    ctx.beginPath();
-
-    ctx.moveTo(x,y);
-    ctx.lineTo(x+15,y-45);
-    ctx.lineTo(x+30,y);
-
-    ctx.closePath();
-
-    ctx.fill();
-
-    ctx.fillStyle="#fff";
-
-    ctx.fillRect(
-      x+8,
-      y-27,
-      16,
-      7
-    );
-  }
-
-  if(o.type==="bike"){
-
-    ctx.strokeStyle="#222";
-    ctx.lineWidth=4;
-
-    ctx.beginPath();
-    ctx.arc(x+10,y-10,14,0,Math.PI*2);
-    ctx.stroke();
-
-    ctx.beginPath();
-    ctx.arc(x+48,y-10,14,0,Math.PI*2);
-    ctx.stroke();
-
-    ctx.beginPath();
-
-    ctx.moveTo(x+10,y-10);
-    ctx.lineTo(x+28,y-32);
-    ctx.lineTo(x+48,y-10);
-    ctx.lineTo(x+10,y-10);
-
-    ctx.stroke();
-  }
-
-  if(o.type==="sign"){
-
-    ctx.fillStyle="#777";
-
-    ctx.fillRect(
-      x+20,
-      y-100,
-      6,
-      100
-    );
-
-    ctx.fillStyle="#fff";
-
-    ctx.fillRect(
-      x-8,
-      y-115,
-      62,
-      35
-    );
-
-    ctx.strokeStyle="#444";
-    ctx.lineWidth=2;
-
-    ctx.strokeRect(
-      x-8,
-      y-115,
-      62,
-      35
-    );
-
-    ctx.fillStyle="#333";
-    ctx.font="bold 11px Arial";
-
-    ctx.fillText(
-      "工事中",
-      x+4,
-      y-93
-    );
-  }
-
-  if(o.type==="bench"){
-
-    ctx.fillStyle="#765034";
-
-    ctx.fillRect(
-      x,
-      y-38,
-      65,
-      8
-    );
-
-    ctx.fillRect(
-      x+8,
-      y-30,
-      7,
-      30
-    );
-
-    ctx.fillRect(
-      x+50,
-      y-30,
-      7,
-      30
-    );
-  }
-
-  if(o.type==="car"){
-
-    ctx.fillStyle="#4c5961";
-
-    ctx.beginPath();
-
-    ctx.roundRect(
-      x,
-      y-48,
-      100,
-      48,
-      8
-    );
-
-    ctx.fill();
-
-    ctx.fillStyle="#273038";
-
-    ctx.fillRect(
-      x+22,
-      y-65,
-      48,
-      22
-    );
-
-    ctx.fillStyle="#a9d0df";
-
-    ctx.fillRect(
-      x+27,
-      y-61,
-      18,
-      14
-    );
-
-    ctx.fillRect(
-      x+49,
-      y-61,
-      16,
-      14
-    );
-
-    ctx.fillStyle="#222";
-
-    ctx.beginPath();
-    ctx.arc(x+20,y,10,0,Math.PI*2);
-    ctx.fill();
-
-    ctx.beginPath();
-    ctx.arc(x+80,y,10,0,Math.PI*2);
-    ctx.fill();
-  }
-}
-
-function spawnObstacle(){
-
-  const types=[
-    "cone",
-    "bike",
-    "sign",
-    "bench",
-    "car"
-  ];
-
-  const type =
-    types[
-      Math.floor(
-        Math.random()*types.length
-      )
-    ];
-
-  obstacles.push({
-    x:W+100,
-    type:type
   });
 }
 
-/* =========================
-   更新
-========================= */
 
-function updateObstacles(dt){
+/* ==================================================
+   CLEAR OBJECT
+================================================== */
 
-  for(
-    let i=obstacles.length-1;
-    i>=0;
-    i--
-  ){
+function clearObjects() {
 
-    const o=obstacles[i];
+  for (
+    const object
+    of objects
+  ) {
 
-    o.x -= speed*dt*60;
+    object.element.remove();
 
-    const ox=o.x;
-
-    const w =
-      o.type==="car" ? 100 :
-      o.type==="bike" ? 62 :
-      o.type==="bench" ? 65 :
-      45;
-
-    const h =
-      o.type==="car" ? 55 :
-      o.type==="sign" ? 115 :
-      o.type==="bike" ? 45 :
-      o.type==="bench" ? 38 :
-      45;
-
-    const px=playerX;
-    const py=groundY-playerY;
-
-    if(
-      px+20>ox &&
-      px-20<ox+w &&
-      py>groundY-h+15
-    ){
-
-      bossGap-=55;
-
-      obstacles.splice(i,1);
-
-      for(let n=0;n<12;n++){
-
-        particles.push({
-          x:px,
-          y:py,
-          vx:rand(-4,4),
-          vy:rand(-6,-1),
-          life:1
-        });
-      }
-
-      if(bossGap<=25){
-        gameOver();
-      }
-
-      continue;
-    }
-
-    if(o.x<-150){
-      obstacles.splice(i,1);
-    }
   }
+
+  objects = [];
 }
 
-function updateParticles(dt){
 
-  for(
-    let i=particles.length-1;
-    i>=0;
-    i--
-  ){
+/* ==================================================
+   START
+================================================== */
 
-    const p=particles[i];
+function startGame() {
 
-    p.x+=p.vx*dt*60;
-    p.y+=p.vy*dt*60;
+  running = true;
 
-    p.vy+=.3*dt*60;
+  score = 0;
 
-    p.life-=dt;
+  startTime =
+    performance.now();
 
-    if(p.life<=0){
-      particles.splice(i,1);
-    }
-  }
-}
+  jumping = false;
 
-function drawParticles(){
+  clearObjects();
 
-  for(const p of particles){
+  gameover.style.display =
+    "none";
 
-    ctx.fillStyle =
-      `rgba(255,220,80,${p.life})`;
+  startBtn.classList.add(
+    "hidden"
+  );
 
-    ctx.fillRect(
-      p.x,
-      p.y,
-      5,
-      5
+  title.classList.add(
+    "hidden"
+  );
+
+  hint.classList.remove(
+    "hidden"
+  );
+
+  ranking.style.display =
+    "none";
+
+  statusEl.textContent =
+    "";
+
+  player.style.transform =
+    "translate(-50%,50%)";
+
+  boss.style.right =
+    "13%";
+
+  for (
+    let i = 0;
+    i < 3;
+    i++
+  ) {
+
+    setTimeout(
+      spawnObject,
+      i * 1100
     );
+
   }
+
+  cancelAnimationFrame(
+    animationFrame
+  );
+
+  animationFrame =
+    requestAnimationFrame(
+      gameLoop
+    );
 }
 
-function update(dt){
 
-  if(!running) return;
+/* ==================================================
+   GAME LOOP
+================================================== */
 
-  distance += speed*dt*.13;
+function gameLoop(time) {
 
-  cityOffset += speed*dt*60;
+  if (!running) return;
 
-  speed =
-    7 + Math.min(distance/150,7);
 
-  /* 長押し中は少しだけ上昇力を追加 */
+  score =
+    Math.floor(
+      (time - startTime) / 1000
+    );
 
-  if(jumpHeld){
 
-    jumpPower =
+  scoreEl.textContent =
+    `${score}m`;
+
+
+  /* 難易度 */
+
+  const difficulty =
+    Math.min(
+      score / 60,
+      1
+    );
+
+
+  /* 障害物追加 */
+
+  if (
+    score > 0 &&
+    score % 2 === 0 &&
+    Math.random() < 0.035
+  ) {
+
+    spawnObject();
+
+  }
+
+
+  /* ジャンプ */
+
+  if (jumping) {
+
+    const progress =
       Math.min(
-        jumpPower+dt*2.7,
+        (time - jumpStart) /
+        jumpDuration,
         1
       );
 
-    playerVY += 15*dt;
+
+    const y =
+      Math.sin(
+        progress * Math.PI
+      ) *
+      jumpHeight;
+
+
+    player.style.transform =
+      `translate(
+        -50%,
+        calc(50% - ${y}px)
+      )`;
+
+
+    if (progress >= 1) {
+
+      jumping = false;
+
+      player.style.transform =
+        "translate(-50%,50%)";
+
+    }
+
   }
 
-  /* 重力 */
-
-  playerVY -= 32*dt;
-
-  playerY += playerVY*dt;
-
-  if(playerY<=0){
-
-    playerY=0;
-    playerVY=0;
-  }
 
   /* 上司 */
 
-  bossGap += .8*dt;
-
-  if(bossGap>145){
-    bossGap=145;
-  }
-
-  /* 障害物 */
-
-  spawnTimer-=dt;
-
-  const interval =
-    Math.max(
-      .75,
-      1.5-distance/600
-    );
-
-  if(spawnTimer<=0){
-
-    spawnObstacle();
-
-    spawnTimer=interval;
-  }
-
-  updateObstacles(dt);
-  updateParticles(dt);
-
-  document.getElementById(
-    "distance"
-  ).textContent =
-    Math.floor(distance)+" m";
-
-  const blocks =
-    Math.max(
-      1,
-      Math.floor(bossGap/22)
-    );
-
-  document.getElementById(
-    "bossText"
-  ).textContent =
-    "上司との距離　"+
-    "█".repeat(blocks);
-}
-
-/* =========================
-   描画
-========================= */
-
-function draw(){
-
-  drawSky();
-  drawBuildings();
-  drawStreetObjects();
-  drawConvenienceStore();
-  drawRoad();
-
-  for(const o of obstacles){
-    drawObstacle(o);
-  }
-
-  drawBoss();
-  drawPlayer();
-  drawParticles();
-
-  if(bossGap<70){
-
-    const alpha =
-      (70-bossGap)/140;
-
-    ctx.fillStyle =
-      `rgba(220,0,0,${alpha})`;
-
-    ctx.fillRect(
-      0,
-      0,
-      W,
-      7
-    );
-
-    ctx.fillStyle =
-      `rgba(220,0,0,${alpha*.35})`;
-
-    ctx.fillRect(
-      0,
-      0,
-      W,
-      H
-    );
-  }
-}
-
-/* =========================
-   ゲームループ
-========================= */
-
-function loop(t){
-
-  let dt =
+  const bossProgress =
     Math.min(
-      (t-lastTime)/1000,
-      .033
+      score / 90,
+      1
     );
 
-  lastTime=t;
 
-  update(dt);
-  draw();
+  boss.style.right =
+    (13 - bossProgress * 9) +
+    "%";
 
-  requestAnimationFrame(loop);
-}
 
-/* =========================
-   ジャンプ
-========================= */
+  /* 障害物移動 */
 
-function beginJump(){
+  const playerRect =
+    player.getBoundingClientRect();
 
-  if(!running) return;
 
-  /* 地面にいる時だけジャンプ開始 */
+  for (
+    let i = objects.length - 1;
+    i >= 0;
+    i--
+  ) {
 
-  if(playerY <= 1){
+    const object =
+      objects[i];
 
-    jumpHeld=true;
-    jumpPower=0;
 
-    /* 初速 */
+    object.x -=
+      0.7 +
+      difficulty * 0.65;
 
-    playerVY=15;
+
+    object.element.style.left =
+      object.x + "%";
+
+
+    const rect =
+      object.element
+        .getBoundingClientRect();
+
+
+    /* 画面外 */
+
+    if (
+      object.x < -10
+    ) {
+
+      object.element.remove();
+
+      objects.splice(
+        i,
+        1
+      );
+
+      continue;
+
+    }
+
+
+    /* 衝突 */
+
+    if (
+
+      rect.right >
+        playerRect.left &&
+
+      rect.left <
+        playerRect.right &&
+
+      rect.bottom >
+        playerRect.top + 12 &&
+
+      rect.top <
+        playerRect.bottom - 5
+
+    ) {
+
+      if (
+        object.type ===
+        "coin"
+      ) {
+
+        object.element.remove();
+
+        objects.splice(
+          i,
+          1
+        );
+
+        score += 2;
+
+        scoreEl.textContent =
+          `${score}m`;
+
+      }
+
+      else {
+
+        endGame();
+
+      }
+
+    }
+
   }
+
+
+  /* 上司に捕まる */
+
+  const bossRect =
+    boss.getBoundingClientRect();
+
+
+  if (
+    bossRect.left <
+    playerRect.right + 8
+    &&
+    !jumping
+  ) {
+
+    endGame();
+
+    return;
+
+  }
+
+
+  animationFrame =
+    requestAnimationFrame(
+      gameLoop
+    );
 }
 
-function endJump(){
 
-  if(!jumpHeld) return;
+/* ==================================================
+   GAME OVER
+================================================== */
 
-  jumpHeld=false;
+function endGame() {
 
-  /*
-    長押し時間に応じて追加ジャンプ
-  */
+  if (!running) return;
 
-  playerVY +=
-    20 * jumpPower;
+  running = false;
+
+  cancelAnimationFrame(
+    animationFrame
+  );
+
+
+  finalScore.textContent =
+    `記録 ${score}m`;
+
+
+  if (
+    score > best
+  ) {
+
+    best = score;
+
+    localStorage.setItem(
+      "shachikuBest",
+      best
+    );
+
+    bestEl.textContent =
+      `BEST ${best}m`;
+
+  }
+
+
+  gameover.style.display =
+    "block";
+
+
+  submitScore(
+    score
+  );
+
+
+  loadRanking();
+
 }
 
-/*
-  iPhone / iPad用
-  pointerイベントを使用
-*/
 
-canvas.addEventListener(
+/* ==================================================
+   FIREBASE SCORE SAVE
+================================================== */
+
+async function submitScore(
+  value
+) {
+
+  if (
+    value <= 0
+  ) return;
+
+
+  if (
+    Date.now() -
+    lastSubmit <
+    1000
+  ) return;
+
+
+  lastSubmit =
+    Date.now();
+
+
+  try {
+
+    const scoresRef =
+      ref(
+        db,
+        "scores"
+      );
+
+
+    const newScore =
+      push(
+        scoresRef
+      );
+
+
+    await set(
+      newScore,
+      {
+
+        name:
+          "社畜",
+
+        score:
+          value,
+
+        createdAt:
+          Date.now()
+
+      }
+    );
+
+
+    statusEl.textContent =
+      "ランキングに記録しました";
+
+
+  }
+
+  catch (error) {
+
+    console.error(
+      error
+    );
+
+    statusEl.textContent =
+      "ランキング保存に失敗しました";
+
+  }
+
+}
+
+
+/* ==================================================
+   RANKING
+================================================== */
+
+async function loadRanking() {
+
+  try {
+
+    const scoresQuery =
+      query(
+
+        ref(
+          db,
+          "scores"
+        ),
+
+        orderByChild(
+          "score"
+        ),
+
+        limitToLast(
+          10
+        )
+
+      );
+
+
+    const snapshot =
+      await get(
+        scoresQuery
+      );
+
+
+    const rows = [];
+
+
+    snapshot.forEach(
+      child => {
+
+        rows.push(
+          child.val()
+        );
+
+      }
+    );
+
+
+    rows.sort(
+      (a,b) =>
+        (b.score || 0) -
+        (a.score || 0)
+    );
+
+
+    rankingList.innerHTML =
+      "";
+
+
+    rows.forEach(
+      row => {
+
+        const li =
+          document.createElement(
+            "li"
+          );
+
+
+        li.textContent =
+          `${row.name || "社畜"} — ${row.score || 0}m`;
+
+
+        rankingList.appendChild(
+          li
+        );
+
+      }
+    );
+
+
+    if (
+      rows.length > 0
+    ) {
+
+      ranking.style.display =
+        "block";
+
+      statusEl.textContent =
+        "ランキング接続OK";
+
+    }
+
+    else {
+
+      statusEl.textContent =
+        "ランキング接続OK（まだ記録なし）";
+
+    }
+
+  }
+
+  catch (error) {
+
+    console.error(
+      error
+    );
+
+    statusEl.textContent =
+      "ランキング接続エラー";
+
+  }
+
+}
+
+
+/* ==================================================
+   BUTTON
+================================================== */
+
+startBtn.addEventListener(
+  "click",
+  startGame
+);
+
+
+restartBtn.addEventListener(
+  "click",
+  startGame
+);
+
+
+/* ==================================================
+   MOBILE CONTROL
+================================================== */
+
+game.addEventListener(
   "pointerdown",
-  function(e){
+  event => {
 
-    e.preventDefault();
+    if (
+      event.target ===
+      startBtn
+    ) return;
 
-    beginJump();
 
-  },
-  {passive:false}
-);
+    if (
+      event.target ===
+      restartBtn
+    ) return;
 
-canvas.addEventListener(
-  "pointerup",
-  function(e){
 
-    e.preventDefault();
+    if (!running) return;
 
-    endJump();
 
-  },
-  {passive:false}
-);
+    holding = true;
 
-canvas.addEventListener(
-  "pointercancel",
-  function(e){
 
-    e.preventDefault();
+    clearTimeout(
+      holdTimer
+    );
 
-    endJump();
 
-  },
-  {passive:false}
-);
+    /*
+      一定時間押し続けたら
+      高ジャンプ
+    */
 
-/* マウスでも遊べる */
+    holdTimer =
+      setTimeout(
+        () => {
 
-canvas.addEventListener(
-  "mousedown",
-  function(e){
+          if (
+            holding
+          ) {
 
-    e.preventDefault();
+            jump(true);
 
-    beginJump();
+          }
+
+        },
+        180
+      );
 
   }
 );
+
+
+game.addEventListener(
+  "pointerup",
+  () => {
+
+    if (!holding) return;
+
+    holding = false;
+
+
+    clearTimeout(
+      holdTimer
+    );
+
+
+    /*
+      短押しなら通常ジャンプ
+    */
+
+    if (
+      running &&
+      !jumping
+    ) {
+
+      jump(false);
+
+    }
+
+  }
+);
+
+
+game.addEventListener(
+  "pointercancel",
+  () => {
+
+    holding = false;
+
+    clearTimeout(
+      holdTimer
+    );
+
+  }
+);
+
+
+/* ==================================================
+   PC KEYBOARD
+================================================== */
 
 window.addEventListener(
-  "mouseup",
-  function(){
+  "keydown",
+  event => {
 
-    endJump();
+    if (
+      event.code ===
+        "Space" ||
+      event.code ===
+        "ArrowUp"
+    ) {
+
+      event.preventDefault();
+
+
+      if (!running) {
+
+        startGame();
+
+      }
+
+      else {
+
+        jump(true);
+
+      }
+
+    }
 
   }
 );
 
-/* =========================
-   ゲーム開始
-========================= */
 
-function startGame(){
+/* ==================================================
+   INITIAL RANKING LOAD
+================================================== */
 
-  running=true;
-
-  distance=0;
-  speed=7;
-
-  playerY=0;
-  playerVY=0;
-
-  jumpHeld=false;
-  jumpPower=0;
-
-  bossGap=130;
-
-  obstacles=[];
-  particles=[];
-
-  spawnTimer=.7;
-  cityOffset=0;
-
-  document.getElementById(
-    "start"
-  ).style.display="none";
-
-  document.getElementById(
-    "gameover"
-  ).style.display="none";
-
-  lastTime=performance.now();
-}
-
-function gameOver(){
-
-  running=false;
-
-  jumpHeld=false;
-
-  document.getElementById(
-    "result"
-  ).textContent =
-    "あなたは "+
-    Math.floor(distance)+
-    "m 逃げた。";
-
-  document.getElementById(
-    "gameover"
-  ).style.display="flex";
-}
-
-document.getElementById(
-  "startBtn"
-).addEventListener(
-  "click",
-  startGame
-);
-
-document.getElementById(
-  "retryBtn"
-).addEventListener(
-  "click",
-  startGame
-);
-
-requestAnimationFrame(loop);
+loadRanking();
 
 </script>
 
