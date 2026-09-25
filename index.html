@@ -1,42 +1,176 @@
 <!DOCTYPE html>
-<html lang="ja"<!DOCTYPE html>
 <html lang="ja">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
 <title>社畜ダッシュ</title>
+
 <style>
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-body{margin:0;background:#111;color:#fff;font-family:system-ui,-apple-system,sans-serif;overflow:hidden;touch-action:none}
-#game{position:relative;width:100vw;height:100vh;overflow:hidden;background:linear-gradient(#78c9ff 0 55%,#d8d8d8 55%)}
-#sky{position:absolute;inset:0 0 45%;background:linear-gradient(#6fc5ff,#d9f3ff)}
-#road{position:absolute;left:0;right:0;bottom:0;height:45%;background:#555;border-top:8px solid #777}
-.lane{position:absolute;left:0;right:0;height:8px;background:repeating-linear-gradient(90deg,transparent 0 35px,#eee 35px 75px);opacity:.7;top:50%}
-#hud{position:absolute;z-index:20;top:12px;left:12px;right:12px;display:flex;justify-content:space-between;font-weight:800;text-shadow:2px 2px #000}
-#boss{position:absolute;z-index:7;left:-120px;bottom:24%;width:105px;height:105px;border-radius:50%;overflow:hidden;border:4px solid #222;background:#fff;box-shadow:0 5px 15px #0008}
-#boss img{width:100%;height:100%;object-fit:cover;display:block}
-#player{position:absolute;z-index:10;left:40%;bottom:24%;width:52px;height:72px;background:#1769aa;border-radius:16px 16px 8px 8px;box-shadow:0 4px 8px #0008}
-#player:before{content:"";position:absolute;width:38px;height:38px;background:#f0c7a8;border-radius:50%;left:7px;top:-28px;border:3px solid #222}
-#player:after{content:"";position:absolute;left:7px;right:7px;bottom:-15px;height:18px;border-bottom:7px solid #222;border-left:5px solid transparent;border-right:5px solid transparent}
-.obstacle{position:absolute;z-index:8;bottom:24%;width:46px;height:60px;background:#e53935;border:4px solid #fff;border-radius:8px;box-shadow:0 4px 10px #0008}
-.coin{position:absolute;z-index:9;bottom:35%;width:30px;height:30px;border-radius:50%;background:#ffd21a;border:4px solid #fff35a;box-shadow:0 0 12px #ffdf00}
-#warning{position:absolute;z-index:30;top:24%;left:0;right:0;text-align:center;font-size:28px;font-weight:900;color:#ff3030;text-shadow:3px 3px #000;opacity:0;pointer-events:none}
-#menu,#gameover{position:absolute;z-index:50;inset:0;background:#000b;display:flex;align-items:center;justify-content:center;text-align:center;padding:24px}
-.panel{width:min(440px,94vw);background:#202020;border:2px solid #fff;border-radius:18px;padding:24px;box-shadow:0 12px 40px #000}
+html,body{margin:0;width:100%;height:100%;overflow:hidden}
+body{
+  background:#111;color:#fff;
+  font-family:system-ui,-apple-system,sans-serif;
+  touch-action:none;
+}
+#game{
+  position:relative;width:100vw;height:100vh;overflow:hidden;
+  background:linear-gradient(#6fc5ff 0 55%,#d8d8d8 55%);
+}
+#sky{
+  position:absolute;inset:0 0 45%;
+  background:linear-gradient(#6fc5ff,#d9f3ff);
+}
+#road{
+  position:absolute;left:0;right:0;bottom:0;height:45%;
+  background:#555;border-top:8px solid #777;
+  overflow:hidden;
+}
+#roadLines{
+  position:absolute;inset:0;
+}
+.roadLine{
+  position:absolute;top:50%;width:90px;height:8px;
+  background:#eee;border-radius:5px;opacity:.75;
+}
+
+#hud{
+  position:absolute;z-index:30;top:12px;left:12px;right:12px;
+  display:flex;justify-content:space-between;
+  font-weight:900;text-shadow:2px 2px #000;
+}
+
+#player{
+  position:absolute;z-index:15;
+  left:40%;bottom:24%;
+  width:52px;height:72px;
+  background:#1769aa;
+  border-radius:16px 16px 8px 8px;
+  box-shadow:0 4px 8px #0008;
+  transition:transform .05s linear;
+}
+#player:before{
+  content:"";
+  position:absolute;
+  width:38px;height:38px;
+  background:#f0c7a8;border-radius:50%;
+  left:7px;top:-28px;border:3px solid #222;
+}
+#player:after{
+  content:"";
+  position:absolute;
+  left:7px;right:7px;bottom:-15px;height:18px;
+  border-bottom:7px solid #222;
+  border-left:5px solid transparent;
+  border-right:5px solid transparent;
+}
+
+#boss{
+  position:absolute;z-index:12;
+  left:-130px;bottom:24%;
+  width:105px;height:105px;
+  border-radius:50%;
+  overflow:hidden;
+  border:4px solid #222;
+  background:#fff;
+  box-shadow:0 5px 15px #0008;
+}
+#bossImg{
+  width:100%;height:100%;object-fit:cover;display:block;
+}
+
+.obstacle{
+  position:absolute;z-index:13;
+  bottom:24%;
+  width:54px;height:65px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:38px;
+  background:#222;
+  border:3px solid #fff;
+  border-radius:10px;
+  box-shadow:0 4px 10px #0008;
+}
+
+.coin{
+  position:absolute;z-index:14;
+  width:32px;height:32px;
+  border-radius:50%;
+  background:#ffd21a;
+  border:4px solid #fff35a;
+  box-shadow:0 0 12px #ffdf00;
+}
+.coin:after{
+  content:"¥";
+  position:absolute;
+  inset:0;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  color:#9a6500;
+  font-weight:900;
+}
+
+#warning{
+  position:absolute;z-index:40;
+  top:24%;left:0;right:0;
+  text-align:center;
+  font-size:28px;font-weight:900;
+  color:#ff3030;text-shadow:3px 3px #000;
+  opacity:0;pointer-events:none;
+}
+
+#menu,#gameover{
+  position:absolute;z-index:100;inset:0;
+  background:#000b;
+  display:flex;align-items:center;justify-content:center;
+  text-align:center;padding:24px;
+}
+#gameover{display:none}
+
+.panel{
+  width:min(440px,94vw);
+  max-height:90vh;
+  overflow:auto;
+  background:#202020;
+  border:2px solid #fff;
+  border-radius:18px;
+  padding:24px;
+  box-shadow:0 12px 40px #000;
+}
 h1{margin:0 0 8px;font-size:40px}
-button{width:100%;padding:15px;margin-top:10px;border:0;border-radius:12px;font-size:18px;font-weight:800}
+button{
+  width:100%;padding:15px;margin-top:10px;
+  border:0;border-radius:12px;
+  font-size:18px;font-weight:800;
+}
 .primary{background:#ffd21a;color:#111}
-input{width:100%;padding:13px;border-radius:10px;border:0;font-size:17px;margin:10px 0}
-#rankingList{text-align:left;max-height:220px;overflow:auto;margin-top:12px}
-.rankRow{display:flex;justify-content:space-between;padding:8px 4px;border-bottom:1px solid #555}
+input{
+  width:100%;padding:13px;
+  border-radius:10px;border:0;
+  font-size:17px;margin:10px 0;
+}
 .small{font-size:13px;color:#ccc}
+#rankingList,#rankingList2{
+  text-align:left;max-height:220px;
+  overflow:auto;margin-top:12px;
+}
+.rankRow{
+  display:flex;justify-content:space-between;
+  padding:8px 4px;
+  border-bottom:1px solid #555;
+}
+#firebaseStatus{
+  text-align:center;font-size:10px;
+  opacity:.75;margin-top:5px;
+}
+
 .shake{animation:shake .16s linear infinite}
 @keyframes shake{
-0%{transform:translate(0)}
-25%{transform:translate(5px,-3px)}
-50%{transform:translate(-4px,3px)}
-75%{transform:translate(3px,2px)}
-100%{transform:translate(-2px,-2px)}
+  0%{transform:translate(0)}
+  25%{transform:translate(5px,-3px)}
+  50%{transform:translate(-4px,3px)}
+  75%{transform:translate(3px,2px)}
+  100%{transform:translate(-2px,-2px)}
 }
 </style>
 </head>
@@ -45,108 +179,110 @@ input{width:100%;padding:13px;border-radius:10px;border:0;font-size:17px;margin:
 
 <div id="game">
 
-<div id="sky"></div>
+  <div id="sky"></div>
 
-<div id="road">
-<div class="lane"></div>
-</div>
+  <div id="road">
+    <div id="roadLines"></div>
+  </div>
 
-<div id="hud">
-<span>距離 <b id="distance">0</b>m</span>
-<span>🪙 <b id="coins">0</b>　🔥 <b id="combo">0</b></span>
-</div>
+  <div id="hud">
+    <span>距離 <b id="distance">0</b>m</span>
+    <span>🪙 <b id="coins">0</b>　🔥 <b id="combo">0</b></span>
+  </div>
 
-<div id="warning">⚠ 上司が近い！ ⚠</div>
+  <div id="warning">⚠ 上司が近い！ ⚠</div>
 
-<!-- 顔切り抜き画像をHTMLへ直接埋め込み -->
-<div id="boss">
-<img id="bossImg" alt="上司">
-</div>
+  <div id="boss">
+    <div style="
+      width:100%;height:100%;
+      display:flex;align-items:center;justify-content:center;
+      font-size:55px;background:#eee;
+    ">😡</div>
+  </div>
 
-<div id="player"></div>
+  <div id="player"></div>
 
-<div id="menu">
-<div class="panel">
+  <div id="menu">
+    <div class="panel">
 
-<h1>社畜ダッシュ</h1>
+      <h1>社畜ダッシュ</h1>
 
-<p>上司から逃げ続けろ。</p>
+      <p>上司から逃げ続けろ。</p>
 
-<p class="small">
-タップ：ジャンプ<br>
-長押し：大ジャンプ
-</p>
+      <p class="small">
+        タップ：ジャンプ<br>
+        長押し：大ジャンプ
+      </p>
 
-<input
-id="playerName"
-maxlength="12"
-value="社畜"
-placeholder="名前"
->
+      <input
+        id="playerName"
+        maxlength="12"
+        value="社畜"
+        placeholder="名前"
+      >
 
-<button class="primary" id="startBtn">
-スタート
-</button>
+      <button class="primary" id="startBtn">
+        スタート
+      </button>
 
-<h2>ランキング</h2>
+      <h2>ランキング</h2>
 
-<div id="rankingList">
-読み込み中...
-</div>
+      <div id="rankingList">
+        読み込み中...
+      </div>
 
-</div>
-</div>
+      <div id="firebaseStatus"></div>
 
-<div id="gameover" style="display:none">
+    </div>
+  </div>
 
-<div class="panel">
+  <div id="gameover">
+    <div class="panel">
 
-<h1>GAME OVER</h1>
+      <h1>GAME OVER</h1>
 
-<p id="result"></p>
+      <p id="result"></p>
 
-<button class="primary" id="retryBtn">
-もう一度
-</button>
+      <button class="primary" id="retryBtn">
+        もう一度
+      </button>
 
-<h2>ランキング</h2>
+      <h2>ランキング</h2>
 
-<div id="rankingList2"></div>
+      <div id="rankingList2"></div>
 
-</div>
-</div>
+    </div>
+  </div>
 
 </div>
 
 <script type="module">
 
 import {
-initializeApp
-}
-from "https://www.gstatic.com/firebasejs/12.19.0/firebase-app.js";
+  initializeApp
+} from "https://www.gstatic.com/firebasejs/12.19.0/firebase-app.js";
 
 import {
-getDatabase,
-ref,
-push,
-set,
-get
-}
-from "https://www.gstatic.com/firebasejs/12.19.0/firebase-database.js";
+  getDatabase,
+  ref,
+  push,
+  set,
+  get
+} from "https://www.gstatic.com/firebasejs/12.19.0/firebase-database.js";
 
 
 /* =========================
    Firebase
 ========================= */
 
-const firebaseConfig={
-apiKey:"AIzaSyDP7a8QylOIiOeLiKfawJVpGUEIt4Dr4e4",
-authDomain:"shachiku-dash.firebaseapp.com",
-databaseURL:"https://shachiku-dash-default-rtdb.asia-southeast1.firebasedatabase.app",
-projectId:"shachiku-dash",
-storageBucket:"shachiku-dash.firebasestorage.app",
-messagingSenderId:"416033862481",
-appId:"1:416033862481:web:5e951a935e0d80fdd6d970"
+const firebaseConfig = {
+  apiKey:"AIzaSyDP7aQ8ylOIiOeLiKfawJVpGUEIt4Dr4e4",
+  authDomain:"shachiku-dash.firebaseapp.com",
+  databaseURL:"https://shachiku-dash-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId:"shachiku-dash",
+  storageBucket:"shachiku-dash.firebasestorage.app",
+  messagingSenderId:"416033862481",
+  appId:"1:416033862481:web:5e951a935e0d80fdd6d970"
 };
 
 const app=initializeApp(firebaseConfig);
@@ -154,170 +290,917 @@ const db=getDatabase(app);
 
 
 /* =========================
-   上司の顔画像
-   HTMLへ直接埋め込み
+   DOM
 ========================= */
 
-const bossImg=document.getElementById("bossImg");
+const game=document.getElementById("game");
+const player=document.getElementById("player");
+const boss=document.getElementById("boss");
 
-bossImg.src="data:image/jpeg;base64,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[...]
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
-<title>社畜ダッシュ</title>
-<style>
-*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-body{margin:0;background:#111;color:#fff;font-family:system-ui,-apple-system,sans-serif;overflow:hidden;touch-action:none}
-#game{position:relative;width:100vw;height:100vh;overflow:hidden;background:linear-gradient(#78c9ff 0 55%,#d8d8d8 55%)}
-#sky{position:absolute;inset:0 0 45%;background:linear-gradient(#6fc5ff,#d9f3ff)}
-#road{position:absolute;left:0;right:0;bottom:0;height:45%;background:#555;border-top:8px solid #777}
-.lane{position:absolute;left:0;right:0;height:8px;background:repeating-linear-gradient(90deg,transparent 0 35px,#eee 35px 75px);opacity:.7;top:50%}
-#hud{position:absolute;z-index:20;top:12px;left:12px;right:12px;display:flex;justify-content:space-between;font-weight:800;text-shadow:2px 2px #000}
-#boss{position:absolute;z-index:7;left:-120px;bottom:24%;width:105px;height:105px;border-radius:50%;overflow:hidden;border:4px solid #222;background:#fff;box-shadow:0 5px 15px #0008}
-#boss img{width:100%;height:100%;object-fit:cover;display:block}
-#player{position:absolute;z-index:10;left:40%;bottom:24%;width:52px;height:72px;background:#1769aa;border-radius:16px 16px 8px 8px;box-shadow:0 4px 8px #0008}
-#player:before{content:"";position:absolute;width:38px;height:38px;background:#f0c7a8;border-radius:50%;left:7px;top:-28px;border:3px solid #222}
-#player:after{content:"";position:absolute;left:7px;right:7px;bottom:-15px;height:18px;border-bottom:7px solid #222;border-left:5px solid transparent;border-right:5px solid transparent}
-.obstacle{position:absolute;z-index:8;bottom:24%;width:46px;height:60px;background:#e53935;border:4px solid #fff;border-radius:8px;box-shadow:0 4px 10px #0008}
-.coin{position:absolute;z-index:9;bottom:35%;width:30px;height:30px;border-radius:50%;background:#ffd21a;border:4px solid #fff35a;box-shadow:0 0 12px #ffdf00}
-#warning{position:absolute;z-index:30;top:24%;left:0;right:0;text-align:center;font-size:28px;font-weight:900;color:#ff3030;text-shadow:3px 3px #000;opacity:0;pointer-events:none}
-#menu,#gameover{position:absolute;z-index:50;inset:0;background:#000b;display:flex;align-items:center;justify-content:center;text-align:center;padding:24px}
-.panel{width:min(440px,94vw);background:#202020;border:2px solid #fff;border-radius:18px;padding:24px;box-shadow:0 12px 40px #000}
-h1{margin:0 0 8px;font-size:40px}
-button{width:100%;padding:15px;margin-top:10px;border:0;border-radius:12px;font-size:18px;font-weight:800}
-.primary{background:#ffd21a;color:#111}
-input{width:100%;padding:13px;border-radius:10px;border:0;font-size:17px;margin:10px 0}
-#rankingList{text-align:left;max-height:220px;overflow:auto;margin-top:12px}
-.rankRow{display:flex;justify-content:space-between;padding:8px 4px;border-bottom:1px solid #555}
-.small{font-size:13px;color:#ccc}
-.shake{animation:shake .16s linear infinite}
-@keyframes shake{
-0%{transform:translate(0)}
-25%{transform:translate(5px,-3px)}
-50%{transform:translate(-4px,3px)}
-75%{transform:translate(3px,2px)}
-100%{transform:translate(-2px,-2px)}
-}
-</style>
-</head>
+const distanceEl=document.getElementById("distance");
+const coinsEl=document.getElementById("coins");
+const comboEl=document.getElementById("combo");
 
-<body>
+const menu=document.getElementById("menu");
+const over=document.getElementById("gameover");
+const warning=document.getElementById("warning");
 
-<div id="game">
+const result=document.getElementById("result");
 
-<div id="sky"></div>
+const rankingList=document.getElementById("rankingList");
+const rankingList2=document.getElementById("rankingList2");
 
-<div id="road">
-<div class="lane"></div>
-</div>
-
-<div id="hud">
-<span>距離 <b id="distance">0</b>m</span>
-<span>🪙 <b id="coins">0</b>　🔥 <b id="combo">0</b></span>
-</div>
-
-<div id="warning">⚠ 上司が近い！ ⚠</div>
-
-<!-- 顔切り抜き画像をHTMLへ直接埋め込み -->
-<div id="boss">
-<img id="bossImg" alt="上司">
-</div>
-
-<div id="player"></div>
-
-<div id="menu">
-<div class="panel">
-
-<h1>社畜ダッシュ</h1>
-
-<p>上司から逃げ続けろ。</p>
-
-<p class="small">
-タップ：ジャンプ<br>
-長押し：大ジャンプ
-</p>
-
-<input
-id="playerName"
-maxlength="12"
-value="社畜"
-placeholder="名前"
->
-
-<button class="primary" id="startBtn">
-スタート
-</button>
-
-<h2>ランキング</h2>
-
-<div id="rankingList">
-読み込み中...
-</div>
-
-</div>
-</div>
-
-<div id="gameover" style="display:none">
-
-<div class="panel">
-
-<h1>GAME OVER</h1>
-
-<p id="result"></p>
-
-<button class="primary" id="retryBtn">
-もう一度
-</button>
-
-<h2>ランキング</h2>
-
-<div id="rankingList2"></div>
-
-</div>
-</div>
-
-</div>
-
-<script type="module">
-
-import {
-initializeApp
-}
-from "https://www.gstatic.com/firebasejs/12.19.0/firebase-app.js";
-
-import {
-getDatabase,
-ref,
-push,
-set,
-get
-}
-from "https://www.gstatic.com/firebasejs/12.19.0/firebase-database.js";
+const playerName=document.getElementById("playerName");
+const firebaseStatus=document.getElementById("firebaseStatus");
 
 
 /* =========================
-   Firebase
+   道路
 ========================= */
 
-const firebaseConfig={
-apiKey:"AIzaSyDP7a8QylOIiOeLiKfawJVpGUEIt4Dr4e4",
-authDomain:"shachiku-dash.firebaseapp.com",
-databaseURL:"https://shachiku-dash-default-rtdb.asia-southeast1.firebasedatabase.app",
-projectId:"shachiku-dash",
-storageBucket:"shachiku-dash.firebasestorage.app",
-messagingSenderId:"416033862481",
-appId:"1:416033862481:web:5e951a935e0d80fdd6d970"
-};
+const roadLines=document.getElementById("roadLines");
 
-const app=initializeApp(firebaseConfig);
-const db=getDatabase(app);
+for(let i=0;i<8;i++){
+
+  const line=document.createElement("div");
+
+  line.className="roadLine";
+
+  line.dataset.x=String(i*15);
+
+  line.style.left=(i*15)+"%";
+
+  roadLines.appendChild(line);
+}
 
 
 /* =========================
-   上司の顔画像
-   HTMLへ直接埋め込み
+   GAME DATA
 ========================= */
 
-const bossImg=document.getElementById("bossImg");
+let running=false;
+let last=0;
 
-bossImg.src="data:image/jpeg;base64,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[...]
+let distance=0;
+let coins=0;
+let combo=0;
+let bestCombo=0;
+
+let speed=2.5;
+
+const START_SPEED=2.5;
+const MAX_SPEED=4.0;
+
+const GROUND=24;
+
+let jumpY=0;
+let vy=0;
+
+let obstacles=[];
+let coinItems=[];
+
+let obstacleTimer=0;
+let coinTimer=0;
+
+let bossDistance=38;
+
+let safeUntil=0;
+
+let warningTimer=0;
+
+
+/* =========================
+   安全なHTML
+========================= */
+
+function escapeHtml(s){
+
+  return String(s).replace(
+    /[&<>"']/g,
+    m=>({
+      "&":"&amp;",
+      "<":"&lt;",
+      ">":"&gt;",
+      '"':"&quot;",
+      "'":"&#039;"
+    }[m])
+  );
+
+}
+
+
+/* =========================
+   RANKING
+========================= */
+
+async function loadRanking(target=rankingList){
+
+  try{
+
+    firebaseStatus.textContent="ランキング読み込み中…";
+
+    const snap=await get(ref(db,"scores"));
+
+    if(!snap.exists()){
+
+      target.textContent="まだランキングがありません";
+
+      firebaseStatus.textContent="";
+
+      return;
+    }
+
+    const rows=[];
+
+    snap.forEach(child=>{
+
+      const value=child.val();
+
+      if(value){
+        rows.push(value);
+      }
+
+    });
+
+    rows.sort(
+      (a,b)=>
+        Number(b.score||0)-
+        Number(a.score||0)
+    );
+
+    target.innerHTML="";
+
+    rows.slice(0,10).forEach((x,i)=>{
+
+      const row=document.createElement("div");
+
+      row.className="rankRow";
+
+      row.innerHTML=`
+        <span>
+          ${i+1}位　
+          ${escapeHtml(x.name||"社畜")}
+        </span>
+        <b>
+          ${Number(x.score||0).toLocaleString()}
+        </b>
+      `;
+
+      target.appendChild(row);
+
+    });
+
+    firebaseStatus.textContent="✓ オンライン";
+
+  }catch(e){
+
+    console.error(e);
+
+    target.textContent="ランキング取得失敗";
+
+    firebaseStatus.textContent="ランキング接続エラー";
+
+  }
+
+}
+
+
+/* =========================
+   SCORE
+========================= */
+
+async function submitScore(score){
+
+  try{
+
+    firebaseStatus.textContent="ランキング保存中…";
+
+    const scoresRef=ref(db,"scores");
+
+    const newScore=push(scoresRef);
+
+    await set(newScore,{
+
+      name:
+        playerName.value.trim()||
+        "社畜",
+
+      score:Number(score),
+
+      distance:
+        Math.floor(distance),
+
+      coins:Number(coins),
+
+      combo:Number(bestCombo),
+
+      createdAt:Date.now()
+
+    });
+
+    firebaseStatus.textContent="✓ ランキング保存完了";
+
+  }catch(e){
+
+    console.error(e);
+
+    firebaseStatus.textContent="ランキング保存失敗";
+
+  }
+
+}
+
+
+/* =========================
+   RESET
+========================= */
+
+function reset(){
+
+  document
+    .querySelectorAll(".obstacle,.coin")
+    .forEach(e=>e.remove());
+
+  obstacles=[];
+  coinItems=[];
+
+  distance=0;
+  coins=0;
+  combo=0;
+  bestCombo=0;
+
+  speed=START_SPEED;
+
+  jumpY=0;
+  vy=0;
+
+  obstacleTimer=700;
+  coinTimer=900;
+
+  bossDistance=38;
+
+  safeUntil=
+    performance.now()+1200;
+
+  warningTimer=0;
+
+  player.style.transform="translateY(0)";
+
+  boss.style.left="-130px";
+
+  game.classList.remove("shake");
+
+  warning.style.opacity=0;
+
+  distanceEl.textContent="0";
+  coinsEl.textContent="0";
+  comboEl.textContent="0";
+
+}
+
+
+/* =========================
+   START
+========================= */
+
+function start(){
+
+  reset();
+
+  menu.style.display="none";
+  over.style.display="none";
+
+  running=true;
+
+  last=performance.now();
+
+  requestAnimationFrame(loop);
+
+}
+
+
+/* =========================
+   END
+========================= */
+
+function end(){
+
+  if(!running)return;
+
+  running=false;
+
+  const multiplier=
+    Math.min(
+      1+Math.floor(bestCombo/5),
+      5
+    );
+
+  const score=Math.floor(
+    distance*10+
+    coins*100+
+    bestCombo*20+
+    coins*100*(multiplier-1)
+  );
+
+  result.innerHTML=`
+    距離 <b>${Math.floor(distance)}m</b><br>
+    コイン ${coins}枚<br>
+    ベストコンボ ${bestCombo}<br>
+    スコア
+    <strong>
+      ${score.toLocaleString()}
+    </strong>
+  `;
+
+  over.style.display="flex";
+
+  submitScore(score);
+
+  loadRanking(rankingList2);
+
+}
+
+
+/* =========================
+   JUMP
+========================= */
+
+function jump(power){
+
+  if(jumpY<=0){
+
+    vy=power;
+
+    safeUntil=
+      performance.now()+1400;
+
+  }
+
+}
+
+
+/* =========================
+   OBSTACLE
+========================= */
+
+function obstacleTooClose(){
+
+  const screenW=window.innerWidth;
+
+  for(const o of obstacles){
+
+    if(
+      o.x>screenW*.35 &&
+      o.x<screenW+700
+    ){
+      return true;
+    }
+
+  }
+
+  return false;
+
+}
+
+
+function spawnObstacle(){
+
+  if(
+    performance.now()<safeUntil||
+    obstacleTooClose()
+  ){
+    return;
+  }
+
+  const types=[
+
+    ["cone","🚧"],
+    ["bike","🚲"],
+    ["sign","⚠️"],
+    ["bench","🪑"],
+    ["car","🚗"]
+
+  ];
+
+  const type=
+    types[
+      Math.floor(
+        Math.random()*types.length
+      )
+    ];
+
+  const el=
+    document.createElement("div");
+
+  el.className="obstacle";
+
+  el.dataset.type=type[0];
+
+  el.textContent=type[1];
+
+  el.style.left=
+    (window.innerWidth+60)+"px";
+
+  game.appendChild(el);
+
+  obstacles.push({
+
+    el:el,
+
+    x:window.innerWidth+60
+
+  });
+
+}
+
+
+/* =========================
+   COIN
+========================= */
+
+function spawnCoin(){
+
+  const el=
+    document.createElement("div");
+
+  el.className="coin";
+
+  const bottom=
+    31+Math.random()*18;
+
+  el.style.left=
+    (window.innerWidth+40)+"px";
+
+  el.style.bottom=
+    bottom+"%";
+
+  game.appendChild(el);
+
+  coinItems.push({
+
+    el:el,
+
+    x:window.innerWidth+40,
+
+    y:bottom
+
+  });
+
+}
+
+
+/* =========================
+   COLLISION
+========================= */
+
+function playerRect(){
+
+  const r=
+    player.getBoundingClientRect();
+
+  return {
+
+    left:r.left+8,
+
+    right:r.right-8,
+
+    top:r.top+8,
+
+    bottom:r.bottom-3
+
+  };
+
+}
+
+
+function objectRect(el,padding=5){
+
+  const r=
+    el.getBoundingClientRect();
+
+  return {
+
+    left:r.left+padding,
+
+    right:r.right-padding,
+
+    top:r.top+padding,
+
+    bottom:r.bottom
+
+  };
+
+}
+
+
+function hit(a,b,padding=5){
+
+  const ar=playerRect();
+
+  const br=objectRect(
+    b,
+    padding
+  );
+
+  return(
+    ar.left<br.right&&
+    ar.right>br.left&&
+    ar.top<br.bottom&&
+    ar.bottom>br.top
+  );
+
+}
+
+
+/* =========================
+   GAME LOOP
+========================= */
+
+function loop(now){
+
+  if(!running)return;
+
+  const dt=
+    Math.min(
+      .035,
+      (now-last)/1000
+    );
+
+  last=now;
+
+
+  /* SPEED */
+
+  speed=
+    Math.min(
+      MAX_SPEED,
+      START_SPEED+
+      distance*.006
+    );
+
+
+  /* DISTANCE */
+
+  distance+=speed*dt;
+
+  distanceEl.textContent=
+    Math.floor(distance);
+
+
+  /* JUMP */
+
+  jumpY+=vy*dt;
+
+  vy-=18*dt;
+
+  if(jumpY<0){
+
+    jumpY=0;
+
+    vy=0;
+
+  }
+
+  player.style.transform=
+    `translateY(${-jumpY*7}px)`;
+
+
+  /* ROAD */
+
+  document
+    .querySelectorAll(".roadLine")
+    .forEach(line=>{
+
+      let x=
+        Number(line.dataset.x);
+
+      x-=speed*dt*7;
+
+      if(x<-15)x=100;
+
+      line.dataset.x=x;
+
+      line.style.left=x+"%";
+
+    });
+
+
+  /* OBSTACLE TIMER */
+
+  obstacleTimer-=dt*1000;
+
+  if(obstacleTimer<=0){
+
+    if(
+      performance.now()>
+      safeUntil
+    ){
+
+      spawnObstacle();
+
+    }
+
+    obstacleTimer=
+      Math.max(
+        1700,
+        2400-
+        distance*1.2
+      );
+
+  }
+
+
+  /* COIN TIMER */
+
+  coinTimer-=dt*1000;
+
+  if(coinTimer<=0){
+
+    spawnCoin();
+
+    coinTimer=
+      1300+
+      Math.random()*900;
+
+  }
+
+
+  /* OBSTACLES */
+
+  const obstaclePixelSpeed=
+    300+
+    Math.min(
+      distance*.8,
+      70
+    );
+
+  obstacles=
+    obstacles.filter(o=>{
+
+      o.x-=
+        obstaclePixelSpeed*dt;
+
+      o.el.style.left=
+        o.x+"px";
+
+
+      if(o.x<-100){
+
+        o.el.remove();
+
+        return false;
+
+      }
+
+
+      if(
+        hit(player,o.el) &&
+        jumpY<45
+      ){
+
+        combo=0;
+
+        comboEl.textContent="0";
+
+        bossDistance=
+          Math.max(
+            bossDistance-4,
+            0
+          );
+
+        end();
+
+        return false;
+
+      }
+
+      return true;
+
+    });
+
+
+  /* COINS */
+
+  coinItems=
+    coinItems.filter(c=>{
+
+      c.x-=
+        obstaclePixelSpeed*dt;
+
+      c.el.style.left=
+        c.x+"px";
+
+
+      if(c.x<-70){
+
+        c.el.remove();
+
+        return false;
+
+      }
+
+
+      if(hit(player,c.el,2)){
+
+        coins++;
+
+        combo++;
+
+        bestCombo=
+          Math.max(
+            bestCombo,
+            combo
+          );
+
+        coinsEl.textContent=
+          coins;
+
+        comboEl.textContent=
+          combo;
+
+        safeUntil=
+          performance.now()+1100;
+
+        c.el.remove();
+
+        return false;
+
+      }
+
+      return true;
+
+    });
+
+
+  /* BOSS */
+
+  const bossApproach=
+    .8+
+    Math.min(
+      distance/250,
+      .8
+    );
+
+  bossDistance-=
+    bossApproach*
+    dt*.18;
+
+  const px=
+    window.innerWidth*.40;
+
+  const gapPx=
+    Math.max(
+      -40,
+      bossDistance*9
+    );
+
+  boss.style.left=
+    (px-gapPx-105)+"px";
+
+
+  /* WARNING */
+
+  if(bossDistance<10){
+
+    warning.style.opacity=1;
+
+    warningTimer=.15;
+
+    game.classList.add("shake");
+
+  }
+  else{
+
+    warningTimer-=dt;
+
+    if(warningTimer<=0){
+
+      warning.style.opacity=0;
+
+      game.classList.remove("shake");
+
+    }
+
+  }
+
+
+  /* BOSS CATCH */
+
+  if(bossDistance<3){
+
+    end();
+
+    return;
+
+  }
+
+
+  requestAnimationFrame(loop);
+
+}
+
+
+/* =========================
+   INPUT
+========================= */
+
+let pressTimer=null;
+let pressed=false;
+
+
+game.addEventListener(
+  "pointerdown",
+  ()=>{
+
+    if(!running)return;
+
+    pressed=true;
+
+    pressTimer=
+      setTimeout(()=>{
+
+        if(pressed){
+
+          jump(13);
+
+        }
+
+      },260);
+
+  }
+);
+
+
+game.addEventListener(
+  "pointerup",
+  ()=>{
+
+    if(!running)return;
+
+    if(pressTimer){
+
+      clearTimeout(
+        pressTimer
+      );
+
+    }
+
+    if(pressed){
+
+      jump(9);
+
+    }
+
+    pressed=false;
+
+  }
+);
+
+
+game.addEventListener(
+  "pointercancel",
+  ()=>{
+
+    pressed=false;
+
+    if(pressTimer){
+
+      clearTimeout(
+        pressTimer
+      );
+
+    }
+
+  }
+);
+
+
+/* =========================
+   BUTTON
+========================= */
+
+document
+  .getElementById("startBtn")
+  .addEventListener(
+    "click",
+    start
+  );
+
+document
+  .getElementById("retryBtn")
+  .addEventListener(
+    "click",
+    start
+  );
+
+
+/* =========================
+   INITIAL
+========================= */
+
+loadRanking();
+
+</script>
+
+</body>
+</html>
