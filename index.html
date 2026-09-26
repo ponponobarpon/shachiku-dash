@@ -144,43 +144,59 @@ button{margin-top:12px;width:100%;padding:14px;border:0;border-radius:12px;backg
 #bossMood,#bossEyes,#bossMouth{display:none !important}
 @media (max-width:600px){#boss{width:125px !important;height:125px !important;bottom:28% !important}}
 
-/* ===== OBSTACLE SHAPE + DENSITY UPDATE ===== */
-.ob{width:58px;height:64px;border:0;background:transparent;border-radius:0;box-shadow:none;overflow:visible}
-.ob::after,.ob::before{content:"";position:absolute;display:block}
-/* 現実の大きさに近いバラバラの障害物 */
-.ob.cone{width:34px;height:58px;bottom:24%;background:linear-gradient(180deg,#ff7b00 0 25%,#fff 25% 35%,#ff7b00 35% 60%,#fff 60% 70%,#ff7b00 70%);clip-path:polygon(50% 0,100% 100%,0 100%);filter:drop-shadow(0 4px 5px #0008)}
-.ob.cone::after{display:none}
-.ob.bike{width:78px;height:58px;bottom:24%;background:radial-gradient(circle at 16% 78%,transparent 0 10px,#222 10px 13px,transparent 13px),radial-gradient(circle at 84% 78%,transparent 0 10px,#222 10px 13px,transparent 13px),linear-gradient(32deg,transparent 46%,#222 47% 51%,transparent 52%),linear-gradient(148deg,transparent 45%,#222 46% 50%,transparent 51%);filter:drop-shadow(0 4px 5px #0008)}
-.ob.bike::after{left:25px;top:24px;width:25px;height:18px;border:4px solid #27ae60;border-radius:5px 12px 4px 8px;transform:skewX(-12deg)}
-.ob.bike::before{left:30px;top:12px;width:14px;height:12px;border-top:4px solid #222;transform:rotate(-12deg)}
-.ob.sign{width:46px;height:78px;bottom:24%;background:#ffd21c;clip-path:polygon(50% 0,100% 42%,88% 100%,12% 100%,0 42%);filter:drop-shadow(0 4px 5px #0008)}
-.ob.sign::after{content:"!";inset:0;display:grid;place-items:center;color:#111;font-size:27px;font-weight:1000;clip-path:none}
-.ob.bench{width:94px;height:50px;bottom:24%;background:linear-gradient(#8b5a2b 0 30%,transparent 30% 100%);filter:drop-shadow(0 4px 5px #0008)}
-.ob.bench::before{left:7px;top:27px;width:80px;height:9px;background:#6d4524;border-radius:3px;box-shadow:0 14px 0 -1px #6d4524}
-.ob.bench::after{left:13px;top:34px;width:8px;height:18px;background:#4a301c;box-shadow:60px 0 0 #4a301c}
-.ob.car{width:108px;height:58px;bottom:24%;background:#d32f2f;border-radius:15px 15px 8px 8px;filter:drop-shadow(0 4px 5px #0008)}
-.ob.car::before{left:18px;top:6px;width:67px;height:24px;background:#9ed8f5;border:3px solid #8d1e1e;border-radius:10px 10px 3px 3px;transform:skewX(-8deg)}
-.ob.car::after{left:10px;bottom:-9px;width:16px;height:16px;background:#222;border-radius:50%;box-shadow:72px 0 0 #222}
-.ob.puddle{width:100px;height:22px;bottom:24%;background:radial-gradient(ellipse,#3b9ddd 0 48%,#287fc2 49% 72%,transparent 73%);filter:drop-shadow(0 3px 3px #0006)}
-.ob.puddle::after{display:none}
-.ob.barrier{width:112px;height:52px;bottom:24%;background:repeating-linear-gradient(135deg,#e67e22 0 12px,#fff 12px 24px);border:3px solid #333;border-radius:4px;filter:drop-shadow(0 4px 5px #0008)}
-.ob.barrier::before{left:6px;bottom:-10px;width:8px;height:14px;background:#333;box-shadow:86px 0 0 #333}
-.ob.barrier::after{display:none}
-.ob.person{width:38px;height:82px;bottom:24%;background:transparent;filter:drop-shadow(0 4px 5px #0008)}
-.ob.person::before{left:7px;top:0;width:24px;height:24px;background:#f1c7a5;border:3px solid #222;border-radius:50%;box-shadow:4px 25px 0 2px #6c5ce7}
-.ob.person::after{left:5px;top:49px;width:10px;height:28px;background:#202733;border-radius:8px;box-shadow:18px 0 0 #202733}
-/* 落とし穴 */
-.ob.pit{width:112px;height:32px;bottom:22.5%;background:radial-gradient(ellipse at 50% 45%,#050505 0 58%,#252525 59% 72%,#555 73% 100%);border-radius:50%;filter:drop-shadow(0 3px 4px #0009)}
-.ob.pit::before{left:0;top:-3px;width:112px;height:7px;background:repeating-linear-gradient(90deg,#5b4632 0 13px,#2d241b 13px 20px);border-radius:50%;opacity:.9}
-.ob.pit::after{content:"落とし穴";left:50%;top:2px;transform:translateX(-50%);font-size:9px;color:#fff;font-weight:900;text-shadow:0 1px 2px #000;white-space:nowrap}
-/* reduce the coin emphasis so the game is obstacle-focused */
+/* ===== REALISTIC OBSTACLE ART / VARIED REAL-WORLD SIZES ===== */
+.ob{position:absolute;width:60px;height:60px;border:0;background:transparent;border-radius:0;box-shadow:none;overflow:visible;transform-origin:bottom center;}
+.ob::before,.ob::after{content:"";position:absolute;display:block}
+/* コーン：高さ約70cm、細く背の高い形 */
+.ob.cone{width:38px;height:68px;bottom:24%;background:linear-gradient(90deg,#c94b08 0 12%,#ff7b16 12% 42%,#ff9a32 42% 58%,#e85b0b 58% 88%,#b83f06 88%);clip-path:polygon(42% 0,58% 0,78% 76%,100% 92%,100% 100%,0 100%,0 92%,22% 76%);filter:drop-shadow(0 5px 5px #0008)}
+.ob.cone::before{left:8px;top:20px;width:22px;height:8px;background:#fff;transform:skewY(-8deg);box-shadow:3px 20px 0 #fff}
+.ob.cone::after{left:3px;bottom:0;width:32px;height:6px;background:#d94708;border-radius:2px}
+/* 自転車：横倒しの実物に近いシルエット */
+.ob.bike{width:92px;height:66px;bottom:24%;filter:drop-shadow(0 5px 5px #0008)}
+.ob.bike::before{left:5px;bottom:2px;width:26px;height:26px;border:4px solid #20252a;border-radius:50%;box-shadow:51px 0 0 -4px #20252a,51px 0 0 0 #20252a;}
+.ob.bike::after{left:18px;top:17px;width:51px;height:34px;border-left:4px solid #343a40;border-bottom:4px solid #343a40;transform:skewX(-8deg) rotate(-8deg);box-shadow:18px -10px 0 -1px #c62828}
+/* 標識：支柱付き三角注意標識 */
+.ob.sign{width:52px;height:92px;bottom:24%;filter:drop-shadow(0 5px 5px #0008)}
+.ob.sign::before{left:22px;top:39px;width:8px;height:53px;background:linear-gradient(90deg,#555,#bdbdbd 45%,#555);border-radius:2px;box-shadow:0 2px 2px #0006}
+.ob.sign::after{left:1px;top:0;width:50px;height:50px;background:linear-gradient(135deg,#fff3 0 12%,transparent 13%),linear-gradient(#ffd21c,#f0a900);clip-path:polygon(50% 0,100% 86%,92% 100%,8% 100%,0 86%);border:3px solid #444;box-sizing:border-box;content:"!";display:grid;place-items:center;color:#222;font:1000 28px/1 Arial;text-shadow:0 1px 0 #fff}
+/* ベンチ：低く横長 */
+.ob.bench{width:108px;height:58px;bottom:24%;filter:drop-shadow(0 5px 5px #0008)}
+.ob.bench::before{left:5px;top:4px;width:98px;height:19px;background:linear-gradient(#a86b38,#6e421f);border:3px solid #4b2c16;border-radius:4px;box-shadow:0 24px 0 -2px #8d552a}
+.ob.bench::after{left:13px;top:28px;width:8px;height:30px;background:#3e2b1d;transform:skewX(-5deg);box-shadow:70px 0 #3e2b1d}
+/* 車：低く大きい横長障害物 */
+.ob.car{width:124px;height:66px;bottom:24%;background:linear-gradient(180deg,#b51f2b 0,#e33b45 48%,#a91320 49%,#7c1019 100%);border-radius:18px 22px 9px 9px;filter:drop-shadow(0 6px 6px #0009)}
+.ob.car::before{left:22px;top:7px;width:76px;height:28px;background:linear-gradient(135deg,#d9f3ff,#6f9dad 55%,#cbe8f4);border:3px solid #64131a;border-radius:13px 13px 4px 4px;transform:skewX(-8deg);box-shadow:inset 0 4px 4px #fff7}
+.ob.car::after{left:13px;bottom:-10px;width:20px;height:20px;background:#171717;border:3px solid #777;border-radius:50%;box-shadow:78px 0 0 #171717,78px 0 0 3px #777}
+/* 水たまり：低く横長で踏むと危険 */
+.ob.puddle{width:118px;height:25px;bottom:24%;background:radial-gradient(ellipse at 48% 48%,#8fd9ff 0 12%,#3d9ddd 35%,#17669b 68%,transparent 70%);filter:drop-shadow(0 2px 3px #0007)}
+.ob.puddle::before{left:20px;top:5px;width:72px;height:7px;border-top:2px solid #c8efff;border-radius:50%;opacity:.8}
+/* 工事バリケード：中～高、横長 */
+.ob.barrier{width:126px;height:64px;bottom:24%;filter:drop-shadow(0 6px 6px #0008)}
+.ob.barrier::before{left:6px;top:6px;width:114px;height:34px;border:4px solid #333;border-radius:3px;background:repeating-linear-gradient(135deg,#f08a1b 0 14px,#f08a1b 14px 22px,#fff 22px 34px,#fff 34px 42px)}
+.ob.barrier::after{left:10px;bottom:0;width:12px;height:27px;background:#333;box-shadow:94px 0 #333}
+/* 人：成人サイズ相当、高めで縦長 */
+.ob.person{width:42px;height:88px;bottom:24%;filter:drop-shadow(0 5px 5px #0008)}
+.ob.person::before{left:9px;top:0;width:24px;height:24px;background:radial-gradient(circle at 35% 30%,#fff4 0 8%,transparent 9%),#d6a17e;border:2px solid #333;border-radius:50%;box-shadow:0 25px 0 1px #2f4858}
+.ob.person::after{left:5px;top:49px;width:9px;height:32px;background:#25313b;border-radius:8px;transform:rotate(8deg);box-shadow:22px 2px 0 #25313b,8px 25px 0 -1px #161b20,18px 24px 0 -1px #161b20}
+/* 落とし穴：道路が崩れた実物風 */
+.ob.pit{width:126px;height:42px;bottom:22.5%;border-radius:50%;background:radial-gradient(ellipse at 50% 54%,#050505 0 48%,#171717 49% 64%,#51473e 65% 78%,#1e1e1e 79% 100%);filter:drop-shadow(0 4px 5px #0009)}
+.ob.pit::before{left:3px;top:2px;width:120px;height:37px;border-radius:50%;background:repeating-linear-gradient(102deg,transparent 0 9px,#6b5b4c 10px 12px,transparent 13px 22px);opacity:.8}
+.ob.pit::after{content:"";left:18px;top:5px;width:90px;height:24px;border-radius:50%;box-shadow:inset 0 5px 7px #000,0 2px 0 #777;opacity:.75}
+/* さらに種類ごとに自然な大小差を固定 */
+.ob.cone{--ob-scale:1}.ob.bike{--ob-scale:1.05}.ob.sign{--ob-scale:.92}.ob.bench{--ob-scale:.98}.ob.car{--ob-scale:1.08}.ob.puddle{--ob-scale:.92}.ob.barrier{--ob-scale:1.02}.ob.person{--ob-scale:.94}.ob.pit{--ob-scale:1.06}
+.ob{transform:scale(var(--ob-scale,1));}
+/* コインは障害物の形・サイズを邪魔しない */
 .coin{width:30px;height:30px;opacity:.9}
 
-
 /* ===== TRUE PULLED CAMERA ===== */
-#worldActors{position:absolute!important;inset:0!important;z-index:10!important;transform:scale(.68)!important;transform-origin:39% 24%!important;will-change:transform}
+#worldActors{position:absolute!important;inset:0!important;z-index:10!important;transform:none!important;transform-origin:center center!important;will-change:auto}
+/* カメラを引く：人物は元位置・元サイズのまま、景色だけ広く見せる */
+#worldActors>.sky{transform:scale(.72);transform-origin:50% 100%;width:139%;left:-19.5%;}
+#worldActors>.city{transform:scale(.72);transform-origin:50% 100%;width:139%;left:-19.5%;}
+#worldActors>.road{transform:scale(.72);transform-origin:50% 100%;width:139%;left:-19.5%;height:62%;bottom:-2%;}
+#worldActors>.lane{transform:scale(.72);transform-origin:50% 100%;width:139%;left:-19.5%;}
+#worldActors>.commuterTrain,#worldActors>.crosswalk,#worldActors>.ped,#worldActors>.busStop,#worldActors>.tree{transform:scale(.72);transform-origin:50% 100%;}
 #worldActors #boss,#worldActors #player,#worldActors #obstacles{will-change:transform,left}
-
 /* Boss face stays exactly as the default supplied photo */
 #boss.angry,#boss.pressed{transform:none!important;filter:drop-shadow(0 5px 8px rgba(0,0,0,.45))!important}
 #boss.angry:after,#boss.pressed:after{background:none!important}
@@ -307,7 +323,7 @@ playerName.value=(playerName.value.trim()||"社畜").slice(0,12);
 running=true;last=performance.now();distance=0;coins=0;combo=0;bestCombo=0;speed=START_SPEED;
 playerY=0;vy=0;jumping=false;bossGap=45;elapsed=0;nextObstacle=1.45;nextCoin=1.7;safeUntil=performance.now()+1200;
 endScheduled=false;isPressing=false;longJumpTriggered=false;lastMilestone=0;nearMisses=0;paused=false;bossJumpTimer=3.2;bossJumpingUntil=0;boss.classList.remove("bossJump");countdown=3;shield=0;slowTimer=0;coffeeTimer=0;nextPowerup=7;game.classList.remove("paused");pauseBtn.textContent="Ⅱ";if(pressTimer){clearTimeout(pressTimer);pressTimer=0}
-clearObjects();overlay.classList.add("hidden");hint.classList.remove("hidden");bestEl.textContent=Math.floor(bestDistance)+"m";milestoneEl.classList.remove("show");powerupMessage.classList.remove("show");boss.style.left=(innerWidth*.39-(bossGap*11)-118)+"px";boss.classList.remove("angry","pressed");bossMood.textContent="";player.classList.remove(...playerFaces);player.classList.add("tired","running");faceTimer=1.8;bossFlashTimer=0;roadOffset=0;cityOffset=0;const milestone=Math.floor(distance/50)*50;if(milestone>=50&&milestone>lastMilestoneShown){lastMilestoneShown=milestone;milestoneEl.textContent=`🔥 ${milestone}m突破！`;milestoneEl.classList.remove("show");void milestoneEl.offsetWidth;milestoneEl.classList.add("show")}updateHUD();raf=requestAnimationFrame(loop)
+clearObjects();overlay.classList.add("hidden");hint.classList.remove("hidden");bestEl.textContent=Math.floor(bestDistance)+"m";milestoneEl.classList.remove("show");powerupMessage.classList.remove("show");boss.style.left=Math.max(8,innerWidth*.39-(bossGap*5.5)-150)+"px";boss.classList.remove("angry","pressed");bossMood.textContent="";player.classList.remove(...playerFaces);player.classList.add("tired","running");faceTimer=1.8;bossFlashTimer=0;roadOffset=0;cityOffset=0;const milestone=Math.floor(distance/50)*50;if(milestone>=50&&milestone>lastMilestoneShown){lastMilestoneShown=milestone;milestoneEl.textContent=`🔥 ${milestone}m突破！`;milestoneEl.classList.remove("show");void milestoneEl.offsetWidth;milestoneEl.classList.add("show")}updateHUD();raf=requestAnimationFrame(loop)
 }
 function endGame(){
 if(!running)return;running=false;endScheduled=false;isPressing=false;longJumpTriggered=false;lastMilestone=0;nearMisses=0;paused=false;countdown=3;bossJumpTimer=3.2;bossJumpingUntil=0;boss.classList.remove("bossJump");shield=0;slowTimer=0;coffeeTimer=0;nextPowerup=7;game.classList.remove("paused");pauseBtn.textContent="Ⅱ";if(pressTimer){clearTimeout(pressTimer);pressTimer=0}player.classList.remove("running");cancelAnimationFrame(raf);
@@ -353,7 +369,7 @@ game.addEventListener("contextmenu",e=>e.preventDefault());addEventListener("key
 pauseBtn.addEventListener("click",e=>{e.preventDefault();if(!running)return;paused=!paused;game.classList.toggle("paused",paused);pauseBtn.textContent=paused?"▶":"Ⅱ";if(!paused){last=performance.now();raf=requestAnimationFrame(loop)}});
 startBtn.addEventListener("click",startGame);
 
-function spawnObstacle(){const types=["cone","cone","bike","sign","bench","car","puddle","barrier","person","pit","pit"];const type=types[Math.floor(Math.random()*types.length)];const el=document.createElement("div");el.className="ob "+type;el.style.left=(innerWidth+80)+"px";obstacles.appendChild(el);obstacleList.push({el,x:innerWidth+80,hit:false})}
+function spawnObstacle(){const types=["cone","cone","bike","sign","bench","car","puddle","barrier","person","pit","pit"];const type=types[Math.floor(Math.random()*types.length)];const el=document.createElement("div");el.className="ob "+type;el.style.left=(innerWidth+80)+"px";const variation=.92+Math.random()*.16;el.style.setProperty("--spawn-scale",variation);el.style.transform=`scale(calc(var(--ob-scale,1) * var(--spawn-scale,1)))`;obstacles.appendChild(el);obstacleList.push({el,x:innerWidth+80,hit:false})}
 function spawnCoin(){const spawnX=innerWidth+180;const blocked=obstacleList.some(o=>o.x>innerWidth*.82&&o.x<spawnX+140);if(blocked)return;const el=document.createElement("div");el.className="coin";el.textContent="¥";el.style.bottom=(31+Math.random()*16)+"%";el.style.left=spawnX+"px";obstacles.appendChild(el);coinList.push({el,x:spawnX,hit:false})}
 function spawnPowerup(){const types=["shield","slow","coffee"];const type=types[Math.floor(Math.random()*types.length)];const el=document.createElement("div");el.className="powerup "+type;el.textContent=type==="shield"?"🛡️":type==="slow"?"⏱️":"☕";el.style.left=(innerWidth+70)+"px";obstacles.appendChild(el);powerupList.push({el,x:innerWidth+70,type,hit:false})}
 function rectHit(a,b){const ap={left:a.left+10,right:a.right-10,top:a.top+10,bottom:a.bottom-4};const bp={left:b.left+8,right:b.right-8,top:b.top+7,bottom:b.bottom};return ap.left<bp.right&&ap.right>bp.left&&ap.top<bp.bottom&&ap.bottom>bp.top}
@@ -367,7 +383,7 @@ const dt=Math.min(.032,(now-last)/1000);last=now;if(paused)return;elapsed+=dt;
 if(slowTimer>0)slowTimer-=dt;if(coffeeTimer>0)coffeeTimer-=dt;
 speed=Math.min(MAX_SPEED,START_SPEED+distance*.0105);if(coffeeTimer>0)speed=Math.min(MAX_SPEED,speed+.65);if(slowTimer>0)speed*=.62;distance+=speed*dt;
 updateScene(dt);
-const bossApproach=.34+Math.min(distance/260,.55);bossGap=Math.max(0,bossGap-bossApproach*dt);const playerX=innerWidth*.39;const bossX=playerX-(bossGap*11.0)-118;boss.style.left=bossX+"px";
+const bossApproach=.34+Math.min(distance/260,.55);bossGap=Math.max(0,bossGap-bossApproach*dt);const playerX=innerWidth*.39;const bossX=Math.max(8,playerX-(bossGap*5.5)-150);boss.style.left=bossX+"px";
 bossJumpTimer-=dt;if(bossJumpTimer<=0&&!bossJumpingUntil){boss.classList.add("bossJump");bossJumpingUntil=now+820;bossJumpTimer=3.6+Math.random()*4.2}else if(bossJumpingUntil&&now>=bossJumpingUntil){bossJumpingUntil=0;boss.classList.remove("bossJump")}
 if(bossGap<15){warning.classList.add("show");if(bossGap<3){game.classList.add("shake");setTimeout(()=>game.classList.remove("shake"),220);if(!endScheduled){endScheduled=true;setTimeout(endGame,180)}return}}else {warning.classList.remove("show");boss.classList.remove("angry","pressed");bossMood.textContent=""}
 if(bossGap<6){boss.classList.remove("angry","pressed")}
