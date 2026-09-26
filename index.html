@@ -295,6 +295,20 @@ button{margin-top:12px;width:100%;padding:14px;border:0;border-radius:12px;backg
 </div></div>
 </div>
 
+/* ===== FINAL CAMERA: REAL REAR DISTANCE ===== */
+#worldActors{
+  transform:scale(.25)!important;
+  transform-origin:39% 100%!important;
+  width:100%!important;
+  height:100%!important;
+}
+#worldActors>.sky,#worldActors>.city,#worldActors>.road,#worldActors>.lane{
+  transform-origin:50% 100%;
+}
+@media(max-width:600px){
+  #worldActors{transform:scale(.25)!important;transform-origin:39% 100%!important;}
+}
+
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-app.js";
 import { getDatabase, ref, push, set, get } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-database.js";
@@ -335,12 +349,13 @@ function placeBossByRealDistance(){
   const playerX=innerWidth*.39;
   const bossW=150;
   // 画面幅に合わせて「m→px」を調整。45mでも上司全身が左端から切れない。
-  const pxPerMeter=Math.max(2.8,Math.min(4.2,innerWidth*.0042));
+  // 1mを9pxとしてワールド座標化。カメラを25%まで引くので、45mでも約101pxの実距離として見える。
+  const pxPerMeter=9;
   const separation=gap*pxPerMeter;
   // 常にプレイヤーの後ろ（左側）。前方・右側には絶対に出さない。
   const playerLeft=playerX;
   const bossRight=playerLeft-separation;
-  const left=Math.max(6,bossRight-bossW);
+  const left=bossRight-bossW;
   boss.style.left=left+'px';
   boss.style.bottom='28%';
   // 遠近による縮小は一切しない＝奥行き表現を使わない。
