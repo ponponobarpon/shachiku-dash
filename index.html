@@ -8,7 +8,7 @@
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#111;font-family:system-ui,-apple-system,BlinkMacSystemFont,"Hiragino Kaku Gothic ProN",sans-serif;touch-action:none}
 #game{position:relative;width:100vw;height:100dvh;left:0;top:0;transform:none;transform-origin:center center;overflow:hidden;background:#9ed8f5;will-change:transform}
-#worldActors{position:absolute;inset:0;z-index:10;transform:scale(.68);transform-origin:39% 24%;will-change:transform}
+#worldActors{position:absolute;inset:0;z-index:10;transform:none;will-change:transform}
 .sky{position:absolute;inset:0 0 45%;background:linear-gradient(#62bdf7 0%,#bde9ff 62%,#f4d6ad 100%);z-index:0}
 .city{position:absolute;left:0;bottom:42%;width:300%;height:30%;z-index:1;opacity:.9;background:repeating-linear-gradient(90deg,#9da8b0 0 7vw,#c9d0d5 7vw 10vw,#8997a1 10vw 16vw,#b8c1c7 16vw 21vw);will-change:transform}
 .city:before{content:"";position:absolute;inset:35% 0 0;background:repeating-linear-gradient(90deg,transparent 0 12vw,#f5c84b 12vw 12.6vw,transparent 12.6vw 24vw);opacity:.65}
@@ -192,16 +192,24 @@ button{margin-top:12px;width:100%;padding:14px;border:0;border-radius:12px;backg
 #worldActors{position:absolute!important;inset:0!important;z-index:10!important;transform:none!important;transform-origin:center center!important;will-change:auto}
 /* カメラを引く：人物は元位置・元サイズのまま、景色だけ広く見せる */
 #worldActors>.sky{transform:scale(.72);transform-origin:50% 100%;width:139%;left:-19.5%;}
-#worldActors>.city{transform:scale(.72);transform-origin:50% 100%;width:139%;left:-19.5%;}
-#worldActors>.road{transform:scale(.72);transform-origin:50% 100%;width:139%;left:-19.5%;height:62%;bottom:-2%;}
-#worldActors>.lane{transform:scale(.72);transform-origin:50% 100%;width:139%;left:-19.5%;}
-#worldActors>.commuterTrain,#worldActors>.crosswalk,#worldActors>.ped,#worldActors>.busStop,#worldActors>.tree{transform:scale(.72);transform-origin:50% 100%;}
+#worldActors>.city{transform:scale(.40);transform-origin:50% 100%;width:175%;left:-37.5%;}
+#worldActors>.road{transform:scale(.40);transform-origin:50% 100%;width:175%;left:-37.5%;height:62%;bottom:-2%;}
+#worldActors>.lane{transform:scale(.40);transform-origin:50% 100%;width:175%;left:-37.5%;}
+#worldActors>.commuterTrain,#worldActors>.crosswalk,#worldActors>.ped,#worldActors>.busStop,#worldActors>.tree{transform:scale(.54);transform-origin:50% 100%;}
 #worldActors #boss,#worldActors #player,#worldActors #obstacles{will-change:transform,left}
 /* Boss face stays exactly as the default supplied photo */
 #boss.angry,#boss.pressed{transform:none!important;filter:drop-shadow(0 5px 8px rgba(0,0,0,.45))!important}
 #boss.angry:after,#boss.pressed:after{background:none!important}
 #bossMood{display:none!important}
 
+
+/* ===== CAMERA: scenery only, player/boss stay at their original screen positions ===== */
+.sky{transform:scale(.82);transform-origin:50% 100%;}
+.city{transform:scale(.40);transform-origin:50% 100%;width:175%;left:-37.5%;}
+.road{transform:scale(.40);transform-origin:50% 100%;width:175%;left:-37.5%;}
+.lane{transform:scale(.40);transform-origin:50% 100%;width:175%;left:-37.5%;}
+#game:after{transform:scale(.40);transform-origin:50% 100%;width:175%;left:-37.5%;}
+.commuterTrain,.crosswalk,.ped,.busStop,.tree{transform:scale(.54);transform-origin:50% 100%;}
 
 /* ===== BOSS BODY + KINCHAN RUN ===== */
 #boss{
@@ -211,7 +219,7 @@ button{margin-top:12px;width:100%;padding:14px;border:0;border-radius:12px;backg
   background:transparent!important;box-shadow:none!important;
   transform:none!important;filter:none!important;
 }
-#bossRig{position:absolute;left:0;bottom:0;width:150px;height:205px;transform-origin:50% 100%;}
+#bossRig{position:absolute;left:0;bottom:0;width:150px;height:205px;transform-origin:50% 100%;transform:scale(var(--boss-distance-scale,1));}
 .bossHead{position:absolute;left:42px;top:0;width:72px;height:72px;overflow:hidden;border-radius:50%;background:transparent;z-index:6;box-shadow:0 3px 7px #0005}
 .bossHead #bossImg{display:block!important;width:100%!important;height:100%!important;object-fit:cover!important;object-position:50% 16%!important;border:0!important;border-radius:50%!important;filter:none!important;background:transparent!important}
 .bossNeck{position:absolute;left:66px;top:61px;width:18px;height:19px;background:#f1c7a5;border:2px solid #222;border-radius:5px;z-index:4}
@@ -241,7 +249,7 @@ button{margin-top:12px;width:100%;padding:14px;border:0;border-radius:12px;backg
 #boss.bossJump .bossArmR{animation:bossJumpArmR .82s ease-out both}
 #boss.bossJump .bossLegL{animation:bossJumpLegL .82s ease-out both}
 #boss.bossJump .bossLegR{animation:bossJumpLegR .82s ease-out both}
-@keyframes bossJumpBody{0%{transform:translateY(0) rotate(0)}28%{transform:translateY(-34px) rotate(-2deg)}55%{transform:translateY(-43px) rotate(2deg)}100%{transform:translateY(0) rotate(0)}}
+@keyframes bossJumpBody{0%{transform:scale(var(--boss-distance-scale,1)) translateY(0) rotate(0)}28%{transform:scale(var(--boss-distance-scale,1)) translateY(-34px) rotate(-2deg)}55%{transform:scale(var(--boss-distance-scale,1)) translateY(-43px) rotate(2deg)}100%{transform:scale(var(--boss-distance-scale,1)) translateY(0) rotate(0)}}
 @keyframes bossJumpArmL{0%,100%{transform:rotate(38deg)}45%{transform:rotate(78deg) translateY(-4px)}}
 @keyframes bossJumpArmR{0%,100%{transform:rotate(-38deg)}45%{transform:rotate(-78deg) translateY(-4px)}}
 @keyframes bossJumpLegL{0%,100%{transform:rotate(18deg)}45%{transform:rotate(-48deg) translateX(-7px)}}
@@ -318,12 +326,31 @@ let bossJumpTimer=3.2,bossJumpingUntil=0;
 
 function resizeBoss(){boss.style.width="125px";boss.style.height="150px"} addEventListener("resize",resizeBoss);resizeBoss();
 function clearObjects(){obstacleList.forEach(o=>o.el.remove());coinList.forEach(o=>o.el.remove());powerupList.forEach(o=>o.el.remove());obstacleList=[];coinList=[];powerupList=[]}
+// 上司の45mの距離を「奥行き」ではなく道路上の横方向の分離として表示。
+// カメラは景色だけを広くし、プレイヤーと上司の大きさ・高さは変えない。
+const BOSS_START_DISTANCE=45;
+function placeBossByRealDistance(){
+  const gap=Math.max(0,Math.min(BOSS_START_DISTANCE,bossGap));
+  const t=1-gap/BOSS_START_DISTANCE;
+  const playerX=innerWidth*.40;
+  const bossW=150;
+  const bossH=205;
+  // 45mでは画面右側、距離が縮むほどプレイヤー側へ横移動。
+  // 画面外には出さず、常に上司全身を表示。
+  const lateralPx=Math.min(innerWidth*.44, innerWidth*(.12 + .28*(1-t)));
+  const centerX=playerX+lateralPx;
+  const left=Math.max(6,Math.min(innerWidth-bossW-6,centerX-bossW/2));
+  boss.style.left=left+'px';
+  boss.style.bottom='28%';
+  bossRig.style.setProperty("--boss-distance-scale",1);
+}
+
 function startGame(){
 playerName.value=(playerName.value.trim()||"社畜").slice(0,12);
 running=true;last=performance.now();distance=0;coins=0;combo=0;bestCombo=0;speed=START_SPEED;
 playerY=0;vy=0;jumping=false;bossGap=45;elapsed=0;nextObstacle=1.45;nextCoin=1.7;safeUntil=performance.now()+1200;
 endScheduled=false;isPressing=false;longJumpTriggered=false;lastMilestone=0;nearMisses=0;paused=false;bossJumpTimer=3.2;bossJumpingUntil=0;boss.classList.remove("bossJump");countdown=3;shield=0;slowTimer=0;coffeeTimer=0;nextPowerup=7;game.classList.remove("paused");pauseBtn.textContent="Ⅱ";if(pressTimer){clearTimeout(pressTimer);pressTimer=0}
-clearObjects();overlay.classList.add("hidden");hint.classList.remove("hidden");bestEl.textContent=Math.floor(bestDistance)+"m";milestoneEl.classList.remove("show");powerupMessage.classList.remove("show");boss.style.left=Math.max(8,innerWidth*.39-(bossGap*5.5)-150)+"px";boss.classList.remove("angry","pressed");bossMood.textContent="";player.classList.remove(...playerFaces);player.classList.add("tired","running");faceTimer=1.8;bossFlashTimer=0;roadOffset=0;cityOffset=0;const milestone=Math.floor(distance/50)*50;if(milestone>=50&&milestone>lastMilestoneShown){lastMilestoneShown=milestone;milestoneEl.textContent=`🔥 ${milestone}m突破！`;milestoneEl.classList.remove("show");void milestoneEl.offsetWidth;milestoneEl.classList.add("show")}updateHUD();raf=requestAnimationFrame(loop)
+clearObjects();overlay.classList.add("hidden");hint.classList.remove("hidden");bestEl.textContent=Math.floor(bestDistance)+"m";milestoneEl.classList.remove("show");powerupMessage.classList.remove("show");placeBossByRealDistance();boss.classList.remove("angry","pressed");bossMood.textContent="";player.classList.remove(...playerFaces);player.classList.add("tired","running");faceTimer=1.8;bossFlashTimer=0;roadOffset=0;cityOffset=0;const milestone=Math.floor(distance/50)*50;if(milestone>=50&&milestone>lastMilestoneShown){lastMilestoneShown=milestone;milestoneEl.textContent=`🔥 ${milestone}m突破！`;milestoneEl.classList.remove("show");void milestoneEl.offsetWidth;milestoneEl.classList.add("show")}updateHUD();raf=requestAnimationFrame(loop)
 }
 function endGame(){
 if(!running)return;running=false;endScheduled=false;isPressing=false;longJumpTriggered=false;lastMilestone=0;nearMisses=0;paused=false;countdown=3;bossJumpTimer=3.2;bossJumpingUntil=0;boss.classList.remove("bossJump");shield=0;slowTimer=0;coffeeTimer=0;nextPowerup=7;game.classList.remove("paused");pauseBtn.textContent="Ⅱ";if(pressTimer){clearTimeout(pressTimer);pressTimer=0}player.classList.remove("running");cancelAnimationFrame(raf);
@@ -383,7 +410,7 @@ const dt=Math.min(.032,(now-last)/1000);last=now;if(paused)return;elapsed+=dt;
 if(slowTimer>0)slowTimer-=dt;if(coffeeTimer>0)coffeeTimer-=dt;
 speed=Math.min(MAX_SPEED,START_SPEED+distance*.0105);if(coffeeTimer>0)speed=Math.min(MAX_SPEED,speed+.65);if(slowTimer>0)speed*=.62;distance+=speed*dt;
 updateScene(dt);
-const bossApproach=.34+Math.min(distance/260,.55);bossGap=Math.max(0,bossGap-bossApproach*dt);const playerX=innerWidth*.39;const bossX=Math.max(8,playerX-(bossGap*5.5)-150);boss.style.left=bossX+"px";
+const bossApproach=.34+Math.min(distance/260,.55);bossGap=Math.max(0,bossGap-bossApproach*dt);placeBossByRealDistance();
 bossJumpTimer-=dt;if(bossJumpTimer<=0&&!bossJumpingUntil){boss.classList.add("bossJump");bossJumpingUntil=now+820;bossJumpTimer=3.6+Math.random()*4.2}else if(bossJumpingUntil&&now>=bossJumpingUntil){bossJumpingUntil=0;boss.classList.remove("bossJump")}
 if(bossGap<15){warning.classList.add("show");if(bossGap<3){game.classList.add("shake");setTimeout(()=>game.classList.remove("shake"),220);if(!endScheduled){endScheduled=true;setTimeout(endGame,180)}return}}else {warning.classList.remove("show");boss.classList.remove("angry","pressed");bossMood.textContent=""}
 if(bossGap<6){boss.classList.remove("angry","pressed")}
