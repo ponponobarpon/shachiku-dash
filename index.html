@@ -298,10 +298,10 @@ button{margin-top:12px;width:100%;padding:14px;border:0;border-radius:12px;backg
 /* ===== CAMERA: 100m CLASS WIDE VIEW ===== */
 /* カメラは背景だけではなく、プレイヤー・上司・障害物を含むワールド全体を引く。 */
 /* キャラは「遠くに置く」のではなく、同じワールドをカメラで広く見る。 */
-#worldActors{transform:scale(.55)!important;transform-origin:39% 100%!important;width:100%!important;height:100%!important;}
+#worldActors{transform:translateX(26vw) scale(.55)!important;transform-origin:39% 100%!important;width:100%!important;height:100%!important;}
 #worldActors>.sky,#worldActors>.city,#worldActors>.road,#worldActors>.lane,#game:after{transform:none!important;transform-origin:50% 100%!important;width:182%!important;left:-41%!important;}
 #worldActors>.commuterTrain,#worldActors>.crosswalk,#worldActors>.ped,#worldActors>.busStop,#worldActors>.tree{transform:none!important;transform-origin:50% 100%!important;}
-@media(max-width:600px){#worldActors{transform:scale(.55)!important;transform-origin:39% 100%!important;}
+@media(max-width:600px){#worldActors{transform:translateX(26vw) scale(.55)!important;transform-origin:39% 100%!important;}
 #worldActors>.sky,#worldActors>.city,#worldActors>.road,#worldActors>.lane,#game:after{transform:none!important;width:182%!important;left:-41%!important;}
 #worldActors>.commuterTrain,#worldActors>.crosswalk,#worldActors>.ped,#worldActors>.busStop,#worldActors>.tree{transform:none!important;}}
 
@@ -340,24 +340,23 @@ function clearObjects(){obstacleList.forEach(o=>o.el.remove());coinList.forEach(
 // プレイヤーの「真後ろ＝画面左側」から、実距離(m)に比例して追ってくる。
 // 上司の大きさは距離で変えず、カメラだけを引いて45mでも常に全身を画面内へ入れる。
 const BOSS_START_DISTANCE=45;
+const CAMERA_SCALE=.55;
+const CAMERA_PLAYER_X=.65;
+const VIEW_WIDTH_METERS=100;
 function placeBossByRealDistance(){
   const gap=Math.max(0,Math.min(BOSS_START_DISTANCE,bossGap));
   const W=innerWidth;
-  const cameraScale=.55;
-  const cameraOrigin=W*.39;
+  const cameraOrigin=W*CAMERA_PLAYER_X;
   const playerScreenX=cameraOrigin;
-  /* 画面の横幅を約100mとして扱う。45mなら画面幅の45%離す。 */
-  const gapScreen=(gap/100)*W;
-  const bossScreenWidth=150*cameraScale;
+  const gapScreen=(gap/VIEW_WIDTH_METERS)*W;
+  const bossScreenWidth=150*CAMERA_SCALE;
   const bossScreenLeft=playerScreenX-gapScreen-bossScreenWidth;
-  /* スケール後も狙った画面位置になるよう、ワールド座標を逆算。 */
-  const worldLeft=cameraOrigin+(bossScreenLeft-cameraOrigin)/cameraScale;
+  const worldLeft=cameraOrigin+(bossScreenLeft-cameraOrigin)/CAMERA_SCALE;
   boss.style.left=worldLeft+'px';
   boss.style.right='auto';
   boss.style.bottom='28%';
   bossRig.style.setProperty('--boss-distance-scale',1);
 }
-
 
 
 function startGame(){
@@ -425,7 +424,7 @@ const dt=Math.min(.032,(now-last)/1000);last=now;if(paused)return;elapsed+=dt;
 if(slowTimer>0)slowTimer-=dt;if(coffeeTimer>0)coffeeTimer-=dt;
 speed=Math.min(MAX_SPEED,START_SPEED+distance*.0105);if(coffeeTimer>0)speed=Math.min(MAX_SPEED,speed+.65);if(slowTimer>0)speed*=.62;distance+=speed*dt;
 updateScene(dt);
-const bossApproach=.34+Math.min(distance/260,.55);bossGap=Math.max(0,bossGap-bossApproach*dt);placeBossByRealDistance();
+const bossClosingSpeed=.85+Math.min(distance*.0015,.45);bossGap=Math.max(0,bossGap-bossClosingSpeed*dt);placeBossByRealDistance();
 bossJumpTimer-=dt;if(bossJumpTimer<=0&&!bossJumpingUntil){boss.classList.add("bossJump");bossJumpingUntil=now+820;bossJumpTimer=3.6+Math.random()*4.2}else if(bossJumpingUntil&&now>=bossJumpingUntil){bossJumpingUntil=0;boss.classList.remove("bossJump")}
 if(bossGap<15){warning.classList.add("show");if(bossGap<3){game.classList.add("shake");setTimeout(()=>game.classList.remove("shake"),220);if(!endScheduled){endScheduled=true;setTimeout(endGame,180)}return}}else {warning.classList.remove("show");boss.classList.remove("angry","pressed");bossMood.textContent=""}
 if(bossGap<6){boss.classList.remove("angry","pressed")}
