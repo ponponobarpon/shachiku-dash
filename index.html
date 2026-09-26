@@ -167,7 +167,7 @@ button{margin-top:12px;width:100%;padding:14px;border:0;border-radius:12px;backg
 <input id="playerName" maxlength="12" value="社畜" placeholder="ユーザー名">
 <button id="startBtn">START</button>
 <div id="gameoverStats" class="hidden"></div>
-<div id="ranking"><b>🏆 ONLINE RANKING</b><div id="rankingList">ランキング読み込み中…</div></div>
+<div id="ranking"><b>🏆 ONLINE RANKING</b><div id="rankingList">ランキング読み込み中…</div><div id="myRank" style="margin-top:8px;padding-top:8px;border-top:2px solid #ccc;font-weight:900">自分の最高ランク：読み込み中…</div></div>
 </div></div>
 </div>
 
@@ -189,7 +189,7 @@ const $=id=>document.getElementById(id);
 const game=$("game"),overlay=$("overlay"),startBtn=$("startBtn"),playerName=$("playerName");
 const player=$("player"),boss=$("boss"),obstacles=$("obstacles"),warning=$("warning");
 const distanceEl=$("distance"),speedEl=$("speed"),bossDistanceEl=$("bossDistance"),coinsEl=$("coins"),comboEl=$("combo"),multiplierEl=$("multiplier"),phaseEl=$("phase"),bestEl=$("best"),pauseBtn=$("pauseBtn"),milestoneEl=$("milestone"),powerupMessage=$("powerupMessage");
-const rankingList=$("rankingList"),gameoverStats=$("gameoverStats"),hint=$("hint"),bossMood=$("bossMood");
+const rankingList=$("rankingList"),myRankEl=$("myRank"),gameoverStats=$("gameoverStats"),hint=$("hint"),bossMood=$("bossMood");
 
 let running=false,last=0,raf=0,distance=0,coins=0,combo=0,bestCombo=0,speed=2.5;
 let playerY=0,vy=0,jumping=false,bossGap=38,elapsed=0,nextObstacle=2.0,nextCoin=.9,safeUntil=0;
@@ -223,10 +223,20 @@ function escapeHtml(s){return String(s).replace(/[&<>"']/g,m=>({"&":"&amp;","<":
 async function loadRanking(){
 try{
 const snap=await get(ref(db,"scores"));
-if(!snap.exists()){rankingList.innerHTML="<div style='padding-top:6px'>まだランキングがありません</div>";return}
+if(!snap.exists()){rankingList.innerHTML="<div style='padding-top:6px'>まだランキングがありません</div>";myRankEl.textContent="自分の最高ランク：まだ記録なし";return}
 const rows=[];snap.forEach(c=>rows.push(c.val()));rows.sort((a,b)=>Number(b.score||0)-Number(a.score||0));
-rankingList.innerHTML=rows.slice(0,10).map((x,i)=>`<div class="rankRow"><span>${i+1}位　${escapeHtml(x.name||"社畜")}</span><b>${Number(x.score||0).toLocaleString()}</b></div>`).join("")
-}catch(e){console.error("ランキング取得失敗",e);rankingList.innerHTML="<div style='padding-top:6px'>ランキング取得失敗</div>"}
+const top5=rows.slice(0,5);
+rankingList.innerHTML=top5.map((x,i)=>`<div class="rankRow"><span>${i+1}位　${escapeHtml(x.name||"社畜")}</span><b>${Number(x.score||0).toLocaleString()}</b></div>`).join("");
+const myName=(playerName.value.trim()||"社畜").slice(0,12);
+const myScores=rows.filter(x=>(x.name||"社畜")===myName);
+if(myScores.length){
+const myBest=myScores.reduce((best,x)=>Number(x.score||0)>Number(best.score||0)?x:best,myScores[0]);
+const myRank=rows.findIndex(x=>x===myBest)+1;
+myRankEl.textContent=`自分の最高ランク：${myRank}位　${Number(myBest.score||0).toLocaleString()}点`;
+}else{
+myRankEl.textContent="自分の最高ランク：まだ記録なし";
+}
+}catch(e){console.error("ランキング取得失敗",e);rankingList.innerHTML="<div style='padding-top:6px'>ランキング取得失敗</div>";myRankEl.textContent="自分の最高ランク：取得失敗"}
 }
 function jump(high){
 if(!running)return;
