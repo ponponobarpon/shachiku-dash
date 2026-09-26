@@ -144,47 +144,20 @@ button{margin-top:12px;width:100%;padding:14px;border:0;border-radius:12px;backg
 #bossMood,#bossEyes,#bossMouth{display:none !important}
 @media (max-width:600px){#boss{width:125px !important;height:125px !important;bottom:28% !important}}
 
-/* ===== REALISTIC OBSTACLE ART / VARIED REAL-WORLD SIZES ===== */
-.ob{position:absolute;width:60px;height:60px;border:0;background:transparent;border-radius:0;box-shadow:none;overflow:visible;transform-origin:bottom center;}
-.ob::before,.ob::after{content:"";position:absolute;display:block}
-/* コーン：高さ約70cm、細く背の高い形 */
-.ob.cone{width:38px;height:68px;bottom:24%;background:linear-gradient(90deg,#c94b08 0 12%,#ff7b16 12% 42%,#ff9a32 42% 58%,#e85b0b 58% 88%,#b83f06 88%);clip-path:polygon(42% 0,58% 0,78% 76%,100% 92%,100% 100%,0 100%,0 92%,22% 76%);filter:drop-shadow(0 5px 5px #0008)}
-.ob.cone::before{left:8px;top:20px;width:22px;height:8px;background:#fff;transform:skewY(-8deg);box-shadow:3px 20px 0 #fff}
-.ob.cone::after{left:3px;bottom:0;width:32px;height:6px;background:#d94708;border-radius:2px}
-/* 自転車：横倒しの実物に近いシルエット */
-.ob.bike{width:92px;height:66px;bottom:24%;filter:drop-shadow(0 5px 5px #0008)}
-.ob.bike::before{left:5px;bottom:2px;width:26px;height:26px;border:4px solid #20252a;border-radius:50%;box-shadow:51px 0 0 -4px #20252a,51px 0 0 0 #20252a;}
-.ob.bike::after{left:18px;top:17px;width:51px;height:34px;border-left:4px solid #343a40;border-bottom:4px solid #343a40;transform:skewX(-8deg) rotate(-8deg);box-shadow:18px -10px 0 -1px #c62828}
-/* 標識：支柱付き三角注意標識 */
-.ob.sign{width:52px;height:92px;bottom:24%;filter:drop-shadow(0 5px 5px #0008)}
-.ob.sign::before{left:22px;top:39px;width:8px;height:53px;background:linear-gradient(90deg,#555,#bdbdbd 45%,#555);border-radius:2px;box-shadow:0 2px 2px #0006}
-.ob.sign::after{left:1px;top:0;width:50px;height:50px;background:linear-gradient(135deg,#fff3 0 12%,transparent 13%),linear-gradient(#ffd21c,#f0a900);clip-path:polygon(50% 0,100% 86%,92% 100%,8% 100%,0 86%);border:3px solid #444;box-sizing:border-box;content:"!";display:grid;place-items:center;color:#222;font:1000 28px/1 Arial;text-shadow:0 1px 0 #fff}
-/* ベンチ：低く横長 */
-.ob.bench{width:108px;height:58px;bottom:24%;filter:drop-shadow(0 5px 5px #0008)}
-.ob.bench::before{left:5px;top:4px;width:98px;height:19px;background:linear-gradient(#a86b38,#6e421f);border:3px solid #4b2c16;border-radius:4px;box-shadow:0 24px 0 -2px #8d552a}
-.ob.bench::after{left:13px;top:28px;width:8px;height:30px;background:#3e2b1d;transform:skewX(-5deg);box-shadow:70px 0 #3e2b1d}
-/* 車：低く大きい横長障害物 */
-.ob.car{width:124px;height:66px;bottom:24%;background:linear-gradient(180deg,#b51f2b 0,#e33b45 48%,#a91320 49%,#7c1019 100%);border-radius:18px 22px 9px 9px;filter:drop-shadow(0 6px 6px #0009)}
-.ob.car::before{left:22px;top:7px;width:76px;height:28px;background:linear-gradient(135deg,#d9f3ff,#6f9dad 55%,#cbe8f4);border:3px solid #64131a;border-radius:13px 13px 4px 4px;transform:skewX(-8deg);box-shadow:inset 0 4px 4px #fff7}
-.ob.car::after{left:13px;bottom:-10px;width:20px;height:20px;background:#171717;border:3px solid #777;border-radius:50%;box-shadow:78px 0 0 #171717,78px 0 0 3px #777}
-/* 水たまり：低く横長で踏むと危険 */
-.ob.puddle{width:118px;height:25px;bottom:24%;background:radial-gradient(ellipse at 48% 48%,#8fd9ff 0 12%,#3d9ddd 35%,#17669b 68%,transparent 70%);filter:drop-shadow(0 2px 3px #0007)}
-.ob.puddle::before{left:20px;top:5px;width:72px;height:7px;border-top:2px solid #c8efff;border-radius:50%;opacity:.8}
-/* 工事バリケード：中～高、横長 */
-.ob.barrier{width:126px;height:64px;bottom:24%;filter:drop-shadow(0 6px 6px #0008)}
-.ob.barrier::before{left:6px;top:6px;width:114px;height:34px;border:4px solid #333;border-radius:3px;background:repeating-linear-gradient(135deg,#f08a1b 0 14px,#f08a1b 14px 22px,#fff 22px 34px,#fff 34px 42px)}
-.ob.barrier::after{left:10px;bottom:0;width:12px;height:27px;background:#333;box-shadow:94px 0 #333}
-/* 人：成人サイズ相当、高めで縦長 */
-.ob.person{width:42px;height:88px;bottom:24%;filter:drop-shadow(0 5px 5px #0008)}
-.ob.person::before{left:9px;top:0;width:24px;height:24px;background:radial-gradient(circle at 35% 30%,#fff4 0 8%,transparent 9%),#d6a17e;border:2px solid #333;border-radius:50%;box-shadow:0 25px 0 1px #2f4858}
-.ob.person::after{left:5px;top:49px;width:9px;height:32px;background:#25313b;border-radius:8px;transform:rotate(8deg);box-shadow:22px 2px 0 #25313b,8px 25px 0 -1px #161b20,18px 24px 0 -1px #161b20}
-/* 落とし穴：道路が崩れた実物風 */
-.ob.pit{width:126px;height:42px;bottom:22.5%;border-radius:50%;background:radial-gradient(ellipse at 50% 54%,#050505 0 48%,#171717 49% 64%,#51473e 65% 78%,#1e1e1e 79% 100%);filter:drop-shadow(0 4px 5px #0009)}
-.ob.pit::before{left:3px;top:2px;width:120px;height:37px;border-radius:50%;background:repeating-linear-gradient(102deg,transparent 0 9px,#6b5b4c 10px 12px,transparent 13px 22px);opacity:.8}
-.ob.pit::after{content:"";left:18px;top:5px;width:90px;height:24px;border-radius:50%;box-shadow:inset 0 5px 7px #000,0 2px 0 #777;opacity:.75}
-/* さらに種類ごとに自然な大小差を固定 */
-.ob.cone{--ob-scale:1}.ob.bike{--ob-scale:1.05}.ob.sign{--ob-scale:.92}.ob.bench{--ob-scale:.98}.ob.car{--ob-scale:1.08}.ob.puddle{--ob-scale:.92}.ob.barrier{--ob-scale:1.02}.ob.person{--ob-scale:.94}.ob.pit{--ob-scale:1.06}
-.ob{transform:scale(var(--ob-scale,1));}
+/* ===== REALISTIC SVG OBSTACLE ART / VARIED REAL-WORLD SIZES ===== */
+.ob{position:absolute;width:80px;height:70px;bottom:24%;border:0;background:transparent;border-radius:0;box-shadow:none;overflow:visible;transform-origin:bottom center;filter:drop-shadow(0 5px 5px #0008)}
+.ob svg{display:block;width:100%;height:100%;overflow:visible}
+.ob.cone{width:42px;height:72px}
+.ob.bike{width:104px;height:72px}
+.ob.sign{width:56px;height:96px}
+.ob.bench{width:118px;height:62px}
+.ob.car{width:138px;height:74px}
+.ob.puddle{width:124px;height:28px}
+.ob.barrier{width:132px;height:70px}
+.ob.person{width:48px;height:94px}
+.ob.pit{width:132px;height:46px;bottom:22.5%}
+.ob.cone{--ob-scale:1.00}.ob.bike{--ob-scale:1.05}.ob.sign{--ob-scale:.92}.ob.bench{--ob-scale:.98}.ob.car{--ob-scale:1.08}.ob.puddle{--ob-scale:.92}.ob.barrier{--ob-scale:1.02}.ob.person{--ob-scale:.94}.ob.pit{--ob-scale:1.06}
+.ob{transform:scale(calc(var(--ob-scale,1) * var(--spawn-scale,1)))}
 /* コインは障害物の形・サイズを邪魔しない */
 .coin{width:30px;height:30px;opacity:.9}
 
@@ -410,8 +383,52 @@ game.addEventListener("contextmenu",e=>e.preventDefault());addEventListener("key
 pauseBtn.addEventListener("click",e=>{e.preventDefault();if(!running)return;paused=!paused;game.classList.toggle("paused",paused);pauseBtn.textContent=paused?"▶":"Ⅱ";if(!paused){last=performance.now();raf=requestAnimationFrame(loop)}});
 startBtn.addEventListener("click",startGame);
 
-function spawnObstacle(){const types=["cone","cone","bike","sign","bench","car","puddle","barrier","person","pit","pit"];const type=types[Math.floor(Math.random()*types.length)];const el=document.createElement("div");el.className="ob "+type;el.style.left=(innerWidth+80)+"px";const variation=.92+Math.random()*.16;el.style.setProperty("--spawn-scale",variation);el.style.transform=`scale(calc(var(--ob-scale,1) * var(--spawn-scale,1)))`;obstacles.appendChild(el);obstacleList.push({el,x:innerWidth+80,hit:false})}
-function spawnCoin(){const spawnX=innerWidth+180;const blocked=obstacleList.some(o=>o.x>innerWidth*.82&&o.x<spawnX+140);if(blocked)return;const el=document.createElement("div");el.className="coin";el.textContent="¥";el.style.bottom=(31+Math.random()*16)+"%";el.style.left=spawnX+"px";obstacles.appendChild(el);coinList.push({el,x:spawnX,hit:false})}
+const obstacleSVG={
+cone:`<svg viewBox="0 0 120 180" aria-hidden="true"><defs><linearGradient id="coneG" x1="0" x2="1"><stop stop-color="#b83b08"/><stop offset=".28" stop-color="#ff6b12"/><stop offset=".55" stop-color="#ff9d2f"/><stop offset=".82" stop-color="#e85208"/><stop offset="1" stop-color="#9e2f05"/></linearGradient></defs><ellipse cx="60" cy="169" rx="56" ry="10" fill="#222" opacity=".28"/><path d="M43 24h34l19 128H24z" fill="url(#coneG)" stroke="#7e2605" stroke-width="3"/><path d="M34 83h52l4 18H30z" fill="#fff" stroke="#ddd" stroke-width="2"/><path d="M27 144h66l13 12v13H14v-13z" fill="#e9570a" stroke="#7e2605" stroke-width="3"/><path d="M45 24q15-11 30 0" fill="#444" stroke="#222" stroke-width="3"/></svg>`,
+bike:`<svg viewBox="0 0 220 150" aria-hidden="true"><ellipse cx="110" cy="138" rx="94" ry="8" fill="#222" opacity=".25"/><circle cx="47" cy="105" r="32" fill="#111" stroke="#555" stroke-width="5"/><circle cx="172" cy="105" r="32" fill="#111" stroke="#555" stroke-width="5"/><circle cx="47" cy="105" r="6" fill="#aaa"/><circle cx="172" cy="105" r="6" fill="#aaa"/><path d="M47 105 91 58 126 105 47 105 77 105 105 54 172 105M91 58l31-2 22 20" fill="none" stroke="#30353a" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/><path d="M116 56l8-18h20" fill="none" stroke="#30353a" stroke-width="7" stroke-linecap="round"/><path d="M87 58l-14-14" stroke="#c62828" stroke-width="8" stroke-linecap="round"/><path d="M137 34l18 2" stroke="#111" stroke-width="6" stroke-linecap="round"/></svg>`,
+sign:`<svg viewBox="0 0 120 210" aria-hidden="true"><ellipse cx="60" cy="202" rx="45" ry="7" fill="#222" opacity=".25"/><path d="M55 82h10v112H55z" fill="#888" stroke="#444" stroke-width="3"/><path d="M60 8 111 91H9z" fill="#fff" stroke="#333" stroke-width="6"/><path d="M60 20 99 84H21z" fill="#f2b400" stroke="#e38a00" stroke-width="3"/><path d="M60 36v26" stroke="#222" stroke-width="8" stroke-linecap="round"/><circle cx="60" cy="73" r="5" fill="#222"/></svg>`,
+bench:`<svg viewBox="0 0 230 120" aria-hidden="true"><ellipse cx="115" cy="111" rx="100" ry="7" fill="#222" opacity=".25"/><path d="M18 20h194v24H18z" fill="#8d572c" stroke="#4d2d18" stroke-width="5"/><path d="M18 49h194v20H18z" fill="#6f421f" stroke="#4d2d18" stroke-width="5"/><path d="M31 69l-10 38M199 69l10 38M68 69l-7 38M162 69l7 38" stroke="#3a2a1d" stroke-width="9" stroke-linecap="round"/><path d="M24 24h182" stroke="#d99a5b" stroke-width="4" opacity=".55"/></svg>`,
+car:`<svg viewBox="0 0 280 150" aria-hidden="true"><ellipse cx="140" cy="138" rx="120" ry="10" fill="#222" opacity=".28"/><path d="M22 88q8-34 45-38l34-36h83l42 36q32 4 34 38v29H22z" fill="#c52835" stroke="#64131a" stroke-width="5"/><path d="M104 23h78l35 30H77z" fill="#8fc6d9" stroke="#4c6c78" stroke-width="5"/><path d="M111 27h30v22h-45zM148 27h30l30 22h-60z" fill="#bfe8f5" opacity=".8"/><circle cx="71" cy="120" r="22" fill="#171717" stroke="#777" stroke-width="5"/><circle cx="209" cy="120" r="22" fill="#171717" stroke="#777" stroke-width="5"/><circle cx="71" cy="120" r="8" fill="#aaa"/><circle cx="209" cy="120" r="8" fill="#aaa"/><path d="M28 91h224" stroke="#f36a73" stroke-width="5" opacity=".6"/></svg>`,
+puddle:`<svg viewBox="0 0 250 60" aria-hidden="true"><ellipse cx="125" cy="31" rx="115" ry="20" fill="#17669b" opacity=".85"/><ellipse cx="118" cy="27" rx="90" ry="13" fill="#4db6e8"/><path d="M55 24q30-10 60 0M132 28q28-10 58 0" fill="none" stroke="#c9f2ff" stroke-width="3" opacity=".85"/><ellipse cx="125" cy="49" rx="90" ry="5" fill="#111" opacity=".18"/></svg>`,
+barrier:`<svg viewBox="0 0 260 140" aria-hidden="true"><ellipse cx="130" cy="131" rx="110" ry="7" fill="#222" opacity=".25"/><path d="M18 32h224v54H18z" fill="#f08a1b" stroke="#333" stroke-width="6"/><path d="M35 38l42 42M83 38l42 42M131 38l42 42M179 38l42 42" stroke="#fff" stroke-width="16"/><path d="M35 86v40M225 86v40" stroke="#333" stroke-width="12"/><path d="M24 104h40M196 104h40" stroke="#333" stroke-width="8"/></svg>`,
+person:`<svg viewBox="0 0 120 230" aria-hidden="true"><ellipse cx="60" cy="222" rx="43" ry="7" fill="#222" opacity=".25"/><circle cx="60" cy="32" r="24" fill="#d7a17d" stroke="#333" stroke-width="4"/><path d="M42 67q18-12 36 0l13 73H29z" fill="#26384b" stroke="#17232f" stroke-width="4"/><path d="M35 78 11 126M85 78l24 48" stroke="#26384b" stroke-width="11" stroke-linecap="round"/><path d="M46 139l-8 69M74 139l8 69" stroke="#17232f" stroke-width="13" stroke-linecap="round"/><path d="M35 214h24M61 214h24" stroke="#111" stroke-width="10" stroke-linecap="round"/><path d="M44 24q16-20 32 0" stroke="#3b2418" stroke-width="8" fill="none"/></svg>`,
+pit:`<svg viewBox="0 0 270 90" aria-hidden="true"><ellipse cx="135" cy="48" rx="124" ry="35" fill="#1b1b1b" stroke="#5b5047" stroke-width="7"/><ellipse cx="135" cy="48" rx="96" ry="25" fill="#050505"/><path d="M22 48q18-23 36 0M212 48q18-23 36 0M76 25q18 15 36 0M158 25q18 15 36 0" fill="none" stroke="#806d58" stroke-width="7" opacity=".8"/><path d="M50 62q32 12 62 0M158 62q32 12 62 0" fill="none" stroke="#3b332c" stroke-width="5"/></svg>`
+};
+
+function obstacleArea(x){return {left:x-80,right:x+180}}
+function hasCoinConflict(x,buffer=520){return coinList.some(c=>Math.abs(c.x-x)<buffer)}
+function hasObstacleConflict(x,buffer=180){return obstacleList.some(o=>Math.abs(o.x-x)<buffer)}
+function spawnObstacle(){
+  const types=["cone","cone","bike","sign","bench","car","puddle","barrier","person","pit","pit"];
+  const spawnX=innerWidth+120;
+  if(hasCoinConflict(spawnX,620)) return false;
+  if(hasObstacleConflict(spawnX,260)) return false;
+  const type=types[Math.floor(Math.random()*types.length)];
+  const el=document.createElement("div");
+  el.className="ob "+type;
+  el.style.left=spawnX+"px";
+  const variation=.78+Math.random()*.44;
+  el.style.setProperty("--spawn-scale",variation);
+  el.innerHTML=obstacleSVG[type];
+  obstacles.appendChild(el);
+  obstacleList.push({el,x:spawnX,hit:false});
+  return true;
+}
+function spawnCoin(){
+  const candidates=[innerWidth+180,innerWidth+300,innerWidth+420,innerWidth+540];
+  const spawnX=candidates[Math.floor(Math.random()*candidates.length)];
+  const blockedByObstacle=obstacleList.some(o=>Math.abs(o.x-spawnX)<520);
+  const blockedByCoin=coinList.some(c=>Math.abs(c.x-spawnX)<260);
+  if(blockedByObstacle||blockedByCoin)return false;
+  const el=document.createElement("div");
+  el.className="coin";
+  el.textContent="¥";
+  el.style.bottom=(31+Math.random()*16)+"%";
+  el.style.left=spawnX+"px";
+  obstacles.appendChild(el);
+  coinList.push({el,x:spawnX,hit:false,safeRadius:520});
+  return true;
+}
 function spawnPowerup(){const types=["shield","slow","coffee"];const type=types[Math.floor(Math.random()*types.length)];const el=document.createElement("div");el.className="powerup "+type;el.textContent=type==="shield"?"🛡️":type==="slow"?"⏱️":"☕";el.style.left=(innerWidth+70)+"px";obstacles.appendChild(el);powerupList.push({el,x:innerWidth+70,type,hit:false})}
 function rectHit(a,b){const ap={left:a.left+10,right:a.right-10,top:a.top+10,bottom:a.bottom-4};const bp={left:b.left+8,right:b.right-8,top:b.top+7,bottom:b.bottom};return ap.left<bp.right&&ap.right>bp.left&&ap.top<bp.bottom&&ap.bottom>bp.top}
 function updateHUD(){const mult=Math.min(5,1+Math.floor(combo/5));distanceEl.textContent=Math.floor(distance)+"m";speedEl.textContent=(speed*3.6).toFixed(1)+"km/h";coinsEl.textContent=coins;comboEl.textContent=combo;bossDistanceEl.textContent=Math.max(0,bossGap).toFixed(0)+"m";multiplierEl.textContent="×"+mult;const d=Math.floor(distance);phaseEl.textContent=d<80?"朝":d<180?"通勤":d<300?"修羅場":"限界"}
@@ -432,8 +449,8 @@ if(jumping){playerY+=vy*dt;vy-=1650*dt;if(playerY<=0){playerY=0;vy=0;jumping=fal
 player.style.transform=`translateY(${-playerY}px)`;
 faceTimer-=dt;if(faceTimer<=0){setPlayerFace();faceTimer=1.8+Math.random()*2.0}if(jumping)player.classList.add("sweating");
 const nowMs=performance.now();
-if(elapsed>=nextObstacle){const nearby=obstacleList.some(o=>o.x<innerWidth*.72);if(nowMs>safeUntil&&!nearby)spawnObstacle();nextObstacle=elapsed+Math.max(.82,1.25-distance*.0008)+Math.random()*.28}
-if(elapsed>=nextCoin){spawnCoin();nextCoin=elapsed+2.8+Math.random()*2.2}
+if(elapsed>=nextObstacle){const nearby=obstacleList.some(o=>o.x<innerWidth*.72);if(nowMs>safeUntil&&!nearby){spawnObstacle()}nextObstacle=elapsed+Math.max(.72,1.05-distance*.00065)+Math.random()*.22}
+if(elapsed>=nextCoin){spawnCoin();nextCoin=elapsed+2.4+Math.random()*1.8}
 if(elapsed>=nextPowerup){spawnPowerup();nextPowerup=elapsed+7+Math.random()*6}
 const playerRect=player.getBoundingClientRect();
 obstacleList.forEach(o=>{o.x-=(165+speed*32)*dt;o.el.style.left=o.x+"px";if(!o.hit&&rectHit(playerRect,o.el.getBoundingClientRect())&&(!o.el.classList.contains("pit")||playerY<18)){o.hit=true;if(shield>0){shield=0;o.el.remove();powerupMessage.textContent="🛡️ シールドで回避！";powerupMessage.classList.remove("show");void powerupMessage.offsetWidth;powerupMessage.classList.add("show");combo++;bestCombo=Math.max(bestCombo,combo)}else{combo=0;player.classList.remove(...playerFaces);player.classList.add("panicked");player.style.transform=`translateY(${-playerY}px) rotate(72deg)`;game.classList.add("shake");setTimeout(()=>game.classList.remove("shake"),220);if(!endScheduled){endScheduled=true;setTimeout(endGame,260)}}}else if(!o.hit&&!o.near&&o.x<innerWidth*.43&&o.x>innerWidth*.25){o.near=true;if(!jumping){combo++;nearMisses++;bestCombo=Math.max(bestCombo,combo);safeUntil=Math.max(safeUntil,performance.now()+350);}}});
