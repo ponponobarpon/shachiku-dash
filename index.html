@@ -32,7 +32,7 @@ html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#111;font-f
 .leg{position:absolute;top:67px;width:13px;height:22px;background:#202733;border-radius:8px}.l1{left:17px}.l2{right:17px}
 #obstacles{position:absolute;inset:0;z-index:12;pointer-events:none}
 .ob{position:absolute;bottom:24%;width:52px;height:62px;border-radius:10px;background:#ff9f1c;border:4px solid #fff;box-shadow:0 4px 10px #0008}
-.ob::after{content:"!";position:absolute;inset:0;display:grid;place-items:center;color:#fff;font-size:30px;font-weight:1000}.ob.cone{background:#ff7b00}.ob.bike{background:#27ae60}.ob.sign{background:#e53935}.ob.bench{background:#8d5a35}.ob.car{background:#2878d0}.ob.bike::after{content:"🚲";font-size:26px}.ob.sign::after{content:"⚠"}.ob.bench::after{content:"🪑"}.ob.car::after{content:"🚗"}
+ .ob::after{content:none!important;display:none!important}.ob.cone{background:#ff7b00}.ob.bike{background:#27ae60}.ob.sign{background:#e53935}.ob.bench{background:#8d5a35}.ob.car{background:#2878d0}
 .coin{position:absolute;bottom:35%;width:34px;height:34px;border-radius:50%;background:#ffd21c;border:4px solid #fff;box-shadow:0 3px 10px #0008;display:grid;place-items:center;color:#8a5b00;font-weight:1000;font-size:17px}
 #pauseBtn{position:absolute;right:0;top:0;width:48px;height:48px;margin:0;padding:0;border:2px solid #fff;border-radius:12px;background:#111d;color:#fff;font-size:22px;font-weight:1000;z-index:80}#pauseBtn:active{transform:scale(.94)}
 #milestone,#powerupMessage{position:absolute;left:50%;transform:translate(-50%,-50%);z-index:45;color:#fff;font-weight:1000;text-align:center;text-shadow:0 3px 7px #000;pointer-events:none;opacity:0}#milestone{top:38%;font-size:30px}#powerupMessage{top:48%;font-size:20px}#milestone.show,#powerupMessage.show{animation:popMsg .9s ease-out forwards}@keyframes popMsg{0%{opacity:0;transform:translate(-50%,-35%) scale(.65)}18%{opacity:1;transform:translate(-50%,-50%) scale(1.12)}70%{opacity:1}100%{opacity:0;transform:translate(-50%,-72%) scale(1)}}
@@ -63,7 +63,7 @@ button{margin-top:12px;width:100%;padding:14px;border:0;border-radius:12px;backg
 .tree{position:absolute;z-index:6;bottom:39%;width:34px;height:65px;background:#5b3b24;border-radius:8px}.tree:before{content:"";position:absolute;left:-18px;top:-34px;width:70px;height:60px;background:#4b8f45;border-radius:50%}.t1{left:8%}.t2{left:53%}
 #player:after{content:"";position:absolute;left:5px;bottom:-5px;width:46px;height:8px;border-radius:50%;background:#0004;filter:blur(2px);z-index:-1}
 .ob.puddle{background:#287fc2}.ob.barrier{background:#e67e22}.ob.person{background:#6c5ce7}
-.ob.puddle::after{content:"💧"}.ob.barrier::after{content:"🚧"}.ob.person::after{content:"🚶"}
+
 .coin{animation:coinFloat .65s ease-in-out infinite alternate}@keyframes coinFloat{to{transform:translateY(-7px) rotate(12deg)}}
 #warning{font-weight:1000;text-shadow:0 2px 5px #000;letter-spacing:.04em}
 
@@ -100,7 +100,7 @@ button{margin-top:12px;width:100%;padding:14px;border:0;border-radius:12px;backg
 #boss.angry:after{background:radial-gradient(circle at 50% 28%,rgba(255,40,40,.18),transparent 48%)}
 .ob{bottom:18%;transition:transform .08s}
 .ob.bike{background:#263238}.ob.sign{background:#ffd21c}.ob.bench{background:#8b5a2b}.ob.car{background:#d32f2f}.ob.cone{background:#f27622}
-.ob.bike::after{content:"🚲"}.ob.sign::after{content:"⚠"}.ob.bench::after{content:"🪑"}.ob.car::after{content:"🚗"}.ob.cone::after{content:"🚧"}
+
 .coin{bottom:30%;animation:coinSpin .7s linear infinite;will-change:transform}
 @keyframes coinSpin{50%{transform:scaleX(.55)}100%{transform:scaleX(1)}}
 #warning.show{animation:pulse .32s infinite alternate}
@@ -230,6 +230,11 @@ button{margin-top:12px;width:100%;padding:14px;border:0;border-radius:12px;backg
 #boss.bossJump .bossHead{box-shadow:0 6px 12px #0006}
 @media(max-width:600px){#boss{width:150px!important;height:205px!important;bottom:28%!important}}
 
+
+/* ===== REALISTIC OBSTACLE ART: SVG ONLY ===== */
+.ob{background:transparent!important;border:0!important;box-shadow:none!important;overflow:visible!important;display:block}
+.ob>svg{display:block;width:100%;height:100%;overflow:visible}
+.ob::after{content:none!important;display:none!important}
 </style>
 </head>
 <body>
