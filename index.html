@@ -192,9 +192,9 @@ button{margin-top:12px;width:100%;padding:14px;border:0;border-radius:12px;backg
 #worldActors{position:absolute!important;inset:0!important;z-index:10!important;transform:none!important;transform-origin:center center!important;will-change:auto}
 /* カメラを引く：人物は元位置・元サイズのまま、景色だけ広く見せる */
 #worldActors>.sky{transform:scale(.72);transform-origin:50% 100%;width:139%;left:-19.5%;}
-#worldActors>.city{transform:scale(.40);transform-origin:50% 100%;width:175%;left:-37.5%;}
-#worldActors>.road{transform:scale(.40);transform-origin:50% 100%;width:175%;left:-37.5%;height:62%;bottom:-2%;}
-#worldActors>.lane{transform:scale(.40);transform-origin:50% 100%;width:175%;left:-37.5%;}
+#worldActors>.city{transform:scale(.30);transform-origin:50% 100%;width:205%;left:-52.5%;}
+#worldActors>.road{transform:scale(.30);transform-origin:50% 100%;width:205%;left:-52.5%;height:62%;bottom:-2%;}
+#worldActors>.lane{transform:scale(.30);transform-origin:50% 100%;width:205%;left:-52.5%;}
 #worldActors>.commuterTrain,#worldActors>.crosswalk,#worldActors>.ped,#worldActors>.busStop,#worldActors>.tree{transform:scale(.54);transform-origin:50% 100%;}
 #worldActors #boss,#worldActors #player,#worldActors #obstacles{will-change:transform,left}
 /* Boss face stays exactly as the default supplied photo */
@@ -205,10 +205,10 @@ button{margin-top:12px;width:100%;padding:14px;border:0;border-radius:12px;backg
 
 /* ===== CAMERA: scenery only, player/boss stay at their original screen positions ===== */
 .sky{transform:scale(.82);transform-origin:50% 100%;}
-.city{transform:scale(.40);transform-origin:50% 100%;width:175%;left:-37.5%;}
-.road{transform:scale(.40);transform-origin:50% 100%;width:175%;left:-37.5%;}
-.lane{transform:scale(.40);transform-origin:50% 100%;width:175%;left:-37.5%;}
-#game:after{transform:scale(.40);transform-origin:50% 100%;width:175%;left:-37.5%;}
+.city{transform:scale(.30);transform-origin:50% 100%;width:205%;left:-52.5%;}
+.road{transform:scale(.30);transform-origin:50% 100%;width:205%;left:-52.5%;}
+.lane{transform:scale(.30);transform-origin:50% 100%;width:205%;left:-52.5%;}
+#game:after{transform:scale(.30);transform-origin:50% 100%;width:205%;left:-52.5%;}
 .commuterTrain,.crosswalk,.ped,.busStop,.tree{transform:scale(.54);transform-origin:50% 100%;}
 
 /* ===== BOSS BODY + KINCHAN RUN ===== */
@@ -295,6 +295,16 @@ button{margin-top:12px;width:100%;padding:14px;border:0;border-radius:12px;backg
 </div></div>
 </div>
 
+/* ===== CAMERA: 100m CLASS WIDE VIEW ===== */
+/* カメラは背景だけではなく、プレイヤー・上司・障害物を含むワールド全体を引く。 */
+/* キャラは「遠くに置く」のではなく、同じワールドをカメラで広く見る。 */
+#worldActors{transform:scale(.55)!important;transform-origin:39% 100%!important;width:100%!important;height:100%!important;}
+#worldActors>.sky,#worldActors>.city,#worldActors>.road,#worldActors>.lane,#game:after{transform:none!important;transform-origin:50% 100%!important;width:182%!important;left:-41%!important;}
+#worldActors>.commuterTrain,#worldActors>.crosswalk,#worldActors>.ped,#worldActors>.busStop,#worldActors>.tree{transform:none!important;transform-origin:50% 100%!important;}
+@media(max-width:600px){#worldActors{transform:scale(.55)!important;transform-origin:39% 100%!important;}
+#worldActors>.sky,#worldActors>.city,#worldActors>.road,#worldActors>.lane,#game:after{transform:none!important;width:182%!important;left:-41%!important;}
+#worldActors>.commuterTrain,#worldActors>.crosswalk,#worldActors>.ped,#worldActors>.busStop,#worldActors>.tree{transform:none!important;}}
+
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-app.js";
 import { getDatabase, ref, push, set, get } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-database.js";
@@ -326,24 +336,29 @@ let bossJumpTimer=3.2,bossJumpingUntil=0;
 
 function resizeBoss(){boss.style.width="125px";boss.style.height="150px"} addEventListener("resize",resizeBoss);resizeBoss();
 function clearObjects(){obstacleList.forEach(o=>o.el.remove());coinList.forEach(o=>o.el.remove());powerupList.forEach(o=>o.el.remove());obstacleList=[];coinList=[];powerupList=[]}
-// 上司の45mの距離を「奥行き」ではなく道路上の横方向の分離として表示。
-// カメラは景色だけを広くし、プレイヤーと上司の大きさ・高さは変えない。
+// 上司は奥行き方向へ移動させない。
+// プレイヤーの「真後ろ＝画面左側」から、実距離(m)に比例して追ってくる。
+// 上司の大きさは距離で変えず、カメラだけを引いて45mでも常に全身を画面内へ入れる。
 const BOSS_START_DISTANCE=45;
 function placeBossByRealDistance(){
   const gap=Math.max(0,Math.min(BOSS_START_DISTANCE,bossGap));
-  const t=1-gap/BOSS_START_DISTANCE;
-  const playerX=innerWidth*.40;
-  const bossW=150;
-  const bossH=205;
-  // 45mでは画面右側、距離が縮むほどプレイヤー側へ横移動。
-  // 画面外には出さず、常に上司全身を表示。
-  const lateralPx=Math.min(innerWidth*.44, innerWidth*(.12 + .28*(1-t)));
-  const centerX=playerX+lateralPx;
-  const left=Math.max(6,Math.min(innerWidth-bossW-6,centerX-bossW/2));
-  boss.style.left=left+'px';
+  const W=innerWidth;
+  const cameraScale=.55;
+  const cameraOrigin=W*.39;
+  const playerScreenX=cameraOrigin;
+  /* 画面の横幅を約100mとして扱う。45mなら画面幅の45%離す。 */
+  const gapScreen=(gap/100)*W;
+  const bossScreenWidth=150*cameraScale;
+  const bossScreenLeft=playerScreenX-gapScreen-bossScreenWidth;
+  /* スケール後も狙った画面位置になるよう、ワールド座標を逆算。 */
+  const worldLeft=cameraOrigin+(bossScreenLeft-cameraOrigin)/cameraScale;
+  boss.style.left=worldLeft+'px';
+  boss.style.right='auto';
   boss.style.bottom='28%';
-  bossRig.style.setProperty("--boss-distance-scale",1);
+  bossRig.style.setProperty('--boss-distance-scale',1);
 }
+
+
 
 function startGame(){
 playerName.value=(playerName.value.trim()||"社畜").slice(0,12);
