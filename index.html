@@ -259,7 +259,7 @@ rankingList.innerHTML=html||"<div style='padding-top:6px'>まだランキング�
 }
 function jump(high){
 if(!running)return;
-if(!jumping){jumping=true;vy=high?980:650;safeUntil=performance.now()+1400}else if(high)vy=Math.max(vy,820)
+if(!jumping){jumping=true;vy=high?1120:800;safeUntil=performance.now()+1400}else if(high)vy=Math.max(vy,820)
 }
 let pressTimer=null,isPressing=false;
 game.addEventListener("pointerdown",e=>{if(!running||e.target.closest("#overlay"))return;e.preventDefault();isPressing=true;longJumpTriggered=false;if(pressTimer)clearTimeout(pressTimer);pressTimer=setTimeout(()=>{if(isPressing){longJumpTriggered=true;jump(true)}},260)});
@@ -271,7 +271,7 @@ game.addEventListener("contextmenu",e=>e.preventDefault());addEventListener("key
 pauseBtn.addEventListener("click",e=>{e.preventDefault();if(!running)return;paused=!paused;game.classList.toggle("paused",paused);pauseBtn.textContent=paused?"▶":"Ⅱ";if(!paused){last=performance.now();raf=requestAnimationFrame(loop)}});
 startBtn.addEventListener("click",startGame);
 
-function spawnObstacle(){
+function spawnObstacle(spawnX){
 const types=["cone","bike","sign","bench","car","puddle","barrier","person","hole"];
 const type=types[Math.floor(Math.random()*types.length)];
 const el=document.createElement("div");el.className="ob "+type;
@@ -316,12 +316,18 @@ faceTimer-=dt;if(faceTimer<=0){setPlayerFace();faceTimer=1.8+Math.random()*2.0}i
 const nowMs=performance.now();
 const playerWorldX=600+78/2;
 if(elapsed>=nextObstacle){
-const nearestAhead=obstacleList.reduce((m,o)=>Math.min(m,o.x),Infinity);
-const minGapPx=WORLD_PX_PER_M*(14+Math.random()*4);
-const enoughSpace=(nearestAhead===Infinity)||(nearestAhead>playerWorldX+minGapPx);
-const nearby=obstacleList.some(o=>Math.abs(o.x-playerWorldX)<WORLD_PX_PER_M*9);
-if(nowMs>safeUntil&&!nearby&&enoughSpace){spawnObstacle();lastObstacleSpawnX=1040;}
-nextObstacle=elapsed+0.55+Math.random()*0.35;
+const spawnX=1040+Math.random()*70;
+const minGapPx=WORLD_PX_PER_M*(18+Math.random()*6);
+const spawnBlocked=obstacleList.some(o=>Math.abs(o.x-spawnX)<minGapPx);
+const playerBlocked=obstacleList.some(o=>Math.abs(o.x-playerWorldX)<WORLD_PX_PER_M*10);
+if(nowMs>safeUntil&&!spawnBlocked&&!playerBlocked){
+spawnObstacle(spawnX);
+lastObstacleSpawnX=spawnX;
+const gapM=18+Math.random()*7;
+nextObstacle=elapsed+gapM/Math.max(speed,0.1);
+}else{
+nextObstacle=elapsed+0.35;
+}
 }
 if(elapsed>=nextCoin){
 const coinSpawnX=1120+Math.random()*35;const coinBlocked=obstacleList.some(o=>Math.abs(o.x-coinSpawnX)<WORLD_PX_PER_M*8);
