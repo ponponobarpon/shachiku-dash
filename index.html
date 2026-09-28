@@ -59,7 +59,7 @@ button{margin-top:12px;width:100%;padding:14px;border:0;border-radius:12px;backg
 #boss.pressed #bossMouth{opacity:1;border-bottom-color:#b40000;transform:scaleY(1.5)}
 #boss.angry .bossMouth{opacity:.9}
 .busStop{position:absolute;z-index:6;bottom:39%;left:78%;width:56px;height:72px;border-left:5px solid #333;border-top:5px solid #333;border-radius:10px 10px 0 0;font-size:9px;font-weight:900;text-align:center;padding-top:5px;color:#333}
-.tree{position:absolute;z-index:6;bottom:39%;width:34px;height:65px;background:#5b3b24;border-radius:8px}.tree:before{content:"";position:absolute;left:-18px;top:-34px;width:70px;height:60px;background:#4b8f45;border-radius:50%}.t1{left:8%}.t2{left:53%}
+.tree{position:fixed;z-index:6;bottom:39%;width:34px;height:65px;background:#5b3b24;border-radius:8px;transform:none!important;will-change:auto}.tree:before{content:"";position:absolute;left:-18px;top:-34px;width:70px;height:60px;background:#4b8f45;border-radius:50%}.t1{left:8%}.t2{left:53%}
 #player:after{content:"";position:absolute;left:5px;bottom:-5px;width:46px;height:8px;border-radius:50%;background:#0004;filter:blur(2px);z-index:-1}
 .ob.puddle{background:#287fc2}.ob.barrier{background:#e67e22}.ob.person{background:#6c5ce7}
 .ob.puddle::after{content:"💧"}.ob.barrier::after{content:"🚧"}.ob.person::after{content:"🚶"}
@@ -224,7 +224,7 @@ function clearObjects(){obstacleList.forEach(o=>o.el.remove());coinList.forEach(
 function startGame(){
 playerName.value=(playerName.value.trim()||"社畜").slice(0,12);
 running=true;last=performance.now();distance=0;coins=0;combo=0;bestCombo=0;speed=START_SPEED;
-playerY=0;vy=0;jumping=false;bossGap=45;elapsed=0;nextObstacle=2.4;nextCoin=.9;safeUntil=performance.now()+1200;
+playerY=0;vy=0;jumping=false;bossGap=45;elapsed=0;nextObstacle=1.8;nextCoin=1.6;safeUntil=performance.now()+900;
 endScheduled=false;isPressing=false;longJumpTriggered=false;lastMilestone=0;nearMisses=0;paused=false;countdown=3;shield=0;slowTimer=0;coffeeTimer=0;nextPowerup=7;game.classList.remove("paused");pauseBtn.textContent="Ⅱ";if(pressTimer){clearTimeout(pressTimer);pressTimer=0}
 clearObjects();overlay.classList.add("hidden");hint.classList.remove("hidden");bestEl.textContent=Math.floor(bestDistance)+"m";milestoneEl.classList.remove("show");powerupMessage.classList.remove("show");boss.style.left="60px";boss.classList.remove("angry","pressed");bossMood.textContent="😠";player.classList.remove(...playerFaces);player.classList.add("tired","running");faceTimer=1.8;bossFlashTimer=0;roadOffset=0;cityOffset=0;bossHopTimer=2.8;boss.classList.remove("bossHop");const milestone=Math.floor(distance/50)*50;if(milestone>=50&&milestone>lastMilestoneShown){lastMilestoneShown=milestone;milestoneEl.textContent=`🔥 ${milestone}m突破！`;milestoneEl.classList.remove("show");void milestoneEl.offsetWidth;milestoneEl.classList.add("show")}updateHUD();raf=requestAnimationFrame(loop)
 }
@@ -262,8 +262,18 @@ game.addEventListener("contextmenu",e=>e.preventDefault());addEventListener("key
 pauseBtn.addEventListener("click",e=>{e.preventDefault();if(!running)return;paused=!paused;game.classList.toggle("paused",paused);pauseBtn.textContent=paused?"▶":"Ⅱ";if(!paused){last=performance.now();raf=requestAnimationFrame(loop)}});
 startBtn.addEventListener("click",startGame);
 
-function spawnObstacle(){const types=["cone","bike","sign","bench","car","puddle","barrier","person"];const type=types[Math.floor(Math.random()*types.length)];const el=document.createElement("div");el.className="ob "+type;el.style.left=(WORLD_WIDTH_PX+80)+"px";obstacles.appendChild(el);obstacleList.push({el,x:WORLD_WIDTH_PX+80,hit:false})}
-function spawnCoin(){const el=document.createElement("div");el.className="coin";el.textContent="¥";el.style.bottom=(25+Math.random()*20)+"%";el.style.left=(WORLD_WIDTH_PX+60)+"px";obstacles.appendChild(el);coinList.push({el,x:WORLD_WIDTH_PX+60,hit:false})}
+function spawnObstacle(){
+const types=["cone","bike","sign","bench","car","puddle","barrier","person"];
+const type=types[Math.floor(Math.random()*types.length)];
+const el=document.createElement("div");el.className="ob "+type;
+const spawnX=1040+Math.random()*70;
+el.style.left=spawnX+"px";obstacles.appendChild(el);obstacleList.push({el,x:spawnX,hit:false})
+}
+function spawnCoin(){
+const el=document.createElement("div");el.className="coin";el.textContent="¥";
+const spawnX=1080+Math.random()*50;
+el.style.bottom=(25+Math.random()*20)+"%";el.style.left=spawnX+"px";obstacles.appendChild(el);coinList.push({el,x:spawnX,hit:false})
+}
 function spawnPowerup(){const types=["shield","slow","coffee"];const type=types[Math.floor(Math.random()*types.length)];const el=document.createElement("div");el.className="powerup "+type;el.textContent=type==="shield"?"🛡️":type==="slow"?"⏱️":"☕";el.style.left=(WORLD_WIDTH_PX+70)+"px";obstacles.appendChild(el);powerupList.push({el,x:WORLD_WIDTH_PX+70,type,hit:false})}
 function rectHit(a,b){const ap={left:a.left+7,right:a.right-7,top:a.top+6,bottom:a.bottom-2};const bp={left:b.left+5,right:b.right-5,top:b.top+5,bottom:b.bottom};return ap.left<bp.right&&ap.right>bp.left&&ap.top<bp.bottom&&ap.bottom>bp.top}
 function updateHUD(){const mult=Math.min(5,1+Math.floor(combo/5));distanceEl.textContent=Math.floor(distance)+"m";speedEl.textContent=(speed*3.6).toFixed(1)+"km/h";coinsEl.textContent=coins;comboEl.textContent=combo;bossDistanceEl.textContent=Math.max(0,bossGap).toFixed(0)+"m";multiplierEl.textContent="×"+mult;const d=Math.floor(distance);phaseEl.textContent=d<80?"朝":d<180?"通勤":d<300?"修羅場":"限界"}
@@ -284,13 +294,22 @@ if(jumping){playerY+=vy*dt;vy-=1850*dt;if(playerY<=0){playerY=0;vy=0;jumping=fal
 player.style.transform=`translateY(${-playerY}px)`;
 faceTimer-=dt;if(faceTimer<=0){setPlayerFace();faceTimer=1.8+Math.random()*2.0}if(jumping)player.classList.add("sweating");
 const nowMs=performance.now();
-if(elapsed>=nextObstacle){const nearby=obstacleList.some(o=>o.x<innerWidth*.72);if(nowMs>safeUntil&&!nearby)spawnObstacle();nextObstacle=elapsed+Math.max(1.15,2.05-distance*.0028)+Math.random()*.55}
-if(elapsed>=nextCoin){spawnCoin();nextCoin=elapsed+1+Math.random()*1.4}
+if(elapsed>=nextObstacle){
+const playerWorldX=600;
+const nearby=obstacleList.some(o=>Math.abs(o.x-playerWorldX)<150);
+if(nowMs>safeUntil&&!nearby)spawnObstacle();
+nextObstacle=elapsed+0.85+Math.random()*0.5;
+}
+if(elapsed>=nextCoin){
+const coinBlocked=obstacleList.some(o=>Math.abs(o.x-1080)<95);
+if(!coinBlocked)spawnCoin();
+nextCoin=elapsed+1.8+Math.random()*1.8;
+}
 if(elapsed>=nextPowerup){spawnPowerup();nextPowerup=elapsed+7+Math.random()*6}
 const playerRect=player.getBoundingClientRect();
-obstacleList.forEach(o=>{o.x-=(1108+speed*292)*dt;o.el.style.left=o.x+"px";if(!o.hit&&rectHit(playerRect,o.el.getBoundingClientRect())){o.hit=true;if(shield>0){shield=0;o.el.remove();powerupMessage.textContent="🛡️ シールドで回避！";powerupMessage.classList.remove("show");void powerupMessage.offsetWidth;powerupMessage.classList.add("show");combo++;bestCombo=Math.max(bestCombo,combo)}else{combo=0;player.classList.remove(...playerFaces);player.classList.add("panicked");player.style.transform=`translateY(${-playerY}px) rotate(72deg)`;game.classList.add("shake");setTimeout(()=>game.classList.remove("shake"),220);if(!endScheduled){endScheduled=true;setTimeout(endGame,260)}}}else if(!o.hit&&!o.near&&o.x<innerWidth*.43&&o.x>innerWidth*.25){o.near=true;if(!jumping){combo++;nearMisses++;bestCombo=Math.max(bestCombo,combo);safeUntil=Math.max(safeUntil,performance.now()+350);}}});
-coinList.forEach(c=>{c.x-=(1108+speed*292)*dt;c.el.style.left=c.x+"px";if(!c.hit&&rectHit(playerRect,c.el.getBoundingClientRect())){c.hit=true;coins++;combo++;bestCombo=Math.max(bestCombo,combo);safeUntil=Math.max(safeUntil,performance.now()+1100);player.classList.remove(...playerFaces);player.classList.add("happy");faceTimer=1.4;comboEl.textContent=combo;multiplierEl.textContent="×"+Math.min(5,1+Math.floor(combo/5));c.el.remove()}});
-powerupList.forEach(p=>{p.x-=(1108+speed*292)*dt;p.el.style.left=p.x+"px";if(!p.hit&&rectHit(playerRect,p.el.getBoundingClientRect())){p.hit=true;if(p.type==="shield"){shield=1;powerupMessage.textContent="🛡️ シールド獲得！"}else if(p.type==="slow"){slowTimer=4;powerupMessage.textContent="⏱️ 上司の時間が減速！"}else{coffeeTimer=5;powerupMessage.textContent="☕ コーヒーブースト！"}powerupMessage.classList.remove("show");void powerupMessage.offsetWidth;powerupMessage.classList.add("show");combo++;bestCombo=Math.max(bestCombo,combo);p.el.remove()}});
+obstacleList.forEach(o=>{o.x-=(210+speed*30)*dt;o.el.style.left=o.x+"px";if(!o.hit&&rectHit(playerRect,o.el.getBoundingClientRect())){o.hit=true;if(shield>0){shield=0;o.el.remove();powerupMessage.textContent="🛡️ シールドで回避！";powerupMessage.classList.remove("show");void powerupMessage.offsetWidth;powerupMessage.classList.add("show");combo++;bestCombo=Math.max(bestCombo,combo)}else{combo=0;player.classList.remove(...playerFaces);player.classList.add("panicked");player.style.transform=`translateY(${-playerY}px) rotate(72deg)`;game.classList.add("shake");setTimeout(()=>game.classList.remove("shake"),220);if(!endScheduled){endScheduled=true;setTimeout(endGame,260)}}}else if(!o.hit&&!o.near&&o.x<innerWidth*.43&&o.x>innerWidth*.25){o.near=true;if(!jumping){combo++;nearMisses++;bestCombo=Math.max(bestCombo,combo);safeUntil=Math.max(safeUntil,performance.now()+350);}}});
+coinList.forEach(c=>{c.x-=(210+speed*30)*dt;c.el.style.left=c.x+"px";if(!c.hit&&rectHit(playerRect,c.el.getBoundingClientRect())){c.hit=true;coins++;combo++;bestCombo=Math.max(bestCombo,combo);safeUntil=Math.max(safeUntil,performance.now()+1100);player.classList.remove(...playerFaces);player.classList.add("happy");faceTimer=1.4;comboEl.textContent=combo;multiplierEl.textContent="×"+Math.min(5,1+Math.floor(combo/5));c.el.remove()}});
+powerupList.forEach(p=>{p.x-=(210+speed*30)*dt;p.el.style.left=p.x+"px";if(!p.hit&&rectHit(playerRect,p.el.getBoundingClientRect())){p.hit=true;if(p.type==="shield"){shield=1;powerupMessage.textContent="🛡️ シールド獲得！"}else if(p.type==="slow"){slowTimer=4;powerupMessage.textContent="⏱️ 上司の時間が減速！"}else{coffeeTimer=5;powerupMessage.textContent="☕ コーヒーブースト！"}powerupMessage.classList.remove("show");void powerupMessage.offsetWidth;powerupMessage.classList.add("show");combo++;bestCombo=Math.max(bestCombo,combo);p.el.remove()}});
 powerupList=powerupList.filter(p=>{if(p.x<-100){p.el.remove();return false}return true});
 obstacleList=obstacleList.filter(o=>{if(o.x<-100){o.el.remove();return false}return true});
 coinList=coinList.filter(c=>{if(c.x<-100){c.el.remove();return false}return true});
