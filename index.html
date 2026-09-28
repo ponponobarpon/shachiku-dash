@@ -61,8 +61,6 @@ button{margin-top:12px;width:100%;padding:14px;border:0;border-radius:12px;backg
 .busStop{position:absolute;z-index:6;bottom:39%;left:78%;width:56px;height:72px;border-left:5px solid #333;border-top:5px solid #333;border-radius:10px 10px 0 0;font-size:9px;font-weight:900;text-align:center;padding-top:5px;color:#333}
 .tree{position:fixed;z-index:6;bottom:39%;width:34px;height:65px;background:#5b3b24;border-radius:8px;transform:none!important;will-change:auto}.tree:before{content:"";position:absolute;left:-18px;top:-34px;width:70px;height:60px;background:#4b8f45;border-radius:50%}.t1{left:8%}.t2{left:53%}
 #player:after{content:"";position:absolute;left:5px;bottom:-5px;width:46px;height:8px;border-radius:50%;background:#0004;filter:blur(2px);z-index:-1}
-.ob.puddle{background:#287fc2}.ob.barrier{background:#e67e22}.ob.person{background:#6c5ce7}
-.ob.puddle::after{content:"💧"}.ob.barrier::after{content:"🚧"}.ob.person::after{content:"🚶"}
 .coin{animation:coinFloat .65s ease-in-out infinite alternate}@keyframes coinFloat{to{transform:translateY(-7px) rotate(12deg)}}
 #warning{font-weight:1000;text-shadow:0 2px 5px #000;letter-spacing:.04em}
 
@@ -98,8 +96,6 @@ button{margin-top:12px;width:100%;padding:14px;border:0;border-radius:12px;backg
 #boss:after{content:"";position:absolute;inset:0;border-radius:18px;pointer-events:none;background:radial-gradient(circle at 50% 28%,transparent 0 24%,rgba(255,0,0,.0) 25% 100%);transition:.15s}
 #boss.angry:after{background:radial-gradient(circle at 50% 28%,rgba(255,40,40,.18),transparent 48%)}
 .ob{bottom:18%;transition:transform .08s}
-.ob.bike{background:#263238}.ob.sign{background:#ffd21c}.ob.bench{background:#8b5a2b}.ob.car{background:#d32f2f}.ob.cone{background:#f27622}
-.ob.bike::after{content:"🚲"}.ob.sign::after{content:"⚠"}.ob.bench::after{content:"🪑"}.ob.car::after{content:"🚗"}.ob.cone::after{content:"🚧"}
 .coin{bottom:30%;animation:coinSpin .7s linear infinite;will-change:transform}
 @keyframes coinSpin{50%{transform:scaleX(.55)}100%{transform:scaleX(1)}}
 #warning.show{animation:pulse .32s infinite alternate}
@@ -154,19 +150,16 @@ button{margin-top:12px;width:100%;padding:14px;border:0;border-radius:12px;backg
 #boss.bossHop .bossLegL{animation:none;transform:rotate(38deg) translateY(0);}
 #boss.bossHop .bossLegR{animation:none;transform:rotate(-38deg) translateY(0);}
 #boss.bossHop img{transform:translateY(-17px);}
+</style>
 <style id="realistic-obstacle-fix">
 .ob{background:transparent!important;border:0!important;box-shadow:none!important;border-radius:0!important;width:120px;height:100px;overflow:visible;display:block;bottom:18%;}
 .ob::after{content:none!important;display:none!important}
 .ob>svg{position:absolute;left:0;bottom:0;width:100%;height:100%;overflow:visible;display:block}
-.ob.cone{width:90px;height:90px}.ob.bike{width:110px;height:90px}.ob.sign{width:90px;height:100px}.ob.bench{width:110px;height:85px}.ob.car{width:120px;height:82px}.ob.puddle{width:110px;height:60px}.ob.barrier{width:110px;height:90px}.ob.person{width:75px;height:105px}
-<style id="ob-realism-enhance">
-.ob>svg{filter:drop-shadow(0 6px 5px rgba(0,0,0,.28));transform:translateZ(0);}
-.ob.cone>svg{filter:drop-shadow(0 7px 5px rgba(0,0,0,.32));}
-.ob.bike>svg,.ob.person>svg{filter:drop-shadow(0 7px 5px rgba(0,0,0,.30));}
-.ob.car>svg{filter:drop-shadow(0 8px 6px rgba(0,0,0,.34));}
-.ob.puddle>svg{filter:drop-shadow(0 3px 3px rgba(0,0,0,.22));}
+.ob.cone{width:90px;height:90px}.ob.bike{width:110px;height:90px}.ob.sign{width:90px;height:100px}.ob.bench{width:110px;height:85px}.ob.car{width:120px;height:82px}.ob.puddle{width:110px;height:60px}.ob.barrier{width:110px;height:90px}.ob.person{width:75px;height:105px}.ob.hole{width:120px;height:58px}
+.ob>svg{filter:drop-shadow(0 6px 5px rgba(0,0,0,.28));transform:translateZ(0)}
+.ob.cone>svg{filter:drop-shadow(0 7px 5px rgba(0,0,0,.32))}.ob.bike>svg,.ob.person>svg{filter:drop-shadow(0 7px 5px rgba(0,0,0,.30))}.ob.car>svg{filter:drop-shadow(0 8px 6px rgba(0,0,0,.34))}.ob.puddle>svg,.ob.hole>svg{filter:drop-shadow(0 3px 3px rgba(0,0,0,.22))}
 </style>
-</style>
+<style id="ob-realism-enhance"></style>
 </head>
 <body>
 <div id="game">
@@ -227,7 +220,7 @@ addEventListener("resize",resizeCamera);resizeCamera();
 let running=false,last=0,raf=0,distance=0,coins=0,combo=0,bestCombo=0,speed=2.5;
 let playerY=0,vy=0,jumping=false,bossGap=38,elapsed=0,nextObstacle=2.4,nextCoin=.9,safeUntil=0;
 let obstacleList=[],coinList=[],powerupList=[];
-let paused=false,countdown=0,countdownTimer=0,shield=0,slowTimer=0,coffeeTimer=0,bestDistance=Number(localStorage.getItem("shachikuBestDistance")||0),lastMilestoneShown=0,nextPowerup=7;
+let paused=false,countdown=0,countdownTimer=0,shield=0,slowTimer=0,coffeeTimer=0,bestDistance=Number(localStorage.getItem("shachikuBestDistance")||0),bestScore=Number(localStorage.getItem("shachikuBestScore")||0),lastMilestoneShown=0,nextPowerup=7;
 const START_SPEED=2.5,MAX_SPEED=4.0;
 const playerFaces=["tired","sweating","panicked","happy"];
 let faceTimer=0,bossFlashTimer=0,roadOffset=0,cityOffset=0,longJumpTriggered=false,endScheduled=false,runPhase=0,lastMilestone=0,nearMisses=0,bossHopTimer=2.8;
@@ -243,7 +236,7 @@ clearObjects();overlay.classList.add("hidden");hint.classList.remove("hidden");b
 }
 function endGame(){
 if(!running)return;running=false;endScheduled=false;isPressing=false;longJumpTriggered=false;lastMilestone=0;nearMisses=0;paused=false;countdown=3;shield=0;slowTimer=0;coffeeTimer=0;nextPowerup=7;game.classList.remove("paused");pauseBtn.textContent="Ⅱ";if(pressTimer){clearTimeout(pressTimer);pressTimer=0}player.classList.remove("running");cancelAnimationFrame(raf);
-const finalMultiplier=Math.min(5,1+Math.floor(bestCombo/5));if(distance>bestDistance){bestDistance=Math.floor(distance);localStorage.setItem("shachikuBestDistance",bestDistance)}bestEl.textContent=bestDistance+"m";const score=Math.floor((distance*10+coins*100+bestCombo*50)*finalMultiplier);
+const finalMultiplier=Math.min(5,1+Math.floor(bestCombo/5));if(distance>bestDistance){bestDistance=Math.floor(distance);localStorage.setItem("shachikuBestDistance",bestDistance)}const score=Math.floor((distance*10+coins*100+bestCombo*50)*finalMultiplier);if(score>bestScore){bestScore=score;localStorage.setItem("shachikuBestScore",bestScore)}bestEl.textContent=bestDistance+"m";
 gameoverStats.innerHTML=`距離 ${Math.floor(distance)}m ／ コイン ${coins} ／ 最大COMBO ${bestCombo} ／ 倍率 ×${finalMultiplier} ／ スコア ${score.toLocaleString()}`;
 gameoverStats.classList.remove("hidden");overlay.classList.remove("hidden");hint.classList.add("hidden");
 submitScore(score).then(loadRanking)
@@ -258,7 +251,10 @@ try{
 const snap=await get(ref(db,"scores"));
 if(!snap.exists()){rankingList.innerHTML="<div style='padding-top:6px'>まだランキングがありません</div>";return}
 const rows=[];snap.forEach(c=>rows.push(c.val()));rows.sort((a,b)=>Number(b.score||0)-Number(a.score||0));
-rankingList.innerHTML=rows.slice(0,10).map((x,i)=>`<div class="rankRow"><span>${i+1}位　${escapeHtml(x.name||"社畜")}</span><b>${Number(x.score||0).toLocaleString()}</b></div>`).join("")
+const top5=rows.slice(0,5);
+let html=top5.map((x,i)=>`<div class="rankRow"><span>${i+1}位　${escapeHtml(x.name||"社畜")}</span><b>${Number(x.score||0).toLocaleString()}</b></div>`).join("");
+if(bestScore>0){const ownRank=rows.filter(x=>Number(x.score||0)>bestScore).length+1;html+=`<div style="margin-top:8px;padding-top:8px;border-top:2px solid #aaa;font-weight:900">あなたの自己ベスト：${ownRank}位　${bestScore.toLocaleString()}</div>`}
+rankingList.innerHTML=html||"<div style='padding-top:6px'>まだランキングがありません</div>"
 }catch(e){console.error("ランキング取得失敗",e);rankingList.innerHTML="<div style='padding-top:6px'>ランキング取得失敗</div>"}
 }
 function jump(high){
@@ -276,7 +272,7 @@ pauseBtn.addEventListener("click",e=>{e.preventDefault();if(!running)return;paus
 startBtn.addEventListener("click",startGame);
 
 function spawnObstacle(){
-const types=["cone","bike","sign","bench","car","puddle","barrier","person"];
+const types=["cone","bike","sign","bench","car","puddle","barrier","person","hole"];
 const type=types[Math.floor(Math.random()*types.length)];
 const el=document.createElement("div");el.className="ob "+type;
 const art={
@@ -287,14 +283,15 @@ bench:`<svg viewBox="0 0 110 85" aria-hidden="true"><defs><linearGradient id="wo
 car:`<svg viewBox="0 0 120 82" aria-hidden="true"><defs><linearGradient id="carPaint" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ff6666"/><stop offset=".5" stop-color="#d93636"/><stop offset="1" stop-color="#8f1e1e"/></linearGradient></defs><ellipse cx="60" cy="75" rx="48" ry="5" fill="#000" opacity=".22"/><path d="M12 55 22 32Q25 25 35 25h42q9 0 14 9l12 21v15H12Z" fill="url(#carPaint)" stroke="#222" stroke-width="4"/><path d="M31 29h39l11 20H21Z" fill="#75b9dc" stroke="#222" stroke-width="3"/><circle cx="31" cy="69" r="10" fill="#222"/><circle cx="89" cy="69" r="10" fill="#222"/><circle cx="31" cy="69" r="4" fill="#aaa"/><circle cx="89" cy="69" r="4" fill="#aaa"/><rect x="13" y="51" width="9" height="8" rx="2" fill="#ffe27a"/><rect x="98" y="51" width="9" height="8" rx="2" fill="#ffe27a"/></svg>`,
 puddle:`<svg viewBox="0 0 110 60" aria-hidden="true"><ellipse cx="55" cy="32" rx="45" ry="20" fill="#287fc2" opacity=".9" stroke="#123b66" stroke-width="4"/><ellipse cx="42" cy="26" rx="18" ry="6" fill="#8ed8ff" opacity=".65"/><ellipse cx="76" cy="39" rx="12" ry="4" fill="#8ed8ff" opacity=".45"/></svg>`,
 barrier:`<svg viewBox="0 0 110 90" aria-hidden="true"><ellipse cx="55" cy="82" rx="40" ry="4" fill="#000" opacity=".22"/><path d="M10 30h90v18H10z" fill="#e67e22" stroke="#222" stroke-width="4"/><path d="M25 48v27M85 48v27" stroke="#444" stroke-width="8"/><path d="M17 30 30 48M43 30 56 48M69 30 82 48" stroke="#fff" stroke-width="8"/></svg>`,
-person:`<svg viewBox="0 0 75 105" aria-hidden="true"><ellipse cx="37" cy="99" rx="22" ry="4" fill="#000" opacity=".22"/><circle cx="37" cy="16" r="11" fill="#e2ae87" stroke="#222" stroke-width="3"/><path d="M22 31q15-10 30 0l7 33H16Z" fill="#4c5d73" stroke="#222" stroke-width="4"/><path d="M25 63 17 94M50 63l8 31M19 43 5 66M56 43l14 23" stroke="#222" stroke-width="7" stroke-linecap="round"/><path d="M17 94h-8M58 94h9" stroke="#111" stroke-width="7" stroke-linecap="round"/></svg>`
+person:`<svg viewBox="0 0 75 105" aria-hidden="true"><ellipse cx="37" cy="99" rx="22" ry="4" fill="#000" opacity=".22"/><circle cx="37" cy="16" r="11" fill="#e2ae87" stroke="#222" stroke-width="3"/><path d="M22 31q15-10 30 0l7 33H16Z" fill="#4c5d73" stroke="#222" stroke-width="4"/><path d="M25 63 17 94M50 63l8 31M19 43 5 66M56 43l14 23" stroke="#222" stroke-width="7" stroke-linecap="round"/><path d="M17 94h-8M58 94h9" stroke="#111" stroke-width="7" stroke-linecap="round"/></svg>`,
+hole:`<svg viewBox="0 0 120 58" aria-hidden="true"><defs><radialGradient id="holeDark"><stop offset="0" stop-color="#050505"/><stop offset=".62" stop-color="#161616"/><stop offset="1" stop-color="#555"/></radialGradient></defs><ellipse cx="60" cy="35" rx="51" ry="18" fill="#000" opacity=".22"/><path d="M8 32Q18 13 60 12T112 32Q103 51 60 53T8 32Z" fill="url(#holeDark)" stroke="#222" stroke-width="4"/><path d="M18 27Q32 17 52 18M68 18Q90 18 103 28" fill="none" stroke="#888" stroke-width="3" opacity=".6"/><path d="M28 38q13 7 27 5M68 44q15 1 28-7" fill="none" stroke="#000" stroke-width="5" opacity=".8"/></svg>`
 };
 el.innerHTML=art[type];
 const spawnX=1040+Math.random()*70;el.style.left=spawnX+"px";obstacles.appendChild(el);obstacleList.push({el,x:spawnX,hit:false})
 }
-function spawnCoin(){
+function spawnCoin(spawnX){
 const el=document.createElement("div");el.className="coin";el.textContent="¥";
-const spawnX=1080+Math.random()*50;
+if(spawnX==null)spawnX=1080+Math.random()*50;
 el.style.bottom=(25+Math.random()*20)+"%";el.style.left=spawnX+"px";obstacles.appendChild(el);coinList.push({el,x:spawnX,hit:false})
 }
 function spawnPowerup(){const types=["shield","slow","coffee"];const type=types[Math.floor(Math.random()*types.length)];const el=document.createElement("div");el.className="powerup "+type;el.textContent=type==="shield"?"🛡️":type==="slow"?"⏱️":"☕";el.style.left=(WORLD_WIDTH_PX+70)+"px";obstacles.appendChild(el);powerupList.push({el,x:WORLD_WIDTH_PX+70,type,hit:false})}
@@ -309,7 +306,7 @@ const dt=Math.min(.032,(now-last)/1000);last=now;if(paused)return;elapsed+=dt;
 if(slowTimer>0)slowTimer-=dt;if(coffeeTimer>0)coffeeTimer-=dt;
 speed=Math.min(MAX_SPEED,START_SPEED+distance*.0105);if(coffeeTimer>0)speed=Math.min(MAX_SPEED,speed+.65);if(slowTimer>0)speed*=.62;distance+=speed*dt;
 updateScene(dt);
-const bossApproach=.34+Math.min(distance/260,.55);bossGap=Math.max(0,bossGap-bossApproach*dt);const playerWorldX=600;const bossWorldX=playerWorldX-(bossGap*WORLD_PX_PER_M);boss.style.left=Math.max(0,bossWorldX)+"px";
+const bossRelativeSpeed=.34+Math.min(distance/260,.55);bossGap=Math.max(0,bossGap-bossRelativeSpeed*dt);const playerCenterX=600+78/2;const bossCenterX=playerCenterX-(bossGap*WORLD_PX_PER_M);const bossWorldX=bossCenterX-125/2;boss.style.left=bossWorldX+"px";
 bossHopTimer-=dt;if(bossHopTimer<=0){boss.classList.remove("bossHop");void boss.offsetWidth;boss.classList.add("bossHop");setTimeout(()=>boss.classList.remove("bossHop"),520);bossHopTimer=2.8+Math.random()*3.2;}
 if(bossGap<15){boss.classList.add("angry");bossMood.textContent=bossGap<6?"🤬":"😠";warning.classList.add("show");if(bossGap<3){game.classList.add("shake");setTimeout(()=>game.classList.remove("shake"),220);if(!endScheduled){endScheduled=true;setTimeout(endGame,180)}return}}else {warning.classList.remove("show");boss.classList.remove("angry","pressed");bossMood.textContent="😠"}
 if(bossGap<6){boss.classList.add("pressed");bossMood.textContent="🤬"}
@@ -317,20 +314,20 @@ if(jumping){playerY+=vy*dt;vy-=1850*dt;if(playerY<=0){playerY=0;vy=0;jumping=fal
 player.style.transform=`translateY(${-playerY}px)`;
 faceTimer-=dt;if(faceTimer<=0){setPlayerFace();faceTimer=1.8+Math.random()*2.0}if(jumping)player.classList.add("sweating");
 const nowMs=performance.now();
+const playerWorldX=600+78/2;
 if(elapsed>=nextObstacle){
-const playerWorldX=600;
-const nearby=obstacleList.some(o=>Math.abs(o.x-playerWorldX)<150);
+const nearby=obstacleList.some(o=>Math.abs(o.x-playerWorldX)<WORLD_PX_PER_M*10);
 if(nowMs>safeUntil&&!nearby)spawnObstacle();
 nextObstacle=elapsed+0.85+Math.random()*0.5;
 }
 if(elapsed>=nextCoin){
-const coinBlocked=obstacleList.some(o=>Math.abs(o.x-1080)<95);
-if(!coinBlocked)spawnCoin();
+const coinSpawnX=1080+Math.random()*50;const coinBlocked=obstacleList.some(o=>Math.abs(o.x-coinSpawnX)<WORLD_PX_PER_M*8);
+if(!coinBlocked)spawnCoin(coinSpawnX);
 nextCoin=elapsed+1.8+Math.random()*1.8;
 }
 if(elapsed>=nextPowerup){spawnPowerup();nextPowerup=elapsed+7+Math.random()*6}
 const playerRect=player.getBoundingClientRect();
-obstacleList.forEach(o=>{o.x-=(speed*WORLD_PX_PER_M)*dt;o.el.style.left=o.x+"px";if(!o.hit&&rectHit(playerRect,o.el.getBoundingClientRect())){o.hit=true;if(shield>0){shield=0;o.el.remove();powerupMessage.textContent="🛡️ シールドで回避！";powerupMessage.classList.remove("show");void powerupMessage.offsetWidth;powerupMessage.classList.add("show");combo++;bestCombo=Math.max(bestCombo,combo)}else{combo=0;player.classList.remove(...playerFaces);player.classList.add("panicked");player.style.transform=`translateY(${-playerY}px) rotate(72deg)`;game.classList.add("shake");setTimeout(()=>game.classList.remove("shake"),220);if(!endScheduled){endScheduled=true;setTimeout(endGame,260)}}}else if(!o.hit&&!o.near&&o.x<innerWidth*.43&&o.x>innerWidth*.25){o.near=true;if(!jumping){combo++;nearMisses++;bestCombo=Math.max(bestCombo,combo);safeUntil=Math.max(safeUntil,performance.now()+350);}}});
+obstacleList.forEach(o=>{o.x-=(speed*WORLD_PX_PER_M)*dt;o.el.style.left=o.x+"px";if(!o.hit&&rectHit(playerRect,o.el.getBoundingClientRect())){o.hit=true;if(shield>0){shield=0;o.el.remove();powerupMessage.textContent="🛡️ シールドで回避！";powerupMessage.classList.remove("show");void powerupMessage.offsetWidth;powerupMessage.classList.add("show");combo++;bestCombo=Math.max(bestCombo,combo)}else{combo=0;player.classList.remove(...playerFaces);player.classList.add("panicked");player.style.transform=`translateY(${-playerY}px) rotate(72deg)`;game.classList.add("shake");setTimeout(()=>game.classList.remove("shake"),220);if(!endScheduled){endScheduled=true;setTimeout(endGame,260)}}}else if(!o.hit&&!o.near&&o.x<playerWorldX+WORLD_PX_PER_M*8&&o.x>playerWorldX-WORLD_PX_PER_M*2){o.near=true;if(!jumping){combo++;nearMisses++;bestCombo=Math.max(bestCombo,combo);safeUntil=Math.max(safeUntil,performance.now()+350);}}});
 coinList.forEach(c=>{c.x-=(speed*WORLD_PX_PER_M)*dt;c.el.style.left=c.x+"px";if(!c.hit&&rectHit(playerRect,c.el.getBoundingClientRect())){c.hit=true;coins++;combo++;bestCombo=Math.max(bestCombo,combo);safeUntil=Math.max(safeUntil,performance.now()+1100);player.classList.remove(...playerFaces);player.classList.add("happy");faceTimer=1.4;comboEl.textContent=combo;multiplierEl.textContent="×"+Math.min(5,1+Math.floor(combo/5));c.el.remove()}});
 powerupList.forEach(p=>{p.x-=(speed*WORLD_PX_PER_M)*dt;p.el.style.left=p.x+"px";if(!p.hit&&rectHit(playerRect,p.el.getBoundingClientRect())){p.hit=true;if(p.type==="shield"){shield=1;powerupMessage.textContent="🛡️ シールド獲得！"}else if(p.type==="slow"){slowTimer=4;powerupMessage.textContent="⏱️ 上司の時間が減速！"}else{coffeeTimer=5;powerupMessage.textContent="☕ コーヒーブースト！"}powerupMessage.classList.remove("show");void powerupMessage.offsetWidth;powerupMessage.classList.add("show");combo++;bestCombo=Math.max(bestCombo,combo);p.el.remove()}});
 powerupList=powerupList.filter(p=>{if(p.x<-100){p.el.remove();return false}return true});
