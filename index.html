@@ -217,11 +217,11 @@ let cameraScale=1;
 function resizeCamera(){cameraScale=Math.min(innerWidth/WORLD_WIDTH_PX,1);game.style.setProperty("--camera-scale",cameraScale);world.style.height=(innerHeight/cameraScale)+"px";}
 addEventListener("resize",resizeCamera);resizeCamera();
 
+const START_SPEED=5.5,MAX_SPEED=10.0;
 let running=false,last=0,raf=0,distance=0,coins=0,combo=0,bestCombo=0,speed=START_SPEED;
 let playerY=0,vy=0,jumping=false,bossGap=45,elapsed=0,nextObstacle=1.8,nextCoin=1.6,safeUntil=0,lastObstacleSpawnX=-Infinity;
 let obstacleList=[],coinList=[],powerupList=[];
 let paused=false,countdown=0,countdownTimer=0,shield=0,slowTimer=0,coffeeTimer=0,bestDistance=Number(localStorage.getItem("shachikuBestDistance")||0),bestScore=Number(localStorage.getItem("shachikuBestScore")||0),lastMilestoneShown=0,nextPowerup=7;
-const START_SPEED=5.5,MAX_SPEED=10.0;
 const playerFaces=["tired","sweating","panicked","happy"];
 let faceTimer=0,bossFlashTimer=0,roadOffset=0,cityOffset=0,longJumpTriggered=false,endScheduled=false,runPhase=0,lastMilestone=0,nearMisses=0,bossHopTimer=2.8;
 
