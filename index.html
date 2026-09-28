@@ -217,11 +217,11 @@ let cameraScale=1;
 function resizeCamera(){cameraScale=Math.min(innerWidth/WORLD_WIDTH_PX,1);game.style.setProperty("--camera-scale",cameraScale);world.style.height=(innerHeight/cameraScale)+"px";}
 addEventListener("resize",resizeCamera);resizeCamera();
 
-let running=false,last=0,raf=0,distance=0,coins=0,combo=0,bestCombo=0,speed=2.5;
-let playerY=0,vy=0,jumping=false,bossGap=38,elapsed=0,nextObstacle=2.4,nextCoin=.9,safeUntil=0;
+let running=false,last=0,raf=0,distance=0,coins=0,combo=0,bestCombo=0,speed=START_SPEED;
+let playerY=0,vy=0,jumping=false,bossGap=45,elapsed=0,nextObstacle=1.8,nextCoin=1.6,safeUntil=0,lastObstacleSpawnX=-Infinity;
 let obstacleList=[],coinList=[],powerupList=[];
 let paused=false,countdown=0,countdownTimer=0,shield=0,slowTimer=0,coffeeTimer=0,bestDistance=Number(localStorage.getItem("shachikuBestDistance")||0),bestScore=Number(localStorage.getItem("shachikuBestScore")||0),lastMilestoneShown=0,nextPowerup=7;
-const START_SPEED=2.5,MAX_SPEED=4.0;
+const START_SPEED=5.5,MAX_SPEED=10.0;
 const playerFaces=["tired","sweating","panicked","happy"];
 let faceTimer=0,bossFlashTimer=0,roadOffset=0,cityOffset=0,longJumpTriggered=false,endScheduled=false,runPhase=0,lastMilestone=0,nearMisses=0,bossHopTimer=2.8;
 
@@ -230,7 +230,7 @@ function clearObjects(){obstacleList.forEach(o=>o.el.remove());coinList.forEach(
 function startGame(){
 playerName.value=(playerName.value.trim()||"社畜").slice(0,12);
 running=true;last=performance.now();distance=0;coins=0;combo=0;bestCombo=0;speed=START_SPEED;
-playerY=0;vy=0;jumping=false;bossGap=45;elapsed=0;nextObstacle=1.8;nextCoin=1.6;safeUntil=performance.now()+900;
+playerY=0;vy=0;jumping=false;bossGap=45;elapsed=0;nextObstacle=1.8;lastObstacleSpawnX=-Infinity;nextCoin=1.6;safeUntil=performance.now()+900;
 endScheduled=false;isPressing=false;longJumpTriggered=false;lastMilestone=0;nearMisses=0;paused=false;countdown=3;shield=0;slowTimer=0;coffeeTimer=0;nextPowerup=7;game.classList.remove("paused");pauseBtn.textContent="Ⅱ";if(pressTimer){clearTimeout(pressTimer);pressTimer=0}
 clearObjects();overlay.classList.add("hidden");hint.classList.remove("hidden");bestEl.textContent=Math.floor(bestDistance)+"m";milestoneEl.classList.remove("show");powerupMessage.classList.remove("show");boss.style.left="60px";boss.classList.remove("angry","pressed");bossMood.textContent="😠";player.classList.remove(...playerFaces);player.classList.add("tired","running");faceTimer=1.8;bossFlashTimer=0;roadOffset=0;cityOffset=0;bossHopTimer=2.8;boss.classList.remove("bossHop");const milestone=Math.floor(distance/50)*50;if(milestone>=50&&milestone>lastMilestoneShown){lastMilestoneShown=milestone;milestoneEl.textContent=`🔥 ${milestone}m突破！`;milestoneEl.classList.remove("show");void milestoneEl.offsetWidth;milestoneEl.classList.add("show")}updateHUD();raf=requestAnimationFrame(loop)
 }
@@ -287,11 +287,11 @@ person:`<svg viewBox="0 0 75 105" aria-hidden="true"><ellipse cx="37" cy="99" rx
 hole:`<svg viewBox="0 0 120 58" aria-hidden="true"><defs><radialGradient id="holeDark"><stop offset="0" stop-color="#050505"/><stop offset=".62" stop-color="#161616"/><stop offset="1" stop-color="#555"/></radialGradient></defs><ellipse cx="60" cy="35" rx="51" ry="18" fill="#000" opacity=".22"/><path d="M8 32Q18 13 60 12T112 32Q103 51 60 53T8 32Z" fill="url(#holeDark)" stroke="#222" stroke-width="4"/><path d="M18 27Q32 17 52 18M68 18Q90 18 103 28" fill="none" stroke="#888" stroke-width="3" opacity=".6"/><path d="M28 38q13 7 27 5M68 44q15 1 28-7" fill="none" stroke="#000" stroke-width="5" opacity=".8"/></svg>`
 };
 el.innerHTML=art[type];
-const spawnX=1040+Math.random()*70;el.style.left=spawnX+"px";obstacles.appendChild(el);obstacleList.push({el,x:spawnX,hit:false})
+const spawnX=1080+Math.random()*40;el.style.left=spawnX+"px";obstacles.appendChild(el);obstacleList.push({el,x:spawnX,hit:false})
 }
 function spawnCoin(spawnX){
 const el=document.createElement("div");el.className="coin";el.textContent="¥";
-if(spawnX==null)spawnX=1080+Math.random()*50;
+if(spawnX==null)spawnX=1120+Math.random()*35;
 el.style.bottom=(25+Math.random()*20)+"%";el.style.left=spawnX+"px";obstacles.appendChild(el);coinList.push({el,x:spawnX,hit:false})
 }
 function spawnPowerup(){const types=["shield","slow","coffee"];const type=types[Math.floor(Math.random()*types.length)];const el=document.createElement("div");el.className="powerup "+type;el.textContent=type==="shield"?"🛡️":type==="slow"?"⏱️":"☕";el.style.left=(WORLD_WIDTH_PX+70)+"px";obstacles.appendChild(el);powerupList.push({el,x:WORLD_WIDTH_PX+70,type,hit:false})}
@@ -306,7 +306,7 @@ const dt=Math.min(.032,(now-last)/1000);last=now;if(paused)return;elapsed+=dt;
 if(slowTimer>0)slowTimer-=dt;if(coffeeTimer>0)coffeeTimer-=dt;
 speed=Math.min(MAX_SPEED,START_SPEED+distance*.0105);if(coffeeTimer>0)speed=Math.min(MAX_SPEED,speed+.65);if(slowTimer>0)speed*=.62;distance+=speed*dt;
 updateScene(dt);
-const bossRelativeSpeed=.34+Math.min(distance/260,.55);bossGap=Math.max(0,bossGap-bossRelativeSpeed*dt);const playerCenterX=600+78/2;const bossCenterX=playerCenterX-(bossGap*WORLD_PX_PER_M);const bossWorldX=bossCenterX-125/2;boss.style.left=bossWorldX+"px";
+const bossRelativeSpeed=1.35+Math.min(distance/180,1.65);bossGap=Math.max(0,bossGap-bossRelativeSpeed*dt);const playerCenterX=600+78/2;const bossCenterX=playerCenterX-(bossGap*WORLD_PX_PER_M);const bossWorldX=bossCenterX-125/2;boss.style.left=bossWorldX+"px";
 bossHopTimer-=dt;if(bossHopTimer<=0){boss.classList.remove("bossHop");void boss.offsetWidth;boss.classList.add("bossHop");setTimeout(()=>boss.classList.remove("bossHop"),520);bossHopTimer=2.8+Math.random()*3.2;}
 if(bossGap<15){boss.classList.add("angry");bossMood.textContent=bossGap<6?"🤬":"😠";warning.classList.add("show");if(bossGap<3){game.classList.add("shake");setTimeout(()=>game.classList.remove("shake"),220);if(!endScheduled){endScheduled=true;setTimeout(endGame,180)}return}}else {warning.classList.remove("show");boss.classList.remove("angry","pressed");bossMood.textContent="😠"}
 if(bossGap<6){boss.classList.add("pressed");bossMood.textContent="🤬"}
@@ -316,12 +316,15 @@ faceTimer-=dt;if(faceTimer<=0){setPlayerFace();faceTimer=1.8+Math.random()*2.0}i
 const nowMs=performance.now();
 const playerWorldX=600+78/2;
 if(elapsed>=nextObstacle){
-const nearby=obstacleList.some(o=>Math.abs(o.x-playerWorldX)<WORLD_PX_PER_M*10);
-if(nowMs>safeUntil&&!nearby)spawnObstacle();
-nextObstacle=elapsed+0.85+Math.random()*0.5;
+const nearestAhead=obstacleList.reduce((m,o)=>Math.min(m,o.x),Infinity);
+const minGapPx=WORLD_PX_PER_M*(14+Math.random()*4);
+const enoughSpace=(nearestAhead===Infinity)||(nearestAhead>playerWorldX+minGapPx);
+const nearby=obstacleList.some(o=>Math.abs(o.x-playerWorldX)<WORLD_PX_PER_M*9);
+if(nowMs>safeUntil&&!nearby&&enoughSpace){spawnObstacle();lastObstacleSpawnX=1040;}
+nextObstacle=elapsed+0.55+Math.random()*0.35;
 }
 if(elapsed>=nextCoin){
-const coinSpawnX=1080+Math.random()*50;const coinBlocked=obstacleList.some(o=>Math.abs(o.x-coinSpawnX)<WORLD_PX_PER_M*8);
+const coinSpawnX=1120+Math.random()*35;const coinBlocked=obstacleList.some(o=>Math.abs(o.x-coinSpawnX)<WORLD_PX_PER_M*8);
 if(!coinBlocked)spawnCoin(coinSpawnX);
 nextCoin=elapsed+1.8+Math.random()*1.8;
 }
