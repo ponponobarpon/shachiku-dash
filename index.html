@@ -12,7 +12,7 @@ html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#111;font-f
 .city{position:absolute;left:0;bottom:42%;width:300%;height:30%;z-index:1;opacity:.9;background:repeating-linear-gradient(90deg,#9da8b0 0 7vw,#c9d0d5 7vw 10vw,#8997a1 10vw 16vw,#b8c1c7 16vw 21vw);will-change:transform}
 .city:before{content:"";position:absolute;inset:35% 0 0;background:repeating-linear-gradient(90deg,transparent 0 12vw,#f5c84b 12vw 12.6vw,transparent 12.6vw 24vw);opacity:.65}
 .road{position:absolute;left:0;right:0;bottom:0;height:45%;background:linear-gradient(#777b7e 0 7%,#4e5052 7% 100%);border-top:8px solid #858585;z-index:2;overflow:hidden}
-.lane{position:absolute;bottom:48%;left:0;width:300%;height:9px;background:repeating-linear-gradient(90deg,transparent 0 35px,#eee 35px 105px,transparent 105px 175px);opacity:.8;will-change:transform}
+.lane{position:absolute;bottom:48%;left:0;width:300%;height:9px;background:repeating-linear-gradient(90deg,transparent 0 55px,#eee 55px 95px,transparent 95px 180px);opacity:.65;will-change:transform}
 #game:after{display:none!important;content:"";position:absolute;left:0;right:0;bottom:45%;height:8%;z-index:3;background:repeating-linear-gradient(90deg,#f4f4f4 0 22px,transparent 22px 82px);opacity:.45;will-change:transform}
 .hud{position:absolute;top:max(12px,env(safe-area-inset-top));left:10px;right:10px;display:flex;gap:7px;z-index:30;flex-wrap:wrap}
 .hudBox{background:#08141ce8;border:2px solid #fff;border-radius:10px;color:#fff;padding:6px 10px;font-weight:800;min-width:92px;text-align:center;box-shadow:0 3px 8px #0008}
@@ -66,7 +66,7 @@ button{margin-top:12px;width:100%;padding:14px;border:0;border-radius:12px;backg
 
 /* ===== FULL GAME UPDATE ===== */
 .commuterTrain{position:absolute;z-index:5;left:-300px;bottom:39%;width:260px;height:60px;background:#f4f4f4;border:4px solid #333;border-radius:9px;box-shadow:0 5px 12px #0007;animation:trainRun 10s linear infinite}.commuterTrain:before{content:"";position:absolute;left:14px;top:11px;width:38px;height:25px;background:#74c8ec;box-shadow:48px 0 #74c8ec,96px 0 #74c8ec,144px 0 #74c8ec;border:2px solid #555}.commuterTrain:after{content:"";position:absolute;left:0;right:0;bottom:-9px;height:7px;background:#333}@keyframes trainRun{from{transform:translateX(0)}to{transform:translateX(calc(100vw + 650px))}}
-.crosswalk{display:none!important;position:absolute;z-index:4;bottom:17%;left:-280px;width:230px;height:78px;transform:skewX(-20deg);background:repeating-linear-gradient(90deg,#eee 0 22px,transparent 22px 40px);opacity:.55;animation:crossRun 7.5s linear infinite}@keyframes crossRun{from{transform:translateX(0) skewX(-20deg)}to{transform:translateX(135vw) skewX(-20deg)}}
+.crosswalk{display:none!important;display:none!important;position:absolute;z-index:4;bottom:17%;left:-280px;width:230px;height:78px;transform:skewX(-20deg);background:repeating-linear-gradient(90deg,#eee 0 22px,transparent 22px 40px);opacity:.55;animation:crossRun 7.5s linear infinite}@keyframes crossRun{from{transform:translateX(0) skewX(-20deg)}to{transform:translateX(135vw) skewX(-20deg)}}
 .ped{position:absolute;z-index:7;bottom:39%;width:18px;height:48px;background:#222;border-radius:10px 10px 3px 3px;animation:pedRun 8.5s linear infinite}.ped:before{content:"";position:absolute;left:3px;top:-13px;width:12px;height:12px;border-radius:50%;background:#f0c7a8}.ped.p1{left:20%;animation-delay:-2s}.ped.p2{left:65%;animation-delay:-5s}@keyframes pedRun{from{transform:translateX(0)}to{transform:translateX(-130vw)}}
 
 #bossMood{position:absolute;z-index:2;right:10px;top:8px;font-size:34px;opacity:0;transform:rotate(-10deg) scale(.8);transition:.12s;text-shadow:2px 2px 4px #000}
@@ -105,7 +105,7 @@ button{margin-top:12px;width:100%;padding:14px;border:0;border-radius:12px;backg
 
 
 /* ===== FINAL WORLD / ROAD / SCENE POLISH ===== */
-.tree{z-index:6;will-change:transform}
+.tree{z-index:6;will-change:transform;position:absolute!important}
 .sidewalk{position:absolute;z-index:3;left:0;bottom:28%;width:3600px;height:15%;background:linear-gradient(#9b9b9b,#777);border-top:5px solid #bfc3c5;box-shadow:inset 0 8px 0 #666;will-change:transform}
 .sidewalk:before{content:"";position:absolute;left:0;right:0;top:12%;height:8px;background:repeating-linear-gradient(90deg,#d8d8d8 0 80px,#a7a7a7 80px 86px)}
 .sidewalk:after{content:"";position:absolute;left:0;right:0;bottom:0;height:18%;background:repeating-linear-gradient(90deg,#555 0 120px,#666 120px 126px)}
@@ -118,12 +118,15 @@ button{margin-top:12px;width:100%;padding:14px;border:0;border-radius:12px;backg
 #world.scene-bridge .city{background:linear-gradient(#8dc4e2 0 38%,#7db1cb 38% 62%,#94cde8 62% 100%);}
 #world.scene-bridge .sidewalk{background:linear-gradient(#777,#555);border-top-color:#aaa}
 #world.scene-bridge #road{box-shadow:inset 0 7px 0 #666, inset 0 -10px 0 #444}
-#world.scene-up #road{transform:skewY(-3deg);transform-origin:50% 100%}
-#world.scene-down #road{transform:skewY(3deg);transform-origin:50% 100%}
-#world.scene-up .lane{transform:skewY(-3deg)}
-#world.scene-down .lane{transform:skewY(3deg)}
-#world.scene-up .sidewalk{transform:skewY(-3deg)}
-#world.scene-down .sidewalk{transform:skewY(3deg)}
+#world.scene-up #road{transform:rotate(-3.8deg) scaleY(1.02);transform-origin:50% 100%}
+#world.scene-down #road{transform:rotate(3.8deg) scaleY(1.02);transform-origin:50% 100%}
+#world.scene-up .lane{transform:rotate(-3.8deg);transform-origin:50% 100%}
+#world.scene-down .lane{transform:rotate(3.8deg);transform-origin:50% 100%}
+#world.scene-up .sidewalk{transform:rotate(-3.8deg) scaleY(1.05);transform-origin:50% 100%}
+#world.scene-down .sidewalk{transform:rotate(3.8deg) scaleY(1.05);transform-origin:50% 100%}
+#world.scene-up #road:before,#world.scene-down #road:before{content:"";position:absolute;left:-5%;right:-5%;top:0;height:100%;background:repeating-linear-gradient(90deg,transparent 0 35px,#eee 35px 105px,transparent 105px 175px);opacity:.45}
+#world.scene-up .city{filter:saturate(.92) brightness(1.03)}
+#world.scene-down .city{filter:saturate(.9) brightness(.94)}
 
 /* FINAL BOSS FACE CUTOUT FIX */
 #boss{left:-120px;bottom:24%;width:125px;height:150px;border-radius:0;overflow:visible;border:0;background:transparent;box-shadow:none;will-change:left,transform}
@@ -300,7 +303,7 @@ rankingList.innerHTML=html||"<div style='padding-top:6px'>まだランキング�
 }
 function jump(high){
 if(!running)return;
-if(!jumping){jumping=true;vy=high?1500:1150;jumpElapsed=0;jumpDuration=(2*vy)/1700;jumpTravel=high?430:330;safeUntil=performance.now()+Math.max(1600,jumpDuration*1000+450)}else if(high)vy=Math.max(vy,1500)
+if(!jumping){jumping=true;vy=high?1380:1120;jumpElapsed=0;jumpDuration=(2*vy)/1850;jumpTravel=high?480:360;safeUntil=performance.now()+Math.max(1200,jumpDuration*1000+350)}else if(high)vy=Math.max(vy,1380)
 }
 let pressTimer=null,isPressing=false;
 game.addEventListener("pointerdown",e=>{if(!running||e.target.closest("#overlay"))return;e.preventDefault();isPressing=true;longJumpTriggered=false;if(pressTimer)clearTimeout(pressTimer);pressTimer=setTimeout(()=>{if(isPressing){longJumpTriggered=true;jump(true)}},260)});
@@ -329,7 +332,7 @@ person:`<svg viewBox="0 0 75 105" aria-hidden="true"><ellipse cx="37" cy="99" rx
 hole:`<svg viewBox="0 0 120 58" aria-hidden="true"><defs><radialGradient id="holeDark"><stop offset="0" stop-color="#050505"/><stop offset=".62" stop-color="#161616"/><stop offset="1" stop-color="#555"/></radialGradient></defs><ellipse cx="60" cy="35" rx="51" ry="18" fill="#000" opacity=".22"/><path d="M8 32Q18 13 60 12T112 32Q103 51 60 53T8 32Z" fill="url(#holeDark)" stroke="#222" stroke-width="4"/><path d="M18 27Q32 17 52 18M68 18Q90 18 103 28" fill="none" stroke="#888" stroke-width="3" opacity=".6"/><path d="M28 38q13 7 27 5M68 44q15 1 28-7" fill="none" stroke="#000" stroke-width="5" opacity=".8"/></svg>`
 };
 el.innerHTML=art[type];
-if(spawnX==null)spawnX=1080+Math.random()*40;el.style.left=spawnX+"px";obstacles.appendChild(el);obstacleList.push({el,x:spawnX,hit:false})
+if(spawnX==null)spawnX=1080+Math.random()*40;el.style.left=spawnX+"px";obstacles.appendChild(el);obstacleList.push({el,x:spawnX,hit:false,high:highType,requiredY:highType?430:0})
 }
 function spawnCoin(spawnX,coinY){
 const el=document.createElement("div");el.className="coin";el.textContent="¥";
@@ -343,56 +346,69 @@ function updateHUD(){const mult=Math.min(5,1+Math.floor(combo/5));distanceEl.tex
 
 function setPlayerFace(){player.classList.remove(...playerFaces);let f=playerFaces[Math.floor(Math.random()*playerFaces.length)];if(bossGap<12)f="panicked";else if(jumping)f="sweating";player.classList.add(f)}
 function updateScene(dt){
-roadOffset=(roadOffset+(speed*WORLD_PX_PER_M)*dt)%560;
-cityOffset=(cityOffset+(speed*WORLD_PX_PER_M*0.18)*dt)%280;
-const lane=document.querySelector(".lane"),city=document.querySelector(".city"),sidewalk=document.querySelector(".sidewalk"),trees=document.querySelectorAll(".tree");
-const slope=(world.classList.contains("scene-up")?-3:world.classList.contains("scene-down")?3:0);lane.style.transform=`skewY(${slope}deg) translateX(${-roadOffset}px)`;city.style.transform=`translateX(${-cityOffset}px)`;sidewalk.style.transform=`translateX(${-cityOffset*1.15}px)`;trees.forEach((t,i)=>t.style.transform=`translateX(${-cityOffset*(1.25+i*.05)}px)`);
-sceneTimer+=dt;
-const sceneDistance=Math.floor(distance/120); const idx=sceneDistance%8;
-if(idx!==sceneIndex){sceneIndex=idx;const scenes=["scene-city","scene-residential","scene-suburban","scene-up","scene-down","scene-mountain","scene-bridge","scene-city"];world.classList.remove("scene-city","scene-residential","scene-suburban","scene-up","scene-down","scene-mountain","scene-bridge");world.classList.add(scenes[idx]);}
-runPhase+=dt*speed*7;player.style.marginBottom=(Math.sin(runPhase)*1.5)+"px";
+  roadOffset=(roadOffset+(speed*WORLD_PX_PER_M)*dt)%560;
+  cityOffset=(cityOffset+(speed*WORLD_PX_PER_M*0.18)*dt)%280;
+  sceneTimer+=dt;
+  const sceneDistance=Math.floor(distance/90);
+  const idx=sceneDistance%8;
+  const scenes=["scene-city","scene-residential","scene-suburban","scene-up","scene-down","scene-mountain","scene-bridge","scene-city"];
+  if(idx!==sceneIndex){
+    sceneIndex=idx;
+    world.classList.remove("scene-city","scene-residential","scene-suburban","scene-up","scene-down","scene-mountain","scene-bridge");
+    world.classList.add(scenes[idx]);
+  }
+  const lane=document.querySelector(".lane"),city=document.querySelector(".city"),sidewalk=document.querySelector(".sidewalk"),trees=document.querySelectorAll(".tree");
+  const slope=world.classList.contains("scene-up")?-3.8:world.classList.contains("scene-down")?3.8:0;
+  lane.style.transform=(slope?`rotate(${slope}deg) `:'')+`translateX(${-roadOffset}px)`;
+  city.style.transform=`translateX(${-cityOffset}px)`;
+  sidewalk.style.transform=(slope?`rotate(${slope}deg) `:'')+`translateX(${-cityOffset*1.15}px)`;
+  trees.forEach((t,i)=>{t.style.transform=`translateX(${-cityOffset*(1.25+i*.05)}px)`;});
+  runPhase+=dt*speed*7;
+  player.style.marginBottom=(Math.sin(runPhase)*1.5)+"px";
 }
 function loop(now){
 if(!running)return;
 const dt=Math.min(.032,(now-last)/1000);last=now;if(paused)return;elapsed+=dt;
 if(slowTimer>0)slowTimer-=dt;if(coffeeTimer>0)coffeeTimer-=dt;
-speed=Math.min(MAX_SPEED,START_SPEED+distance*.022);if(coffeeTimer>0)speed=Math.min(MAX_SPEED,speed+.65);if(slowTimer>0)speed*=.62;distance+=speed*dt;
+const acceleration=0.55+Math.min(elapsed/45,0.85);speed=Math.min(MAX_SPEED,speed+acceleration*dt);if(coffeeTimer>0)speed=Math.min(MAX_SPEED,speed+.65);if(slowTimer>0)speed*=.62;distance+=speed*dt;
 updateScene(dt);
-const bossRelativeSpeed=0.85+Math.min(distance/260,0.65);bossGap=Math.max(0,bossGap-bossRelativeSpeed*dt);const playerCenterX=600+78/2;const bossCenterX=playerCenterX-(bossGap*WORLD_PX_PER_M);const bossWorldX=bossCenterX-125/2;boss.style.left=bossWorldX+"px";
+const bossRelativeSpeed=1.45+Math.min(elapsed/80,1.15);bossGap=Math.max(0,bossGap-bossRelativeSpeed*dt);const playerCenterX=600+78/2;const bossCenterX=playerCenterX-(bossGap*WORLD_PX_PER_M);const bossWorldX=bossCenterX-125/2;boss.style.left=bossWorldX+"px";
 bossHopTimer-=dt;if(bossHopTimer<=0){boss.classList.remove("bossHop");void boss.offsetWidth;boss.classList.add("bossHop");setTimeout(()=>boss.classList.remove("bossHop"),520);bossHopTimer=2.8+Math.random()*3.2;}
 if(bossGap<15){boss.classList.add("angry");bossMood.textContent=bossGap<6?"🤬":"😠";warning.classList.add("show");if(bossGap<3){game.classList.add("shake");setTimeout(()=>game.classList.remove("shake"),220);if(!endScheduled){endScheduled=true;setTimeout(endGame,180)}return}}else {warning.classList.remove("show");boss.classList.remove("angry","pressed");bossMood.textContent="😠"}
 if(bossGap<6){boss.classList.add("pressed");bossMood.textContent="🤬"}
-if(jumping){jumpElapsed+=dt;playerY+=vy*dt;vy-=1700*dt;if(playerY<=0){playerY=0;vy=0;jumping=false;jumpElapsed=0}}
+if(jumping){jumpElapsed+=dt;playerY+=vy*dt;vy-=1850*dt;if(playerY<=0){playerY=0;vy=0;jumping=false;jumpElapsed=0}}
 const jumpRatio=jumping&&jumpDuration>0?Math.min(1,jumpElapsed/jumpDuration):0;
-const jumpX=jumping?Math.sin(Math.PI*jumpRatio)*jumpTravel:0;
+const jumpX=jumping?jumpTravel*jumpRatio:0;
 player.style.transform=`translate(${jumpX}px, ${-playerY}px)`;
 faceTimer-=dt;if(faceTimer<=0){setPlayerFace();faceTimer=1.8+Math.random()*2.0}if(jumping)player.classList.add("sweating");
 const nowMs=performance.now();
 const playerWorldX=600+78/2;
 if(elapsed>=nextObstacle){
-const spawnX=1040+Math.random()*70;
-const minGapPx=WORLD_PX_PER_M*(24+Math.random()*8);
+const spawnX=1140+Math.random()*45;
+const minGapPx=WORLD_PX_PER_M*(26+Math.random()*8);
 const spawnBlocked=obstacleList.some(o=>Math.abs(o.x-spawnX)<minGapPx);
-const playerBlocked=obstacleList.some(o=>Math.abs(o.x-playerWorldX)<WORLD_PX_PER_M*10);
-if(nowMs>safeUntil&&!jumping&&!spawnBlocked&&!playerBlocked){
+const playerBlocked=obstacleList.some(o=>Math.abs(o.x-playerWorldX)<WORLD_PX_PER_M*12);
+const jumpLandingBlocked=obstacleList.some(o=>o.x>playerWorldX+WORLD_PX_PER_M*18&&o.x<playerWorldX+WORLD_PX_PER_M*42);
+if(nowMs>safeUntil&&!jumping&&!spawnBlocked&&!playerBlocked&&!jumpLandingBlocked){
 spawnObstacle(spawnX);
 lastObstacleSpawnX=spawnX;
-const gapM=24+Math.random()*8;
+const gapM=26+Math.random()*8;
 nextObstacle=elapsed+gapM/Math.max(speed,0.1);
 }else{
-nextObstacle=elapsed+0.35;
+nextObstacle=elapsed+0.7;
 }
 }
 if(elapsed>=nextCoin){
-const coinSpawnX=1110+Math.random()*55;
-const coinBlocked=obstacleList.some(o=>Math.abs(o.x-coinSpawnX)<WORLD_PX_PER_M*12);
-const coinY=30+Math.random()*10;
-if(!coinBlocked){spawnCoin(coinSpawnX,coinY)}
-nextCoin=elapsed+2.0+Math.random()*1.7;
+const coinSpawnX=1135+Math.random()*45;
+const coinBlocked=obstacleList.some(o=>Math.abs(o.x-coinSpawnX)<WORLD_PX_PER_M*14);
+const landingBlocked=obstacleList.some(o=>o.x>coinSpawnX-WORLD_PX_PER_M*8&&o.x<coinSpawnX+WORLD_PX_PER_M*8);
+const coinY=26+Math.random()*12;
+if(!coinBlocked&&!landingBlocked){spawnCoin(coinSpawnX,coinY)}
+nextCoin=elapsed+2.4+Math.random()*2.0;
 }
 if(elapsed>=nextPowerup){spawnPowerup();nextPowerup=elapsed+7+Math.random()*6}
 const playerRect=player.getBoundingClientRect();
-obstacleList.forEach(o=>{o.x-=(speed*WORLD_PX_PER_M)*dt;o.el.style.left=o.x+"px";if(!o.hit&&playerY<125&&rectHit(playerRect,o.el.getBoundingClientRect())){o.hit=true;if(shield>0){shield=0;o.el.remove();powerupMessage.textContent="🛡️ シールドで回避！";powerupMessage.classList.remove("show");void powerupMessage.offsetWidth;powerupMessage.classList.add("show");combo++;bestCombo=Math.max(bestCombo,combo)}else{combo=0;player.classList.remove(...playerFaces);player.classList.add("panicked");player.style.transform=`translateY(${-playerY}px) rotate(72deg)`;game.classList.add("shake");setTimeout(()=>game.classList.remove("shake"),220);if(!endScheduled){endScheduled=true;setTimeout(endGame,260)}}}else if(!o.hit&&!o.near&&o.x<playerWorldX+WORLD_PX_PER_M*8&&o.x>playerWorldX-WORLD_PX_PER_M*2){o.near=true;if(!jumping){combo++;nearMisses++;bestCombo=Math.max(bestCombo,combo);safeUntil=Math.max(safeUntil,performance.now()+350);}}});
+obstacleList.forEach(o=>{o.x-=(speed*WORLD_PX_PER_M)*dt;o.el.style.left=o.x+"px";if(!o.hit&&playerY<(o.requiredY||125)&&rectHit(playerRect,o.el.getBoundingClientRect())){o.hit=true;if(shield>0){shield=0;o.el.remove();powerupMessage.textContent="🛡️ シールドで回避！";powerupMessage.classList.remove("show");void powerupMessage.offsetWidth;powerupMessage.classList.add("show");combo++;bestCombo=Math.max(bestCombo,combo)}else{combo=0;player.classList.remove(...playerFaces);player.classList.add("panicked");player.style.transform=`translateY(${-playerY}px) rotate(72deg)`;game.classList.add("shake");setTimeout(()=>game.classList.remove("shake"),220);if(!endScheduled){endScheduled=true;setTimeout(endGame,260)}}}else if(!o.hit&&!o.near&&o.x<playerWorldX+WORLD_PX_PER_M*8&&o.x>playerWorldX-WORLD_PX_PER_M*2){o.near=true;if(!jumping){combo++;nearMisses++;bestCombo=Math.max(bestCombo,combo);safeUntil=Math.max(safeUntil,performance.now()+350);}}});
 coinList.forEach(c=>{c.x-=(speed*WORLD_PX_PER_M)*dt;c.el.style.left=c.x+"px";if(!c.hit&&rectHit(playerRect,c.el.getBoundingClientRect())){c.hit=true;coins++;combo++;bestCombo=Math.max(bestCombo,combo);bossGap=Math.min(45,bossGap+4.5);safeUntil=Math.max(safeUntil,performance.now()+1100);player.classList.remove(...playerFaces);player.classList.add("happy");faceTimer=1.4;comboEl.textContent=combo;multiplierEl.textContent="×"+Math.min(5,1+Math.floor(combo/5));c.el.remove()}});
 powerupList.forEach(p=>{p.x-=(speed*WORLD_PX_PER_M)*dt;p.el.style.left=p.x+"px";if(!p.hit&&rectHit(playerRect,p.el.getBoundingClientRect())){p.hit=true;if(p.type==="shield"){shield=1;powerupMessage.textContent="🛡️ シールド獲得！"}else if(p.type==="slow"){slowTimer=4;powerupMessage.textContent="⏱️ 上司の時間が減速！"}else{coffeeTimer=5;powerupMessage.textContent="☕ コーヒーブースト！"}powerupMessage.classList.remove("show");void powerupMessage.offsetWidth;powerupMessage.classList.add("show");combo++;bestCombo=Math.max(bestCombo,combo);p.el.remove()}});
 powerupList=powerupList.filter(p=>{if(p.x<-100){p.el.remove();return false}return true});
